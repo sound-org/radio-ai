@@ -10,7 +10,7 @@ model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-smal
 inputs = processor(
     text=[
         "80s pop track with bassy drums and synth",
-        "90s rock song with loud guitars and heavy drums",
+        "30s jazz track with piano and saxophone",
     ],
     padding=True,
     return_tensors="pt",
