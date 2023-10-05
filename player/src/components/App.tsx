@@ -19,7 +19,7 @@ const App: React.FC = (): ReactElement => {
             title: "Sample online song"
         }
     ];
-    const music: Music = SongsList[0];
+    const music: Music = SongsList[1];
 
     const MAX_VOLUME = 20;
     const [play, setPlay] = useState(false);
@@ -46,7 +46,7 @@ const App: React.FC = (): ReactElement => {
     return (
     <div className="App">
       <header className="App-header">
-        AI music player
+        rAIdio
       </header>
       <div className="App-body">
           <div className="Player">
