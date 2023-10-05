@@ -1,17 +1,27 @@
 from midiutil import MIDIFile
-import utils
-import random
+from utils import *
+from mingus.core import chords
+from accord_lead_generator import Generator
 
-## tutorial example
-chord_progression = ["Cmaj7", "Cmaj7", "Fmaj7", "Gdom7"]
-notes_melody = utils.chords_to_notes(chord_progression)
-notes_bass = utils.chords_to_notes(chord_progression, onlyFirst=True)
+# Same program as the one in "tutorial" folder using own classes with custom generated melody
 
-myMIDI = MIDIFile(2)
-myMIDI.addTempo(track=0, time=0, tempo=120)
-myMIDI.addTempo(track=1, time=0, tempo=120)
+def toNote(pitch:str) -> Note:
+    note = Note()
+    note.pitch = pitch
+    note.duration = Duration.Quarter
+    return note
 
-utils.notes_to_midi(file=myMIDI, array_of_notes=notes_melody, octave=4, track=0, notes_duration=[1 for _ in notes_melody])
-utils.notes_to_midi(file=myMIDI, array_of_notes=notes_bass, octave=3, track=1, notes_duration=[4 for _ in notes_bass])
+chord_progression = Generator.get_random_simple_progression_chords(key='A', addon=7)
+notes_melody = Melody.chords_to_notes(chord_progression)
+notes = [toNote(n) for n in notes_melody]
 
-utils.save_midi_file(myMIDI, "example")
+file = MIDIFile(1)
+file.addTempo(track=0, time=0, tempo=120)
+
+melody = Melody()
+
+melody.notes = notes
+
+melody.notes_to_midi(file)
+
+save_midi_file(file, "test2")
