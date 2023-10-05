@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Demo</title>
+</head>
+<body>
+    <h1>WebSocket Client Demo</h1>
+    <button id="connect">Connect</button>
+    <button id="disconnect" disabled>Disconnect</button>
+    <button id="send" disabled>Send Message</button>
+
+    <script>
+        // Initialize WebSocket variable
+        let ws;
+
+        // Get references to buttons
+        const connectButton = document.getElementById('connect');
+        const disconnectButton = document.getElementById('disconnect');
+        const sendButton = document.getElementById('send');
+
+        // Enable/disable buttons based on WebSocket state
+        function updateUI() {
+            const isConnected = ws && ws.readyState === WebSocket.OPEN;
+            connectButton.disabled = isConnected;
+            disconnectButton.disabled = !isConnected;
+            sendButton.disabled = !isConnected;
+        }
+
+        // Connect to WebSocket
+        connectButton.addEventListener('click', () => {
+            ws = new WebSocket('ws://localhost:8000/ws');
+
+            ws.addEventListener('open', () => {
+                console.log('Connected to WebSocket');
+                updateUI();
+            });
+
+            ws.addEventListener('message', (event) => {
+                console.log(`Message received: ${event.data}`);
+            });
+
+            ws.addEventListener('close', () => {
+                console.log('Disconnected from WebSocket');
+                updateUI();
+            });
+        });
+
+        // Disconnect from WebSocket
+        disconnectButton.addEventListener('click', () => {
+            if (ws) {
+                ws.close();
+            }
+        });
+
+        // Send a message through WebSocket
+        sendButton.addEventListener('click', () => {
+            if (ws) {
+                ws.send('Hello, server!');
+            }
+        });
+    </script>
+</body>
+</html>
