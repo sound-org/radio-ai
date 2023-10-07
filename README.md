@@ -16,3 +16,5 @@ research:
 
 - streaming, ale z jednego źródła do wielu odbiorców
 - text to speach (clonowanie głosu??)
+
+
