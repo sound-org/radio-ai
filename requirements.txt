@@ -1,0 +1,4 @@
+fastapi>=0.100.1
+google_api_python_client>=2.94.0
+google_auth_oauthlib>=1.0.0
+langchain

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, WebSocket
 
 app = FastAPI()
 
@@ -47,3 +48,11 @@ async def serve_homepage():
 async def stream_audio(filename: str):
     file_location = f"./static/{filename}"
     return StreamingResponse(open(file_location, "rb"), media_type="audio/wav")
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        # data = await websocket.receive_text()
+        await websocket.send_text(f"Message received: ")
