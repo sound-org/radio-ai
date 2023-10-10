@@ -12,7 +12,8 @@
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
+                //var content = document.createTextNode(event.data)
+                var content = document.createTextNode("message!")
                 message.appendChild(content)
                 messages.appendChild(message)
                 console.log(event)

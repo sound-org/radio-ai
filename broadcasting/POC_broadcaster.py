@@ -1,20 +1,24 @@
 import asyncio
 import websockets
-import random
 import time
+import os
 
 CLIENTS = set()
+FILENAME = "out.wav"
 
 async def relay(queue, websocket):
     while True:
         # Implement custom logic based on queue.qsize() and
         # websocket.transport.get_write_buffer_size() here.
         message = await queue.get()
+        print(f"[{time.ctime()}] broadcasting ... {message[:9]}")
         await websocket.send(message)
 
 def _get_some_data() -> str:
     # some logic to retrieve fragments of wav file, tbd
-    return f"At {time.ctime()} got data : {random.randint(1,100)}"
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), FILENAME)
+    return open(path, "rb").read()
+
 
 async def handler(websocket):
     queue = asyncio.Queue()
@@ -32,7 +36,7 @@ async def send(websocket, message):
     except websockets.ConnectionClosed:
         pass
 
-def broadcast(message:str):
+def broadcast(message):
     if message:
         for queue in CLIENTS:
             queue.put_nowait(message)
@@ -40,8 +44,8 @@ def broadcast(message:str):
 async def broadcast_messages():
     while True:
         await asyncio.sleep(5)
-        message = _get_some_data()  
-        broadcast(message)
+        wave_file =_get_some_data() 
+        broadcast(wave_file)
 
 
 async def main():
