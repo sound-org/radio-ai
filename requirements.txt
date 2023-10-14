@@ -1,4 +1,12 @@
 fastapi>=0.100.1
 google_api_python_client>=2.94.0
 google_auth_oauthlib>=1.0.0
-langchain
+langchain~=0.0.310
+mingus~=0.6.1
+MIDIUtil~=1.2.1
+scipy~=1.10.1
+transformers~=4.31.0.dev0
+moviepy~=1.0.3
+pyttsx3~=2.90
+pydantic~=2.3.0
+beautifulsoup4~=4.12.0
