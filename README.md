@@ -2,7 +2,7 @@
 
 ## Dokument
 https://docs.google.com/document/d/1SezC9cjp9prnVWpdzmoMTUJmgiLjAf7w7JGdcczhsfs/edit?usp=sharing
-https://www.overleaf.com/6127588824kwnkgprzpxjb
+https://www.overleaf.com/8992965293zhtcyddmqqhv
 
 ## Plany
 - feature:
