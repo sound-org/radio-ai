@@ -19,13 +19,15 @@ class TextToSpeech:
             print(f'{i + 1} {voice.name} [{voice.id}]')
 
     def text_to_speech(self, text: str, say: bool, save: bool = False, file_name: str = "text.mp3") -> None:
-        try:
             if say:
                 self.__engine.say(text)
                 self.__engine.runAndWait()
             if save:
                 self.__engine.save_to_file(text, filename=file_name)
                 self.__engine.runAndWait()
-                os.rename(file_name, os.getcwd() + "/text-to-speech/out/" + file_name)
-        except:
-            return
+                try:
+                    # Sometimes you have to switch to the extended path
+                    # filename_prefix = os.getcwd() + '/text-to-speech/out/'
+                    os.rename(file_name, os.getcwd() + "/out/" + file_name)
+                except FileNotFoundError:
+                    print("Could not change the text-to-speech file path\n")
