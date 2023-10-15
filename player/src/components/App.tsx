@@ -2,8 +2,9 @@ import './App.css';
 import './Slider.css'
 import Music from "../interface/Music";
 import * as React from "react";
-import {ReactElement, useRef, useState} from "react";
-import {PlayIcon, PauseIcon, SpeakerWaveIcon} from "@heroicons/react/24/solid";
+import {ReactElement, useEffect, useRef, useState} from "react";
+import {PauseIcon, PlayIcon, SpeakerWaveIcon} from "@heroicons/react/24/solid";
+import useWebSocket from 'react-use-websocket';
 
 const App: React.FC = (): ReactElement => {
 
@@ -21,10 +22,49 @@ const App: React.FC = (): ReactElement => {
     ];
     const music: Music = SongsList[1];
 
+    // Music controls
     const MAX_VOLUME = 20;
-    const [play, setPlay] = useState(false);
+    const [play, setPlay] = useState(true);
     const [volume, setVolume] = useState(MAX_VOLUME)
     const musicRef = useRef<HTMLAudioElement>(null);
+
+    // Socket handling
+    const [, setData] = useState<Blob>();
+    const [counter, setCounter] = useState(0);
+    const [audioURL, setAudioURL] = useState<String>(null);
+    const [backupAudioURL, setBackupAudioURL] = useState<String>(null);
+    const SERVER_URL = 'ws://localhost:8000';
+    const { sendMessage, lastMessage, readyState } = useWebSocket(SERVER_URL);
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+            setCounter(c => c + 1);
+
+            setData(lastMessage.data);
+            const blob = new Blob([lastMessage.data.slice(0, lastMessage.data.length)], {type: "audio/mpeg-3"});
+
+            if (play) {
+                try {
+                    if (musicRef.current.src === "") {
+                        setAudioURL(URL.createObjectURL(blob));
+                        musicRef.current.src = audioURL.toString();
+                        musicRef.current.play().then(() => setPlay(true));
+                    }
+
+                    if (musicRef.current.duration - musicRef.current.currentTime < 5) {
+                        console.log(musicRef.current.duration - musicRef.current.currentTime)
+                        setAudioURL(backupAudioURL);
+                        musicRef.current.src = audioURL.toString();
+                        musicRef.current.play().then(() => setPlay(true));
+                    } else {
+                        setBackupAudioURL(URL.createObjectURL(blob));
+                    }
+                } catch (e) {
+                    console.error(e.toString())
+                }
+            }
+        }
+    }, [lastMessage]);
 
     function togglePlay(): void {
         if (play) {
@@ -60,7 +100,7 @@ const App: React.FC = (): ReactElement => {
                       )}
                   </button>
               </div>
-              <p>{music.title}</p>
+              <p>Number of blobs received: {counter}</p>
               <div className="Volume">
                   <input
                       type="range"
@@ -72,7 +112,7 @@ const App: React.FC = (): ReactElement => {
               </div>
           </div>
           <audio ref={musicRef}>
-              <source src={music.source} type="audio/mp3"/>
+              <source src="" type="audio/mp3"/>
           </audio>
       </div>
     </div>

@@ -4,7 +4,7 @@ import time
 import os
 
 CLIENTS = set()
-FILENAME = "out.wav"
+FILENAME = "out.mp3"
 
 async def relay(queue, websocket):
     while True:
@@ -13,6 +13,7 @@ async def relay(queue, websocket):
         message = await queue.get()
         print(f"[{time.ctime()}] broadcasting ... {message[:9]}")
         await websocket.send(message)
+
 
 def _get_some_data() -> str:
     # some logic to retrieve fragments of wav file, tbd
@@ -30,16 +31,19 @@ async def handler(websocket):
         CLIENTS.remove(queue)
         relay_task.cancel()
 
+
 async def send(websocket, message):
     try:
         await websocket.send(message)
     except websockets.ConnectionClosed:
         pass
 
+
 def broadcast(message):
     if message:
         for queue in CLIENTS:
             queue.put_nowait(message)
+
 
 async def broadcast_messages():
     while True:
