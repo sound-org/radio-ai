@@ -1,4 +1,4 @@
-from text_to_speech.audio_merger import AudioMerger
+from src.text_to_speech.audio_merger import AudioMerger
 
 from .config import TextToSpeechConfig
 from .text_to_speech import TextToSpeechEngine

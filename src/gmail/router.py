@@ -80,9 +80,9 @@ def get_message(response: Response, message_id: str) -> GmailMessageSchema:
     description="Ingest all messages from gmail into a vector database",
     status_code=status.HTTP_200_OK,
     response_description="List of messages successfully ingested",
-    response_model=list[GmailMessageSchema],
+    response_model=List[GmailMessageSchema],
 )
-def get_all_messages(response: Response) -> list[GmailMessageSchema]:
+def get_all_messages(response: Response) -> List[GmailMessageSchema]:
     logger.info("Ingesting messages from gmail")
     gmail_integration = GmailService()
     messages: List[Document] = gmail_integration.get_messages()

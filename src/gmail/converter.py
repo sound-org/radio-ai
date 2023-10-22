@@ -1,3 +1,5 @@
+from typing import List
+
 from langchain.docstore.document import Document
 
 from .schema import GmailMessageSchema
@@ -21,8 +23,8 @@ def convert_gmail_message_model_to_schema(
 
 
 def convert_gmail_messages_model_to_schema(
-    gmail_messages: list[Document],
-) -> list[GmailMessageSchema]:
+    gmail_messages: List[Document],
+) -> List[GmailMessageSchema]:
     return [
         convert_gmail_message_model_to_schema(gmail_message=gmail_message)
         for gmail_message in gmail_messages

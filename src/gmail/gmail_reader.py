@@ -7,7 +7,7 @@ from langchain.docstore.document import Document
 
 from .gmail_message_parser import GmailMessageParser
 
-SCOPES: list[str] = ["https://www.googleapis.com/auth/gmail.readonly"]
+SCOPES: List[str] = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class GmailReader:
         if not self.service:
             self.service = build("gmail", "v1", credentials=self.credentials)
 
-        messsages: list[Document] = self.__search_messages()
+        messsages: List[Document] = self.__search_messages()
 
         return messsages
 
@@ -49,7 +49,7 @@ class GmailReader:
         except Exception as error:
             logger.error(msg=f"An error occurred: {error}")
 
-    def __search_messages(self) -> list[Document]:
+    def __search_messages(self) -> List[Document]:
         query = self.query
 
         results = self.service.users().messages().list(userId="me", q=query).execute()

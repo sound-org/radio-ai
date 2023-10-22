@@ -1,3 +1,5 @@
+from typing import List
+
 import pyttsx3
 
 
@@ -12,7 +14,7 @@ class TextToSpeechEngine:
         self._engine.setProperty("volume", volume)
 
     def list_available_voices(self) -> None:
-        voices: list = self._engine.getProperty("voices")
+        voices: List = self._engine.getProperty("voices")
         for i, voice in enumerate(voices):
             print(f"{i + 1} {voice.name} [{voice.id}]")
 
