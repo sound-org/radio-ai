@@ -9,4 +9,3 @@ class GmailMessageSchema(BaseModel):
     date: str
     url: str
     content: str
-

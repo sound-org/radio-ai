@@ -1,12 +1,15 @@
 import logging
+import uuid
 from typing import List
 
 from fastapi import APIRouter, Response
-from gmail import GmailMessageSchema, GmailService
-from gmail import converter as gmail_converter
 from langchain.chat_models import ChatOpenAI
 from langchain.docstore.document import Document
 from langchain.schema import BaseMessage, HumanMessage, SystemMessage
+
+from src.gmail import GmailMessageSchema, GmailService
+from src.gmail import converter as gmail_converter
+from src.text_to_speech import TextToSpeechService
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +23,10 @@ initial_message = SystemMessage(content="Starting talking")
 history.append(dj_character)
 history.append(initial_message)
 
+text_to_speech_service = TextToSpeechService()
 
-# at localost:8000/docs you can find swagger documentation
-def get_llm():
+
+def get_next_speaker_line():
     chat = ChatOpenAI()
     message = HumanMessage(content="continue")
     history.append(message)
@@ -31,9 +35,13 @@ def get_llm():
     return response
 
 
-@router.get("/speaker/lines")
-def get_speaker_lines():
-    dj_message = get_llm()
+@router.get(path="/speaker/line")
+def get_speaker_lines() -> str:
+    dj_message: BaseMessage = get_next_speaker_line()
+    uid = str(uuid.uuid4())
+    text_to_speech_service.prepare_audition(
+        text=dj_message.content, voice_file_name=f"voice_{uid}.mp3"
+    )
     return dj_message.content
 
 

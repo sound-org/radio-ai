@@ -1,7 +1,7 @@
 import pyttsx3
 
 
-class TextToSpeech:
+class TextToSpeechEngine:
     _engine: pyttsx3.Engine
 
     def __init__(self, voice, rate: int, volume: float) -> None:
@@ -16,17 +16,9 @@ class TextToSpeech:
         for i, voice in enumerate(voices):
             print(f"{i + 1} {voice.name} [{voice.id}]")
 
-    def text_to_speech(
-        self, text: str, say: bool, save: bool = False, file_name: str = "text.mp3"
-    ) -> None:
+    def text_to_speech(self, text: str, say: bool, save: bool, file_name: str) -> None:
         if say:
             self._engine.say(text)
-            self._engine.runAndWait()
         if save:
-            print(file_name)
-            # try:
-            #     os.remove(file_name)
-            # except Exception as e:
-            #     pass
             self._engine.save_to_file(text, filename=file_name)
-            self._engine.runAndWait()
+        self._engine.runAndWait()

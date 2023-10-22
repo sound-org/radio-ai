@@ -27,4 +27,3 @@ def convert_gmail_messages_model_to_schema(
         convert_gmail_message_model_to_schema(gmail_message=gmail_message)
         for gmail_message in gmail_messages
     ]
-

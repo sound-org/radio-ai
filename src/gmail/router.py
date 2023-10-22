@@ -7,8 +7,8 @@ from langchain.docstore.document import Document
 from . import converter as gmail_converter
 from .authenticaion_service import AuthenticationService
 from .gmail_config import GmailConfig
-from .gmail_service import GmailService
 from .schema import GmailMessageSchema
+from .service import GmailService
 
 router = APIRouter(prefix="/gmail", tags=["gmail"])
 
