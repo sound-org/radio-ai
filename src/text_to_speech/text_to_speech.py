@@ -7,9 +7,12 @@ class TextToSpeechEngine:
     _engine: pyttsx3.Engine
 
     def __init__(self, voice, rate: int, volume: float) -> None:
-        self._engine = pyttsx3.init()
-        if voice:
-            self._engine.setProperty("voice", voice)
+        self._engine = pyttsx3.init("espeak")
+        # if voice:
+        #     self._engine.setProperty("voice", voice)
+        voices = self._engine.getProperty("voices")
+        print(voices)
+        self._engine.setProperty("voice", voices[11].id)  # English
         self._engine.setProperty("rate", rate)
         self._engine.setProperty("volume", volume)
 
