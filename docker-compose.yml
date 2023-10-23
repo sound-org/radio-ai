@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile.backend
     volumes:
       - .:/usr/src/app
-    command: ["python", "/usr/local/lib/python3.8/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
+    command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
     ports:
       - 8000:8000
       - 5678:5678

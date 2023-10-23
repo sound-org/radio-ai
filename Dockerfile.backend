@@ -1,17 +1,18 @@
 
-FROM python:3.8-slim as build-deps
+FROM python:3.9-slim as build-deps
 
 WORKDIR /usr/src/app
 
+RUN apt-get update && apt-get install -y gcc && apt-get install -y portaudio19-dev
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 # RUN --mount=type=cache,target=/root/.cache pip install --no-cache-dir
 RUN apt-get update && \
-    apt-get install -y espeak && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y espeak
+    # apt-get clean && \
+    # rm -rf /var/lib/apt/lists/*
 
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 WORKDIR /usr/src/app
 
