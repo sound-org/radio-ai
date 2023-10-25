@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/speaker", tags=["speaker"])
 history: List[BaseMessage] = []
 dj_character = SystemMessage(
-    content="Hello, I am a DJ speaker. I am a little bit crazyyy. I talk about music, about my life, about my friends. And everything else that comes to my mind."
+    content="Hello, I am a DJ speaker. I am a little bit crazyyy. I talk about music, about my life, about my friends. And everything else that comes to my mind. Don't make your speech too long"
 )
 initial_message = SystemMessage(content="Starting talking")
 history.append(dj_character)

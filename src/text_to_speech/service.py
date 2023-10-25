@@ -1,3 +1,5 @@
+import os
+
 from src.text_to_speech.audio_merger import AudioMerger
 
 from .config import TextToSpeechConfig
@@ -18,6 +20,7 @@ class TextToSpeechService:
         self._tts_engine.text_to_speech(text, say, save, file_name)
 
     def prepare_audition(self, text: str, voice_file_name: str) -> None:
+        voice_file_name = self._get_path_for_filename(voice_file_name)
         self.text_to_speech(text, say=False, save=True, file_name=voice_file_name)
 
     def _merge_audio_files(self, voice_file_name: str, audition_file_name: str) -> None:
@@ -29,3 +32,6 @@ class TextToSpeechService:
             ],
             target_filename=audition_file_name,
         )
+
+    def _get_path_for_filename(self, filename: str) -> str:
+        return os.path.join(TextToSpeechConfig.generated_dir, filename)
