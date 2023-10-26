@@ -155,3 +155,5 @@ cython_debug/
 .idea/
 
 musicgen_out.wav
+audio_data/generated/voice*
+audio_data/generated/

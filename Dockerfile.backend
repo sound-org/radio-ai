@@ -1,0 +1,17 @@
+
+FROM python:3.9-slim as build-deps
+
+WORKDIR /usr/src/app
+RUN apt-get update && apt-get install -y gcc portaudio19-dev
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+# RUN --mount=type=cache,target=/root/.cache pip install --no-cache-dir
+
+FROM python:3.9-slim
+
+WORKDIR /usr/src/app
+
+RUN apt update && apt install -y  espeak ffmpeg 
+RUN pip install elevenlabs
+COPY --from=build-deps /usr/local /usr/local
+COPY . .
