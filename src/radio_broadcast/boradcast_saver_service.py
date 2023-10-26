@@ -62,7 +62,7 @@ class BroadcastSaverService:
         )
 
     def _create_output_dir(self, output_dir: Path) -> None:
-        os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True, mode=0o777)
 
     def get_file_from_filename(self, filename: str) -> str:
         return os.path.join(self._output_dir, filename)

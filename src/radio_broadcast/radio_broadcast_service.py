@@ -5,9 +5,10 @@ from typing import List
 from src.radio_broadcast.boradcast_saver_service import BroadcastSaverService
 from src.text_to_speech.config import TextToSpeechConfig
 from src.text_to_speech.service_implementation.text_to_speech_service_elevenabs import (
-    TextToSpeechServiceElevenLabs,
+    TextToSpeechServiceElevenLabs,  # noqa: F401
 )
 from src.text_to_speech.service_interface import TextToSpeechServiceInterface
+from src.text_to_speech.service_implementation.text_to_speech_service_pyttsx3 import TextToSpeechServicePyttsx3  # noqa: F401
 
 from .audio_filename_builder import AudioFilenameBuilder
 from .audio_merger import AudioMerger
@@ -21,8 +22,8 @@ class RadioBroadcastService:
     def __init__(self) -> None:
         self._audio_merger: AudioMerger = AudioMerger()
         self._text_to_speech_service: TextToSpeechServiceInterface = (
-            # TextToSpeechServicePyttsx3()
-            TextToSpeechServiceElevenLabs(TextToSpeechConfig.elevenlabs_voice_id)
+            TextToSpeechServicePyttsx3()
+            # TextToSpeechServiceElevenLabs(TextToSpeechConfig.elevenlabs_voice_id)
         )
 
     def create_broadcast(self, speaker_text: str, music_files: List[str]) -> Path:
