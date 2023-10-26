@@ -10,17 +10,17 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # os.environ["TORCH_CUDA_ARCH_LIST"] = "Turing"
-import torch
+# import torch
 
-print(torch.version.cuda)
-print(os.environ.get("CUDA_VISIBLE_DEVICES", "Variable not set"))
-print(torch.cuda.is_available())
+# print(torch.version.cuda)
+# print(os.environ.get("CUDA_VISIBLE_DEVICES", "Variable not set"))
+# print(torch.cuda.is_available())
 from transformers import AutoProcessor, MusicgenForConditionalGeneration
 
-decive = torch.device("cuda")
+# decive = torch.device("cuda")
 processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
 model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-small")
-model.to(decive)
+# model.to(decive)
 
 inputs = processor(
     text=[
@@ -33,7 +33,7 @@ inputs = processor(
 # model.generation_config.max_length = (
 #     512 * 1  # define sample time (1 second ~= 51, so 512 = 10 seconds)
 # )
-model.generation_config.max_new_tokens = 512 * 5  # define sample time
+model.generation_config.max_new_tokens = 512 * 3  # define sample time
 # calcualte time
 
 

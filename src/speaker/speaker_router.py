@@ -1,5 +1,5 @@
 import logging
-import uuid
+from pathlib import Path
 from typing import List
 
 from fastapi import APIRouter, Response
@@ -9,7 +9,7 @@ from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
 from src.gmail import GmailMessageSchema, GmailService
 from src.gmail import converter as gmail_converter
-from src.text_to_speech import TextToSpeechService
+from src.radio_broadcast import RadioBroadcastService
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +17,13 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/speaker", tags=["speaker"])
 history: List[BaseMessage] = []
 dj_character = SystemMessage(
-    content="Hello, I am a DJ speaker. I am a little bit crazyyy. I talk about music, about my life, about my friends. And everything else that comes to my mind. Don't make your speech too long"
+    content="Hello, I am a DJ speaker. I am a little bit crazyyy. I talk about music, about my life, about my friends. And everything else that comes to my mind. Don't make your speech too long, at most 3 sentences"
 )
 initial_message = SystemMessage(content="Starting talking")
 history.append(dj_character)
 history.append(initial_message)
 
-text_to_speech_service = TextToSpeechService()
+radio_broadcast_service = RadioBroadcastService()
 
 
 def get_next_speaker_line():
@@ -38,9 +38,15 @@ def get_next_speaker_line():
 @router.get(path="/speaker/line")
 def get_speaker_lines() -> str:
     dj_message: BaseMessage = get_next_speaker_line()
-    uid = str(uuid.uuid4())
-    text_to_speech_service.prepare_audition(
-        text=dj_message.content, voice_file_name=f"voice_{uid}.mp3"
+    logger.info("Generating voice for message %s", dj_message.content)
+    path_to_broadcast: Path = radio_broadcast_service.create_broadcast(
+        speaker_text=dj_message.content,
+        music_files=["algorithms/musicgen_out3.wav"],
+    )
+    logger.info(
+        "Successfully generated voice for message %s in dir %s",
+        dj_message.content,
+        path_to_broadcast,
     )
     return dj_message.content
 

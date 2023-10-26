@@ -1,1 +1,1 @@
-from .service import TextToSpeechService
+from .service_interface import TextToSpeechServiceInterface
