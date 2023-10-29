@@ -23,3 +23,9 @@ research:
 - text to speach (clonowanie głosu??)
 
 
+GO:
+
+ W `/go` znajduje się server obsługujący HLS. Aby go odpalić potrzeba go <=1.21.3
+ Klienta możnma odpalić tu : https://hlsjs-dev.video-dev.org/demo/  w linku do src wpicas http://localhost:8080/outputlist.m3u8
+ Server odpalać z pliku /cmd/app/main.go komendą go run .
+ 
