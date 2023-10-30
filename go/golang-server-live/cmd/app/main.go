@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"time"
 )
 
 func main() {
 
-	const songsDir = "..\\..\\music\\bathroom"
+	dirBathroom := filepath.Join("..", "..", "music")
+	dirJazz := filepath.Join("..", "..", "music", "jazz")
 	const port = 8080
 	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan int)
@@ -28,10 +30,10 @@ func main() {
 		}
 	}()
 
-	http.Handle("/", addHeaders(http.FileServer(http.Dir(songsDir))))
+	http.Handle("/", addHeaders(http.FileServer(http.Dir(dirBathroom))))
 	http.Handle("/quit", createShutDown(quit))
 	fmt.Printf("Starting server on %v\n", port)
-	log.Printf("Serving %s on HTTP port: %v\n", songsDir, port)
+	log.Printf("Serving %s, %s on HTTP port: %v\n", dirBathroom, dirJazz, port)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
 }
