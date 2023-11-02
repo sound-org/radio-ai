@@ -127,7 +127,7 @@ func (record *Record) SaveToFile(wr *os.File, path string) error {
 		"#EXT-X-ALLOW-CACHE:{{ .Metadata.Cache }}\n" +
 		"#EXT-X-TARGETDURATION{{ .Metadata.Duration }}\n" +
 		"{{ range .Ts }}{{ .Header }}\n{{ .Name }}\n{{ end }}" +
-		"#EXT-X-ENDLIST\n"
+		"{{ if .HasEnd }}#EXT-X-ENDLIST{{ else }}{{ end }}\n"
 
 	t, err := template.New("manifest").Parse(str)
 	if err != nil {
