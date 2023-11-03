@@ -15,11 +15,16 @@ import (
 
 func TestReadDirectory(t *testing.T) {
 	// given
-	path := filepath.Join("..", "..")
+	path := filepath.Join("..")
 
-	dirs := GetDirectories(path)
+	dirs, err := getFiles(path, "*.go")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	if dirs == nil {
+	log.Println(dirs)
+
+	if len(dirs) == 0 {
 		log.Fatalf("content of directory: %s is empty or nill", path)
 	}
 }
@@ -61,7 +66,7 @@ func TestMarkToDelete(t *testing.T) {
 	}
 	defer os.Remove(file.Name())
 
-	err = utils.ChModTiime(file, 2, 20)
+	err = utils.ChModTime(file, 2, 20)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,7 +96,7 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = utils.ChModTiime(file, 2, 20)
+	err = utils.ChModTime(file, 2, 20)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -111,4 +116,31 @@ func TestDelete(t *testing.T) {
 		log.Fatal("file was not deleted")
 	}
 
+}
+
+func TestCreateMAnager(t *testing.T) {
+	path := filepath.Join(".", "temp")
+	os.Mkdir("temp", 0755)
+	defer os.RemoveAll(path)
+
+	file, err := utils.CreateSimpleM3U8(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mutex := sync.RWMutex{}
+	manager, err := CreateManager(".", "streaming1.m3u8", &mutex)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if _, exists := manager.ReadRecords[file.Name()]; !exists {
+		log.Fatalf("file %s does not exists in the records", file.Name())
+	}
+
+	manager.StreamingFile.Close()
+	err = os.Remove(manager.StreamingFile.Name())
+	if err != nil {
+		log.Fatal(err)
+	}
 }

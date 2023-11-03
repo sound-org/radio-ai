@@ -2,6 +2,7 @@ package reader
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,21 +13,35 @@ import (
 )
 
 const maxFileLifespan = 2 // in days
+// hls main streaming file configs
+const version = 3
+const beginSequence = 0
+const enableCache = "NO"
+const maxDuration = 11
+const maxCapacity = 30
 
-func GetDirectories(path string) []string {
-	entries, err := os.ReadDir(path)
-	if err != nil {
-		return nil
-	}
-	var names []string
+func getFiles(path, pattern string) ([]string, error) {
+	var paths []string
 
-	for _, entry := range entries {
-		if entry.IsDir() {
-			names = append(names, entry.Name())
+	err := filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
 		}
+		if info.IsDir() {
+			return nil
+		}
+		if matched, err := filepath.Match(pattern, filepath.Base(path)); err != nil {
+			return err
+		} else if matched {
+			paths = append(paths, path)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
-	return names
+	return paths, nil
 }
 
 type Manager struct {
@@ -83,11 +98,37 @@ func isToDelete(today, fileCreationDate time.Time, maxLifeSpan int) bool {
 	return fileCreationDate.Add(time.Duration(maxLifeSpan) * 24 * time.Hour).Before(today)
 }
 
-func CreateManager(path string) (*Manager, error) {
-	dirs := GetDirectories(path)
-	if len(dirs) == 0 {
+func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, error) {
+	paths, err := getFiles(path, "*.m3u8")
+	if err != nil {
 		return nil, fmt.Errorf("path %v does not contain any subdirectory", path)
 	}
 
-	return &Manager{}, nil
+	file, err := os.Create(streamingName)
+	if err != nil {
+		return nil, err
+	}
+
+	manager := Manager{
+		ReadRecords: make(map[string]*hls.Record),
+		WriteRecord: hls.Record{
+			Metadata: hls.Metadata{
+				Version:  version,
+				Sequence: beginSequence,
+				Cache:    enableCache,
+				Duration: maxDuration,
+			},
+			Ts:       make([]hls.TsFile, maxCapacity),
+			HasEnd:   false,
+			ToDelete: false,
+		},
+		StreamingFile: file,
+		Mutex:         mutex,
+	}
+
+	for _, entry := range paths {
+		manager.addRecord(entry)
+	}
+
+	return &manager, nil
 }

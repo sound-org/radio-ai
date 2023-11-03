@@ -6,7 +6,7 @@ import (
 )
 
 func CreateSimpleM3U8(path string) (*os.File, error) {
-	file, err := os.CreateTemp(path, "test")
+	file, err := os.CreateTemp(path, "test*.m3u8")
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func CreateSimpleM3U8(path string) (*os.File, error) {
 	return file, nil
 }
 
-func ChModTiime(file *os.File, days, mins int) error {
+func ChModTime(file *os.File, days, mins int) error {
 	now := time.Now()
 	toDeleteDate := time.Now().Add(time.Duration(days)*-24*time.Hour - time.Duration(mins)*time.Minute)
 	err := os.Chtimes(file.Name(), now, toDeleteDate)

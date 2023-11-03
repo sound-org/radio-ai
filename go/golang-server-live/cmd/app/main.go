@@ -19,10 +19,12 @@ func main() {
 	// test periodical functions
 	go func() {
 		log.Printf("goroutine started")
+		i := 0
 		for {
 			select {
 			case <-ticker.C:
-				log.Println("function has been invoked")
+				i = i + 1
+				log.Printf("function has been invoked x%d\n", i)
 			case <-quit:
 				ticker.Stop()
 				return
