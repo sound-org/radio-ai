@@ -4,7 +4,8 @@ import Music from "../interface/Music";
 import * as React from "react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {PauseIcon, PlayIcon, SpeakerWaveIcon} from "@heroicons/react/24/solid";
-import useWebSocket from 'react-use-websocket';
+import Hls from "hls.js";
+import WaveForm from './WaveForm';
 
 const App: React.FC = (): ReactElement => {
 
@@ -24,62 +25,76 @@ const App: React.FC = (): ReactElement => {
 
     // Music controls
     const MAX_VOLUME = 20;
-    const [play, setPlay] = useState(true);
     const [volume, setVolume] = useState(MAX_VOLUME)
-    const musicRef = useRef<HTMLAudioElement>(null);
+    const [duration, setDuration] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
 
-    // Socket handling
-    const [, setData] = useState<Blob>();
-    const [counter, setCounter] = useState(0);
-    const [audioURL, setAudioURL] = useState<String>(null);
-    const [backupAudioURL, setBackupAudioURL] = useState<String>(null);
-    const SERVER_URL = 'ws://localhost:8000';
-    const { sendMessage, lastMessage, readyState } = useWebSocket(SERVER_URL);
+    // HLS
+    const hlsSource = "http://localhost:8080/bathroom/outputlist.m3u8";
+    const hlsRef = useRef<Hls | null>(null);
 
+    // HLS setup - call once on render
     useEffect(() => {
-        if (lastMessage !== null) {
-            setCounter(c => c + 1);
+        if (audioRef.current) {
+            hlsRef.current = new Hls();
+            hlsRef.current.attachMedia(audioRef.current);
+            hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
+                hlsRef.current.loadSource(hlsSource);
 
-            setData(lastMessage.data);
-            const blob = new Blob([lastMessage.data.slice(0, lastMessage.data.length)], {type: "audio/mpeg-3"});
-
-            if (play) {
-                try {
-                    if (musicRef.current.src === "") {
-                        setAudioURL(URL.createObjectURL(blob));
-                        musicRef.current.src = audioURL.toString();
-                        musicRef.current.play().then(() => setPlay(true));
-                    }
-
-                    if (musicRef.current.duration - musicRef.current.currentTime < 5) {
-                        console.log(musicRef.current.duration - musicRef.current.currentTime)
-                        setAudioURL(backupAudioURL);
-                        musicRef.current.src = audioURL.toString();
-                        musicRef.current.play().then(() => setPlay(true));
-                    } else {
-                        setBackupAudioURL(URL.createObjectURL(blob));
-                    }
-                } catch (e) {
-                    console.error(e.toString())
-                }
-            }
+                hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
+                    hlsRef.current.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
+                        const duration = data.details.totalduration;
+                        setDuration(duration);
+                        setCurrentTime(0);
+                        // audioRef.current.play();
+                        // setIsPlaying(true);
+                    })
+                })
+            })
         }
-    }, [lastMessage]);
+    }, [])
+
+    // Audio analyzer
+    const [analyzerData, setAnalyzerData] = useState(null);
+    const audioAnalyzer = () => {
+        // create a new AudioContext
+        const audioCtx = new window.AudioContext();
+        // create an analyzer node with a buffer size of 2048
+        const analyzer = audioCtx.createAnalyser();
+        analyzer.fftSize = 2048;
+
+        const bufferLength = analyzer.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        const source = new MediaElementAudioSourceNode(audioCtx, {
+            mediaElement: audioRef.current
+        });
+        source.connect(analyzer);
+        source.connect(audioCtx.destination);
+
+        // set the analyzerData state with the analyzer, bufferLength, and dataArray
+        setAnalyzerData({ analyzer, bufferLength, dataArray });
+    };
+
 
     function togglePlay(): void {
-        if (play) {
-            musicRef.current?.pause();
-            setPlay(false);
+        if (analyzerData === null) {
+            audioAnalyzer();
+        }
+        if (isPlaying) {
+            audioRef.current!.pause();
+            setIsPlaying(false);
         } else {
-            void musicRef.current?.play();
-            setPlay(true);
+            audioRef.current!.play();
+            setIsPlaying(true);
         }
     }
 
     function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void {
         const { value } = e.target;
         const volume = Number(value) / MAX_VOLUME;
-        musicRef.current.volume = volume;
+        audioRef.current.volume = volume;
         setVolume(volume);
     }
 
@@ -90,17 +105,20 @@ const App: React.FC = (): ReactElement => {
       </header>
       <div className="App-body">
           <div className="Player">
-              <div className="Player-image">
-                      <img src={music.image} className="Player-img" alt="Song thumbnail"/>
-                  <button onClick={togglePlay} type="button" className="Player-btn">
-                      {!play ? (
+              <div className="Player-image" onClick={togglePlay}>
+                  <img src={music.image} className="Player-img" alt="Song thumbnail"/>
+                  <button type="button" className="Player-btn">
+                      {!isPlaying ? (
                           <PlayIcon className="Player-icon" aria-hidden="true" />
                       ) : (
                           <PauseIcon className="Player-icon" aria-hidden="true" />
                       )}
                   </button>
               </div>
-              <p>Number of blobs received: {counter}</p>
+              <div className="Analyzer">
+                  {analyzerData && <WaveForm analyzerData={analyzerData}/>}
+              </div>
+              <p>Duration: {Math.round(duration)} s</p>
               <div className="Volume">
                   <input
                       type="range"
@@ -111,8 +129,8 @@ const App: React.FC = (): ReactElement => {
                   <SpeakerWaveIcon className="Volume-icon"  />
               </div>
           </div>
-          <audio ref={musicRef}>
-              <source src="" type="audio/mp3"/>
+          <audio ref={audioRef}>
+              <source src="" type="audio/mp3" />
           </audio>
       </div>
     </div>
