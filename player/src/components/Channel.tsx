@@ -1,20 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 
-const Channel: React.FC<{num: number, hlsPath: string, active: boolean}> = (props) => {
-    const [isActive, setIsActive] = useState<boolean>(false);
+interface ChannelProps {
+    num: number,
+    hlsPath: string,
+    active: boolean,
+    switchChannel: (a: string, idx: number) => void
+}
 
-    useEffect(() => {
-        setIsActive(props.active);
-    }, [props.active])
-
+const Channel: React.FC<ChannelProps> = (props) => {
     const handleClick = () => {
-        if (!isActive) {
-            setIsActive(true);
+        if (!props.active) {
+            props.switchChannel(props.hlsPath, props.num);
         }
     }
 
     return (
-      <div className={isActive ? "Channel-active" : "Channel"} onClick={handleClick}>
+      <div className={props.active ? "Channel-active" : "Channel"} onClick={handleClick}>
           {props.num}
       </div>
     );

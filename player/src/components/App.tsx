@@ -32,8 +32,15 @@ const App: React.FC = (): ReactElement => {
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
 
+    // Channel handling
+    const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
+    const [hlsUrl, setHlsUrl] = useState<string>("http://localhost:8080/jazz/outputlist.m3u8");
+    const switchChannel = (newUrl: string, newIdx: number) => {
+        setHlsUrl(newUrl);
+        setActiveChannelIdx(newIdx);
+    }
+
     // HLS
-    const hlsSource = "http://localhost:8080/bathroom/outputlist.m3u8";
     const hlsRef = useRef<Hls | null>(null);
 
     // HLS setup - call once on render
@@ -42,7 +49,7 @@ const App: React.FC = (): ReactElement => {
             hlsRef.current = new Hls();
             hlsRef.current.attachMedia(audioRef.current);
             hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hlsRef.current?.loadSource(hlsSource);
+                hlsRef.current?.loadSource(hlsUrl);
 
                 hlsRef.current?.on(Hls.Events.MANIFEST_PARSED, () => {
                     hlsRef.current?.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
@@ -58,7 +65,7 @@ const App: React.FC = (): ReactElement => {
                 })
             })
         }
-    }, [])
+    }, [hlsUrl])
 
     // Audio analyzer
     const [analyzerData, setAnalyzerData] = useState<any>(null);
@@ -80,7 +87,6 @@ const App: React.FC = (): ReactElement => {
         // set the analyzerData state with the analyzer, bufferLength, and dataArray
         setAnalyzerData({ analyzer, bufferLength, dataArray });
     };
-
 
     function togglePlay(): void {
         if (isPlaying) {
@@ -116,11 +122,11 @@ const App: React.FC = (): ReactElement => {
     return (
         <div className="App">
             <div className="Channels">
-                <Channel num={1} hlsPath="" active={true}/>
-                <Channel num={2} hlsPath="" active={false}/>
-                <Channel num={3} hlsPath="" active={false}/>
-                <Channel num={4} hlsPath="" active={false}/>
-                <Channel num={5} hlsPath="" active={false}/>
+                <Channel num={1} hlsPath="http://localhost:8080/jazz/outputlist.m3u8" active={activeChannelIdx === 1} switchChannel={switchChannel}/>
+                <Channel num={2} hlsPath="http://localhost:8080/bathroom/outputlist.m3u8" active={activeChannelIdx === 2} switchChannel={switchChannel}/>
+                <Channel num={3} hlsPath="" active={activeChannelIdx === 3} switchChannel={switchChannel}/>
+                <Channel num={4} hlsPath="" active={activeChannelIdx === 4} switchChannel={switchChannel}/>
+                <Channel num={5} hlsPath="" active={activeChannelIdx === 5} switchChannel={switchChannel}/>
             </div>
             <div className="Radio">
                 <header className="Radio-header">
