@@ -5,7 +5,8 @@ import * as React from "react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {PauseIcon, PlayIcon, SpeakerWaveIcon} from "@heroicons/react/24/solid";
 import Hls from "hls.js";
-import WaveForm from './WaveForm';
+import WaveForm from './WaveForm'
+import Channel from './Channel';
 
 const App: React.FC = (): ReactElement => {
 
@@ -41,15 +42,18 @@ const App: React.FC = (): ReactElement => {
             hlsRef.current = new Hls();
             hlsRef.current.attachMedia(audioRef.current);
             hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hlsRef.current.loadSource(hlsSource);
+                hlsRef.current?.loadSource(hlsSource);
 
-                hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
-                    hlsRef.current.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
+                hlsRef.current?.on(Hls.Events.MANIFEST_PARSED, () => {
+                    hlsRef.current?.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
                         const duration = data.details.totalduration;
                         setDuration(duration);
                         setCurrentTime(0);
-                        // audioRef.current.play();
-                        // setIsPlaying(true);
+                        audioRef.current!.play();
+                        setIsPlaying(true);
+                        if (analyzerData === null) {
+                            audioAnalyzer();
+                        }
                     })
                 })
             })
@@ -57,7 +61,7 @@ const App: React.FC = (): ReactElement => {
     }, [])
 
     // Audio analyzer
-    const [analyzerData, setAnalyzerData] = useState(null);
+    const [analyzerData, setAnalyzerData] = useState<any>(null);
     const audioAnalyzer = () => {
         // create a new AudioContext
         const audioCtx = new window.AudioContext();
@@ -68,7 +72,7 @@ const App: React.FC = (): ReactElement => {
         const bufferLength = analyzer.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
         const source = new MediaElementAudioSourceNode(audioCtx, {
-            mediaElement: audioRef.current
+            mediaElement: audioRef.current!
         });
         source.connect(analyzer);
         source.connect(audioCtx.destination);
@@ -79,9 +83,6 @@ const App: React.FC = (): ReactElement => {
 
 
     function togglePlay(): void {
-        if (analyzerData === null) {
-            audioAnalyzer();
-        }
         if (isPlaying) {
             audioRef.current!.pause();
             setIsPlaying(false);
@@ -94,47 +95,66 @@ const App: React.FC = (): ReactElement => {
     function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void {
         const { value } = e.target;
         const volume = Number(value) / MAX_VOLUME;
-        audioRef.current.volume = volume;
+        audioRef.current!.volume = volume;
         setVolume(volume);
     }
 
+    const musicBgStyle = {
+        backgroundImage: "url('/assets/square.jpg')",
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        minWidth: "100px",
+        minHeight: "100px",
+        width: "50vh",
+        height: "50vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer"
+    };
+
     return (
-    <div className="App">
-      <header className="App-header">
-        rAIdio
-      </header>
-      <div className="App-body">
-          <div className="Player">
-              <div className="Player-image" onClick={togglePlay}>
-                  <img src={music.image} className="Player-img" alt="Song thumbnail"/>
-                  <button type="button" className="Player-btn">
-                      {!isPlaying ? (
-                          <PlayIcon className="Player-icon" aria-hidden="true" />
-                      ) : (
-                          <PauseIcon className="Player-icon" aria-hidden="true" />
-                      )}
-                  </button>
-              </div>
-              <div className="Analyzer">
-                  {analyzerData && <WaveForm analyzerData={analyzerData}/>}
-              </div>
-              <p>Duration: {Math.round(duration)} s</p>
-              <div className="Volume">
-                  <input
-                      type="range"
-                      min={0}
-                      max={MAX_VOLUME}
-                      onChange={(e) => handleVolume(e)}
-                  />
-                  <SpeakerWaveIcon className="Volume-icon"  />
-              </div>
-          </div>
-          <audio ref={audioRef}>
-              <source src="" type="audio/mp3" />
-          </audio>
-      </div>
-    </div>
-  );
+        <div className="App">
+            <div className="Channels">
+                <Channel num={1} hlsPath="" active={true}/>
+                <Channel num={2} hlsPath="" active={false}/>
+                <Channel num={3} hlsPath="" active={false}/>
+                <Channel num={4} hlsPath="" active={false}/>
+                <Channel num={5} hlsPath="" active={false}/>
+            </div>
+            <div className="Radio">
+                <header className="Radio-header">
+                    rAIdio
+                </header>
+                <div className="Player">
+                    <div className="Image" style={musicBgStyle} onClick={togglePlay}>
+                        <button type="button" className="Player-btn">
+                            {!isPlaying ? (
+                                <PlayIcon className="Player-icon" aria-hidden="true"/>
+                            ) : (
+                                <PauseIcon className="Player-icon" aria-hidden="true"/>
+                            )}
+                        </button>
+                    </div>
+                    <div className="Analyzer">
+                        {analyzerData && <WaveForm analyzerData={analyzerData}/>}
+                    </div>
+                    <div className="Volume">
+                        <input
+                            type="range"
+                            min={0}
+                            max={MAX_VOLUME}
+                            onChange={(e) => handleVolume(e)}
+                        />
+                        <SpeakerWaveIcon className="Volume-icon"/>
+                    </div>
+                    <audio ref={audioRef}>
+                        <source src="" type="audio/mp3"/>
+                    </audio>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default App;

@@ -1,8 +1,9 @@
 // This function takes in the audio data, analyzes it, and generates a waveform
 // that is visualized on a canvas element.
+import React from "react";
 import {useEffect, useRef} from "react";
 
-function animateBars(analyser, canvas, canvasCtx, dataArray, bufferLength) {
+function animateBars(analyser: { getByteFrequencyData: (arg0: any) => void }, canvas: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, dataArray: number[], bufferLength: number) {
     // Analyze the audio data using the Web Audio API's `getByteFrequencyData` method.
     analyser.getByteFrequencyData(dataArray);
 
@@ -40,13 +41,13 @@ function animateBars(analyser, canvas, canvasCtx, dataArray, bufferLength) {
 }
 
 // Component to render the waveform
-const WaveForm = ({ analyzerData }) => {
+const WaveForm = ({ analyzerData }: any) => {
     // Ref for the canvas element
-    const canvasRef = useRef(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const { dataArray, analyzer, bufferLength } = analyzerData;
 
     // Function to draw the waveform
-    const draw = (dataArray, analyzer, bufferLength) => {
+    const draw = (dataArray: number[], analyzer: { getByteFrequencyData: (arg0: any) => void; }, bufferLength: number) => {
         const canvas = canvasRef.current;
         if (!canvas || !analyzer) return;
         const canvasCtx = canvas.getContext("2d");
@@ -54,6 +55,7 @@ const WaveForm = ({ analyzerData }) => {
         const animate = () => {
             requestAnimationFrame(animate);
             canvas.width = canvas.width;
+            // @ts-ignore
             animateBars(analyzer, canvas, canvasCtx, dataArray, bufferLength);
         };
 
