@@ -35,9 +35,12 @@ const App: React.FC = (): ReactElement => {
     // Channel handling
     const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
     const [hlsUrl, setHlsUrl] = useState<string>("http://localhost:8080/jazz/outputlist.m3u8");
-    const switchChannel = (newUrl: string, newIdx: number) => {
+    const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
+
+    const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
         setHlsUrl(newUrl);
         setActiveChannelIdx(newIdx);
+        setThumbnailPath(newImgPath)
     }
 
     // HLS
@@ -106,7 +109,7 @@ const App: React.FC = (): ReactElement => {
     }
 
     const musicBgStyle = {
-        backgroundImage: "url('/assets/square.jpg')",
+        backgroundImage: `url('${thumbnailPath}')`,
         backgroundPosition: "center",
         backgroundSize: "cover",
         minWidth: "100px",
@@ -122,11 +125,11 @@ const App: React.FC = (): ReactElement => {
     return (
         <div className="App">
             <div className="Channels">
-                <Channel num={1} hlsPath="http://localhost:8080/jazz/outputlist.m3u8" active={activeChannelIdx === 1} switchChannel={switchChannel}/>
-                <Channel num={2} hlsPath="http://localhost:8080/bathroom/outputlist.m3u8" active={activeChannelIdx === 2} switchChannel={switchChannel}/>
-                <Channel num={3} hlsPath="" active={activeChannelIdx === 3} switchChannel={switchChannel}/>
-                <Channel num={4} hlsPath="" active={activeChannelIdx === 4} switchChannel={switchChannel}/>
-                <Channel num={5} hlsPath="" active={activeChannelIdx === 5} switchChannel={switchChannel}/>
+                <Channel num={1} hlsPath="http://localhost:8080/jazz/outputlist.m3u8" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 1} switchChannel={switchChannel}/>
+                <Channel num={2} hlsPath="http://localhost:8080/bathroom/outputlist.m3u8" thumbnailPath="/assets/thumb2.jpg" active={activeChannelIdx === 2} switchChannel={switchChannel}/>
+                <Channel num={3} hlsPath="" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 3} switchChannel={switchChannel}/>
+                <Channel num={4} hlsPath="" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 4} switchChannel={switchChannel}/>
+                <Channel num={5} hlsPath="" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 5} switchChannel={switchChannel}/>
             </div>
             <div className="Radio">
                 <header className="Radio-header">
