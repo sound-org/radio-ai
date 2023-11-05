@@ -2,13 +2,14 @@ import logging
 from pathlib import Path
 from typing import List
 
-from src.radio_broadcast.boradcast_saver_service import BroadcastSaverService
-from src.text_to_speech.config import TextToSpeechConfig
-from src.text_to_speech.service_implementation.text_to_speech_service_elevenabs import (
-    TextToSpeechServiceElevenLabs,  # noqa: F401
+from src.content_creator.boradcast_saver_service import BroadcastSaverService
+from src.text_to_speech.service_implementation.text_to_speech_service_elevenabs import (  # noqa: F401
+    TextToSpeechServiceElevenLabs,
+)
+from src.text_to_speech.service_implementation.text_to_speech_service_pyttsx3 import (  # noqa: F401
+    TextToSpeechServicePyttsx3,
 )
 from src.text_to_speech.service_interface import TextToSpeechServiceInterface
-from src.text_to_speech.service_implementation.text_to_speech_service_pyttsx3 import TextToSpeechServicePyttsx3  # noqa: F401
 
 from .audio_filename_builder import AudioFilenameBuilder
 from .audio_merger import AudioMerger
@@ -16,7 +17,7 @@ from .audio_merger import AudioMerger
 logger = logging.getLogger(__name__)
 
 
-class RadioBroadcastService:
+class ContentCreatorService:
     # NOTE: a single radio broadcast is a: intro + speaker voice + music + outro
 
     def __init__(self) -> None:
@@ -26,15 +27,16 @@ class RadioBroadcastService:
             # TextToSpeechServiceElevenLabs(TextToSpeechConfig.elevenlabs_voice_id)
         )
 
-    def create_broadcast(self, speaker_text: str, music_files: List[str]) -> Path:
+    def create_new_broadcast(self, speaker_text: str, music_files: List[str]) -> Path:
         broadcast_saver: BroadcastSaverService = BroadcastSaverService()
-        output_broadcast_filename: str = self.get_broadcast_name()
+        output_broadcast_filename: str = self._get_broadcast_name()
 
-        voice_filename: str = self.get_voice_filename()
+        voice_filename: str = self._get_voice_filename()
         voice_file: str = broadcast_saver.get_file_from_filename(
             filename=voice_filename
         )
         logger.info("Running TTS for %s", speaker_text)
+        # TODO: we should call speaker to get his lines, and then we call TTS to convert it to audio
         self._text_to_speech_service.text_to_speech(speaker_text)
         logger.info("Saving TTS output to %s", voice_file)
         self._text_to_speech_service.save(voice_file)
@@ -47,7 +49,7 @@ class RadioBroadcastService:
 
         return path
 
-    def get_voice_filename(self) -> str:
+    def _get_voice_filename(self) -> str:
         return (
             AudioFilenameBuilder()
             .add(self._text_to_speech_service.get_TTS_driver_name())
@@ -55,7 +57,7 @@ class RadioBroadcastService:
             .build()
         )
 
-    def get_broadcast_name(self) -> str:
+    def _get_broadcast_name(self) -> str:
         return (
             AudioFilenameBuilder()
             .add("broadcast")

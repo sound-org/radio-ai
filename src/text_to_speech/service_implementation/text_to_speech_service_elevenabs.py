@@ -14,7 +14,7 @@ class TextToSpeechServiceElevenLabs(TextToSpeechServiceInterface):
     _model: str
     _generated_audio: Union[bytes, Iterator[bytes]]
 
-    def __init__(self, voice_id: str="TX3LPaxmHKxFdv7VOQHJ"):
+    def __init__(self, voice_id: str = "TX3LPaxmHKxFdv7VOQHJ"):
         set_api_key(api_key=TextToSpeechConfig.elevenlabs_api_key)
         self._voice = Voice.from_id(voice_id)
         self._model = "eleven_monolingual_v1"
@@ -25,7 +25,10 @@ class TextToSpeechServiceElevenLabs(TextToSpeechServiceInterface):
         )
 
     def save(self, filename: str) -> None:
+        if self._generated_audio is None:
+            raise Exception("Tried to save TTS output without generating it first")
         save(audio=self._generated_audio, filename=filename)
+        self._generated_audio = None  # clear state
 
     def get_TTS_driver_name(self) -> Literal["elevenlabs"]:
         return "elevenlabs"
