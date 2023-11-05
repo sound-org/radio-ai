@@ -1,0 +1,23 @@
+{
+    "channels": [
+        {
+            "id": 1,
+            "name": "channel1",
+            "description": "channel1 description",
+            "music_theme": "music_theme1",
+            "speaker": {
+                "name": "speaker1",
+                "TTS": "ELEVENLABS",
+                "voice": "Celine",
+                "personality": "normal"
+            },
+            "output_dir": "output_dir"
+        }
+    ]
+}
+// channels/
+// channels/channel1/
+// channels/channel1/speaker/ <speaker audio files>
+// channels/channel1/music/ <music audio files>
+// channels/channel1/broadcast/ <output broadcast audio file>
+// channels/channel1/streaming/ <prepared broacast audio file for Streamer to stream>

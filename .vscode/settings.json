@@ -17,4 +17,11 @@
         "source.organizeImports": true,
         // "editor.formatOnSave": true
     },
+    "python.testing.pytestArgs": [
+        ".",
+        "-s"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
 }

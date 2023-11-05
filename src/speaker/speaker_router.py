@@ -7,9 +7,9 @@ from langchain.chat_models import ChatOpenAI
 from langchain.docstore.document import Document
 from langchain.schema import BaseMessage, HumanMessage, SystemMessage
 
+from src.content_creator import ContentCreatorService
 from src.gmail import GmailMessageSchema, GmailService
 from src.gmail import converter as gmail_converter
-from src.radio_broadcast import RadioBroadcastService
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ initial_message = SystemMessage(content="Starting talking")
 history.append(dj_character)
 history.append(initial_message)
 
-radio_broadcast_service = RadioBroadcastService()
+radio_broadcast_service = ContentCreatorService()
 
 
 def get_next_speaker_line():
@@ -39,7 +39,7 @@ def get_next_speaker_line():
 def get_speaker_lines() -> str:
     dj_message: BaseMessage = get_next_speaker_line()
     logger.info("Generating voice for message %s", dj_message.content)
-    path_to_broadcast: Path = radio_broadcast_service.create_broadcast(
+    path_to_broadcast: Path = radio_broadcast_service.create_new_broadcast(
         speaker_text=dj_message.content,
         music_files=["algorithms/musicgen_out3.wav"],
     )
