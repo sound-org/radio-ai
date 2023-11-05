@@ -4,6 +4,8 @@ logger = getLogger(__name__)
 
 
 class TextToSpeechInterface:
+
+    
     def text_to_speech(self, text: str) -> None:
         raise NotImplementedError
 

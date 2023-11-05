@@ -20,6 +20,7 @@ class TextToSpeechElevenLabs(TextToSpeechInterface):
         self._voice = Voice.from_id(voice_id)
         self._model = "eleven_monolingual_v1"
         self._output_dir = output_dir
+        self._generated_audio = None
 
     def text_to_speech(self, text: str) -> None:
         self._generated_audio = generate(

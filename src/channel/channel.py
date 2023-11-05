@@ -1,15 +1,27 @@
 from src.config.channel_config import ChannelConfig
 from src.music_generator.music_generator import MusicGenerator
 from src.speaker.speaker import Speaker
-from src.text_to_speech.interface import TextToSpeechInterface
 
 
 class Channel:
-    speaker: Speaker
-    music_generator: MusicGenerator
-    tts: TextToSpeechInterface
+    _speaker: Speaker
+    _music_generator: MusicGenerator
 
     def __init__(self, config: ChannelConfig):
-        self.speaker = Speaker(config.speaker)
-        self.music_generator = MusicGenerator(config.music_theme)
-        self.tts = TextToSpeechInterface()  # TODO: add config
+        self._speaker = Speaker(config.speaker)
+        self._music_generator = MusicGenerator(config.music)
+
+    def _generate_speaker_lines(self):
+        return self._speaker.generate_speaker_lines()
+
+    def _generate_ai_music(self):
+        return self._music_generator.generate_ai_music()
+
+    def _generate_algorithmic_music(self):
+        return self._music_generator.generate_algorithmic_music()
+
+    def _prepare_broadcast_for_streaming(self):
+        pass
+
+    def _compose_broadcast(self):
+        pass
