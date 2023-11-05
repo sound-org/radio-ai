@@ -1,23 +1,64 @@
+body {
+  min-width: 800px;
+}
+
 .App {
   color: lightgray;
   font-family: 'Ubuntu', sans-serif;
   text-align: center;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
   justify-content: center;
-  margin: 5vh 0;
+  gap: 30px;
+  margin: 2vh 0;
 }
 
-.App-header {
-  font-size: calc(10px + 3vmin);
+.Channels {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.Channel {
+  background-color: #23547d;
+  min-width: 50px;
+  min-height: 50px;
+  width: 4vw;
+  height: 4vw;
+  border-radius: 5px;
+  color: #d8d8d8;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Channel-active {
+  background-color: #f55d34;
+  min-width: 50px;
+  min-height: 50px;
+  width: 4vw;
+  height: 4vw;
+  border-radius: 5px;
+  color: #d8d8d8;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Radio-header {
+  font-size: 50px;
   color: white;
   padding: 3vh;
   text-align: center;
   font-weight: 500;
 }
 
-.App-body {
+.Player {
   flex-grow: 1;
   background-color: #282c34;
   font-size: calc(10px + 2vmin);
@@ -27,37 +68,41 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  /*width: 30vw;*/
+  /*height: 55vh;*/
 }
 
-.Player {
-  flex: 1;
-}
-
-.Player-image {
-  position: relative;
-}
-
-.Player-img {
-  height: 60vh;
-  width: auto;
+/* Moved to App.tsx in order to allow changing the path */
+.Image {
 }
 
 .Player-btn {
   background-color: transparent;
   background-repeat: no-repeat;
   border: none;
-  overflow: hidden;
+  /*overflow: hidden;*/
   outline: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  /*position: absolute;*/
+  /*top: 40%;*/
+  /*left: 50%;*/
+  /*transform: translate(-50%, -50%);*/
 }
 
 .Player-icon {
   height: 10vh;
   color: lightgray;
   cursor: pointer;
+}
+
+.Analyzer {
+  height: 20vh;
+  margin-top: 3vh;
+  margin-bottom: -10vh;
+}
+
+.Canvas {
+  height: 15vh;
+  width: 40vh;
 }
 
 .Volume {
@@ -72,4 +117,3 @@
   color: lightgray;
   padding: 2px;
 }
-
