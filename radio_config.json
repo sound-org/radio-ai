@@ -4,14 +4,19 @@
             "id": 1,
             "name": "channel1",
             "description": "channel1 description",
-            "music_theme": "music_theme1",
+            "broadcast_output_dir": "channels/channel1/broadcast",
+            "streaming_output_dir": "channels/channel1/streaming",
             "speaker": {
                 "name": "speaker1",
                 "TTS": "ELEVENLABS",
                 "voice": "Celine",
-                "personality": "normal"
+                "personality": "normal",
+                "output_dir": "channels/channel1/speaker"
             },
-            "output_dir": "output_dir"
+            "music": {
+                "theme": "theme1",
+                "output_dir": "channels/channel1/music"
+            }
         }
     ]
 }

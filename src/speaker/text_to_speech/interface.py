@@ -3,7 +3,7 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-class TextToSpeechServiceInterface:
+class TextToSpeechInterface:
     def text_to_speech(self, text: str) -> None:
         raise NotImplementedError
 

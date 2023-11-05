@@ -3,13 +3,13 @@ from pathlib import Path
 from typing import List
 
 from src.content_creator.boradcast_saver_service import BroadcastSaverService
-from src.text_to_speech.service_implementation.text_to_speech_service_elevenabs import (  # noqa: F401
-    TextToSpeechServiceElevenLabs,
+from src.text_to_speech.service_implementation.text_to_speech_elevenabs import (  # noqa: F401
+    TextToSpeechElevenLabs,
 )
-from src.text_to_speech.service_implementation.text_to_speech_service_pyttsx3 import (  # noqa: F401
-    TextToSpeechServicePyttsx3,
+from src.text_to_speech.service_implementation.text_to_speech_pyttsx3 import (  # noqa: F401
+    TextToSpeechPyttsx3,
 )
-from src.text_to_speech.service_interface import TextToSpeechServiceInterface
+from src.text_to_speech.interface import TextToSpeechInterface
 
 from .audio_filename_builder import AudioFilenameBuilder
 from .audio_merger import AudioMerger
@@ -22,8 +22,8 @@ class ContentCreatorService:
 
     def __init__(self) -> None:
         self._audio_merger: AudioMerger = AudioMerger()
-        self._text_to_speech_service: TextToSpeechServiceInterface = (
-            TextToSpeechServicePyttsx3()
+        self._text_to_speech_service: TextToSpeechInterface = (
+            TextToSpeechPyttsx3()
             # TextToSpeechServiceElevenLabs(TextToSpeechConfig.elevenlabs_voice_id)
         )
 

@@ -56,39 +56,39 @@ def callback(request: Request, response: Response):
     return "Successfully saved credentials"
 
 
-@router.get(
-    path="/{message_id}",
-    description="",
-    status_code=200,
-    response_model=GmailMessageSchema,
-)
-def get_message(response: Response, message_id: str) -> GmailMessageSchema:
-    logger.info("Getting message from gmail with id %s", message_id)
-    gmail_integration = GmailService()
-    gmail_message: Document = gmail_integration.get_message_by_id(message_id=message_id)
-    gmail_message_schema: GmailMessageSchema = (
-        gmail_converter.convert_gmail_message_model_to_schema(
-            gmail_message=gmail_message
-        )
-    )
-    logger.info("Successfully returned message from gmail with id %s", message_id)
-    return gmail_message_schema
+# @router.get(
+#     path="/{message_id}",
+#     description="",
+#     status_code=200,
+#     response_model=GmailMessageSchema,
+# )
+# def get_message(response: Response, message_id: str) -> GmailMessageSchema:
+#     logger.info("Getting message from gmail with id %s", message_id)
+#     gmail_integration = GmailService()
+#     gmail_message: Document = gmail_integration.get_message_by_id(message_id=message_id)
+#     gmail_message_schema: GmailMessageSchema = (
+#         gmail_converter.convert_gmail_message_model_to_schema(
+#             gmail_message=gmail_message
+#         )
+#     )
+#     logger.info("Successfully returned message from gmail with id %s", message_id)
+#     return gmail_message_schema
 
 
-@router.get(
-    path="",
-    description="Ingest all messages from gmail into a vector database",
-    status_code=status.HTTP_200_OK,
-    response_description="List of messages successfully ingested",
-    response_model=List[GmailMessageSchema],
-)
-def get_all_messages(response: Response) -> List[GmailMessageSchema]:
-    logger.info("Ingesting messages from gmail")
-    gmail_integration = GmailService()
-    messages: List[Document] = gmail_integration.get_messages()
-    messages_schema: List[
-        GmailMessageSchema
-    ] = gmail_converter.convert_gmail_messages_model_to_schema(gmail_messages=messages)
+# @router.get(
+#     path="",
+#     description="Ingest all messages from gmail into a vector database",
+#     status_code=status.HTTP_200_OK,
+#     response_description="List of messages successfully ingested",
+#     response_model=List[GmailMessageSchema],
+# )
+# def get_all_messages(response: Response) -> List[GmailMessageSchema]:
+#     logger.info("Ingesting messages from gmail")
+#     gmail_integration = GmailService()
+#     messages: List[Document] = gmail_integration.get_messages()
+#     messages_schema: List[
+#         GmailMessageSchema
+#     ] = gmail_converter.convert_gmail_messages_model_to_schema(gmail_messages=messages)
 
-    logger.info(msg="Successfully saved data to vector store")
-    return messages_schema
+#     logger.info(msg="Successfully saved data to vector store")
+#     return messages_schema
