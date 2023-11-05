@@ -45,8 +45,8 @@ func getFiles(path, pattern string) ([]string, error) {
 }
 
 type Manager struct {
-	ReadRecords   map[string]*hls.Record
-	WriteRecord   hls.Record
+	ReadRecords   map[string]*hls.Playlist
+	WriteRecord   hls.Playlist
 	StreamingFile *os.File
 	Mutex         *sync.RWMutex
 }
@@ -110,8 +110,8 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 	}
 
 	manager := Manager{
-		ReadRecords: make(map[string]*hls.Record),
-		WriteRecord: hls.Record{
+		ReadRecords: make(map[string]*hls.Playlist),
+		WriteRecord: hls.Playlist{
 			Metadata: hls.Metadata{
 				Version:  version,
 				Sequence: beginSequence,

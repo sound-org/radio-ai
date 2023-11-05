@@ -22,14 +22,14 @@ type Metadata struct {
 	Duration float32
 }
 
-type Record struct {
+type Playlist struct {
 	Metadata Metadata
 	Ts       []TsFile
 	HasEnd   bool
 	ToDelete bool
 }
 
-func Load(rd *os.File) (*Record, error) {
+func Load(rd *os.File) (*Playlist, error) {
 	scanner := bufio.NewScanner(rd)
 
 	metadata := parseMetadata(scanner)
@@ -42,7 +42,7 @@ func Load(rd *os.File) (*Record, error) {
 		return nil, err
 	}
 
-	return &Record{
+	return &Playlist{
 		Metadata: *metadata,
 		Ts:       *ts,
 		ToDelete: false,
@@ -120,7 +120,7 @@ func extract(line, pattern string) string {
 
 }
 
-func (record *Record) SaveToFile(wr *os.File, path string) error {
+func (record *Playlist) SaveToFile(wr *os.File, path string) error {
 	str := "#EXTM3U\n" +
 		"#EXT-X-VERSION:{{ .Metadata.Version }}\n" +
 		"#EXT-X-MEDIA-SEQUENCE:{{ .Metadata.Sequence }}\n" +

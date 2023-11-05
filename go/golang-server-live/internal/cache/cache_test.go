@@ -48,8 +48,8 @@ func TestAddRecord(t *testing.T) {
 	defer os.Remove(file.Name())
 
 	manager := Manager{
-		ReadRecords:   make(map[string]*hls.Record),
-		WriteRecord:   hls.Record{},
+		ReadRecords:   make(map[string]*hls.Playlist),
+		WriteRecord:   hls.Playlist{},
 		StreamingFile: nil,
 		Mutex:         &sync.RWMutex{},
 	}
@@ -72,8 +72,8 @@ func TestMarkToDelete(t *testing.T) {
 	}
 
 	manager := Manager{
-		ReadRecords:   make(map[string]*hls.Record),
-		WriteRecord:   hls.Record{},
+		ReadRecords:   make(map[string]*hls.Playlist),
+		WriteRecord:   hls.Playlist{},
 		StreamingFile: nil,
 		Mutex:         &sync.RWMutex{},
 	}
@@ -102,8 +102,8 @@ func TestDelete(t *testing.T) {
 	}
 
 	manager := Manager{
-		ReadRecords:   make(map[string]*hls.Record),
-		WriteRecord:   hls.Record{},
+		ReadRecords:   make(map[string]*hls.Playlist),
+		WriteRecord:   hls.Playlist{},
 		StreamingFile: nil,
 		Mutex:         &sync.RWMutex{},
 	}

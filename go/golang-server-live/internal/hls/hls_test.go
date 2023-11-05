@@ -33,7 +33,7 @@ func TestLoadRecord(t *testing.T) {
 	}
 }
 
-func assertRecord(rec *Record) bool {
+func assertRecord(rec *Playlist) bool {
 	ok := true
 
 	ok = ok && rec.Metadata.Version == 3
