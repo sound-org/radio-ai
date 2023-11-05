@@ -4,7 +4,9 @@ import Music from "../interface/Music";
 import * as React from "react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {PauseIcon, PlayIcon, SpeakerWaveIcon} from "@heroicons/react/24/solid";
-import useWebSocket from 'react-use-websocket';
+import Hls from "hls.js";
+import WaveForm from './WaveForm'
+import Channel from './Channel';
 
 const App: React.FC = (): ReactElement => {
 
@@ -24,99 +26,144 @@ const App: React.FC = (): ReactElement => {
 
     // Music controls
     const MAX_VOLUME = 20;
-    const [play, setPlay] = useState(true);
     const [volume, setVolume] = useState(MAX_VOLUME)
-    const musicRef = useRef<HTMLAudioElement>(null);
+    const [duration, setDuration] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
 
-    // Socket handling
-    const [, setData] = useState<Blob>();
-    const [counter, setCounter] = useState(0);
-    const [audioURL, setAudioURL] = useState<String>(null);
-    const [backupAudioURL, setBackupAudioURL] = useState<String>(null);
-    const SERVER_URL = 'ws://localhost:8000';
-    const { sendMessage, lastMessage, readyState } = useWebSocket(SERVER_URL);
+    // Channel handling
+    const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
+    const [hlsUrl, setHlsUrl] = useState<string>("http://localhost:8080/jazz/outputlist.m3u8");
+    const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
 
+    const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
+        setHlsUrl(newUrl);
+        setActiveChannelIdx(newIdx);
+        setThumbnailPath(newImgPath)
+    }
+
+    // HLS
+    const hlsRef = useRef<Hls | null>(null);
+
+    // HLS setup - call once on render
     useEffect(() => {
-        if (lastMessage !== null) {
-            setCounter(c => c + 1);
+        if (audioRef.current) {
+            hlsRef.current = new Hls();
+            hlsRef.current.attachMedia(audioRef.current);
+            hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
+                hlsRef.current?.loadSource(hlsUrl);
 
-            setData(lastMessage.data);
-            const blob = new Blob([lastMessage.data.slice(0, lastMessage.data.length)], {type: "audio/mpeg-3"});
-
-            if (play) {
-                try {
-                    if (musicRef.current.src === "") {
-                        setAudioURL(URL.createObjectURL(blob));
-                        musicRef.current.src = audioURL.toString();
-                        musicRef.current.play().then(() => setPlay(true));
-                    }
-
-                    if (musicRef.current.duration - musicRef.current.currentTime < 5) {
-                        console.log(musicRef.current.duration - musicRef.current.currentTime)
-                        setAudioURL(backupAudioURL);
-                        musicRef.current.src = audioURL.toString();
-                        musicRef.current.play().then(() => setPlay(true));
-                    } else {
-                        setBackupAudioURL(URL.createObjectURL(blob));
-                    }
-                } catch (e) {
-                    console.error(e.toString())
-                }
-            }
+                hlsRef.current?.on(Hls.Events.MANIFEST_PARSED, () => {
+                    hlsRef.current?.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
+                        const duration = data.details.totalduration;
+                        setDuration(duration);
+                        setCurrentTime(0);
+                        audioRef.current!.play();
+                        setIsPlaying(true);
+                        if (analyzerData === null) {
+                            audioAnalyzer();
+                        }
+                    })
+                })
+            })
         }
-    }, [lastMessage]);
+    }, [hlsUrl])
+
+    // Audio analyzer
+    const [analyzerData, setAnalyzerData] = useState<any>(null);
+    const audioAnalyzer = () => {
+        // create a new AudioContext
+        const audioCtx = new window.AudioContext();
+        // create an analyzer node with a buffer size of 2048
+        const analyzer = audioCtx.createAnalyser();
+        analyzer.fftSize = 2048;
+
+        const bufferLength = analyzer.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        const source = new MediaElementAudioSourceNode(audioCtx, {
+            mediaElement: audioRef.current!
+        });
+        source.connect(analyzer);
+        source.connect(audioCtx.destination);
+
+        // set the analyzerData state with the analyzer, bufferLength, and dataArray
+        setAnalyzerData({ analyzer, bufferLength, dataArray });
+    };
 
     function togglePlay(): void {
-        if (play) {
-            musicRef.current?.pause();
-            setPlay(false);
+        if (isPlaying) {
+            audioRef.current!.pause();
+            setIsPlaying(false);
         } else {
-            void musicRef.current?.play();
-            setPlay(true);
+            audioRef.current!.play();
+            setIsPlaying(true);
         }
     }
 
     function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void {
         const { value } = e.target;
         const volume = Number(value) / MAX_VOLUME;
-        musicRef.current.volume = volume;
+        audioRef.current!.volume = volume;
         setVolume(volume);
     }
 
+    const musicBgStyle = {
+        backgroundImage: `url('${thumbnailPath}')`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+        minWidth: "100px",
+        minHeight: "100px",
+        width: "50vh",
+        height: "50vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: "pointer"
+    };
+
     return (
-    <div className="App">
-      <header className="App-header">
-        rAIdio
-      </header>
-      <div className="App-body">
-          <div className="Player">
-              <div className="Player-image">
-                      <img src={music.image} className="Player-img" alt="Song thumbnail"/>
-                  <button onClick={togglePlay} type="button" className="Player-btn">
-                      {!play ? (
-                          <PlayIcon className="Player-icon" aria-hidden="true" />
-                      ) : (
-                          <PauseIcon className="Player-icon" aria-hidden="true" />
-                      )}
-                  </button>
-              </div>
-              <p>Number of blobs received: {counter}</p>
-              <div className="Volume">
-                  <input
-                      type="range"
-                      min={0}
-                      max={MAX_VOLUME}
-                      onChange={(e) => handleVolume(e)}
-                  />
-                  <SpeakerWaveIcon className="Volume-icon"  />
-              </div>
-          </div>
-          <audio ref={musicRef}>
-              <source src="" type="audio/mp3"/>
-          </audio>
-      </div>
-    </div>
-  );
+        <div className="App">
+            <div className="Channels">
+                <Channel num={1} hlsPath="http://localhost:8080/jazz/outputlist.m3u8" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 1} switchChannel={switchChannel}/>
+                <Channel num={2} hlsPath="http://localhost:8080/bathroom/outputlist.m3u8" thumbnailPath="/assets/thumb2.jpg" active={activeChannelIdx === 2} switchChannel={switchChannel}/>
+                <Channel num={3} hlsPath="" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 3} switchChannel={switchChannel}/>
+                <Channel num={4} hlsPath="" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 4} switchChannel={switchChannel}/>
+                <Channel num={5} hlsPath="" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 5} switchChannel={switchChannel}/>
+            </div>
+            <div className="Radio">
+                <header className="Radio-header">
+                    rAIdio
+                </header>
+                <div className="Player">
+                    <div className="Image" style={musicBgStyle} onClick={togglePlay}>
+                        <button type="button" className="Player-btn">
+                            {!isPlaying ? (
+                                <PlayIcon className="Player-icon" aria-hidden="true"/>
+                            ) : (
+                                <PauseIcon className="Player-icon" aria-hidden="true"/>
+                            )}
+                        </button>
+                    </div>
+                    <div className="Analyzer">
+                        {analyzerData && <WaveForm analyzerData={analyzerData}/>}
+                    </div>
+                    <div className="Volume">
+                        <input
+                            type="range"
+                            min={0}
+                            max={MAX_VOLUME}
+                            onChange={(e) => handleVolume(e)}
+                        />
+                        <SpeakerWaveIcon className="Volume-icon"/>
+                    </div>
+                    <audio ref={audioRef}>
+                        <source src="" type="audio/mp3"/>
+                    </audio>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default App;
