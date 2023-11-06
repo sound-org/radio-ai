@@ -125,7 +125,7 @@ func (record *Playlist) SaveToFile(wr *os.File, path string) error {
 		"#EXT-X-VERSION:{{ .Metadata.Version }}\n" +
 		"#EXT-X-MEDIA-SEQUENCE:{{ .Metadata.Sequence }}\n" +
 		"#EXT-X-ALLOW-CACHE:{{ .Metadata.Cache }}\n" +
-		"#EXT-X-TARGETDURATION{{ .Metadata.Duration }}\n" +
+		"#EXT-X-TARGETDURATION:{{ .Metadata.Duration }}\n" +
 		"{{ range .Ts }}{{ .Header }}\n{{ .Name }}\n{{ end }}" +
 		"{{ if .HasEnd }}#EXT-X-ENDLIST{{ else }}{{ end }}\n"
 

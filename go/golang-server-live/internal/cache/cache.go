@@ -1,24 +1,20 @@
-package reader
+package channel
 
 import (
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"sync"
-	"time"
 
 	"github.com/sound-org/radio-ai/server/internal/hls"
 )
 
-const maxFileLifespan = 2 // in days
 // hls main streaming file configs
 const version = 3
 const beginSequence = 0
 const enableCache = "NO"
 const maxDuration = 11
-const maxCapacity = 30
 
 func getFiles(path, pattern string) ([]string, error) {
 	var paths []string
@@ -68,36 +64,6 @@ func (man *Manager) addRecord(path string) int {
 	return len(man.ReadRecords)
 }
 
-func (man *Manager) delete() {
-	for key := range man.ReadRecords {
-		if man.ReadRecords[key].ToDelete {
-			delete(man.ReadRecords, key)
-			root := filepath.Dir(key)
-			err := os.RemoveAll(root)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-	}
-}
-
-func (man *Manager) markToDelete() {
-	today := time.Now()
-	for key := range man.ReadRecords {
-		entry, err := os.Stat(key)
-		if err == nil {
-			if isToDelete(today, entry.ModTime(), maxFileLifespan) {
-				man.ReadRecords[key].ToDelete = true
-			}
-		}
-	}
-}
-
-func isToDelete(today, fileCreationDate time.Time, maxLifeSpan int) bool {
-	// return true if file is older than lifespan
-	return fileCreationDate.Add(time.Duration(maxLifeSpan) * 24 * time.Hour).Before(today)
-}
-
 func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, error) {
 	paths, err := getFiles(path, "*.m3u8")
 	if err != nil {
@@ -118,7 +84,7 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 				Cache:    enableCache,
 				Duration: maxDuration,
 			},
-			Ts:       make([]hls.TsFile, maxCapacity),
+			Ts:       []hls.TsFile{},
 			HasEnd:   false,
 			ToDelete: false,
 		},
@@ -131,4 +97,54 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 	}
 
 	return &manager, nil
+}
+
+func (man *Manager) refresh(path string) (bool, error) {
+	paths, err := getFiles(path, "*.m3u8")
+	if err != nil {
+		return false, err
+	}
+
+	wasAdded := false
+
+	for _, p := range paths {
+		if _, ok := man.ReadRecords[p]; !ok {
+			man.addRecord(p)
+			wasAdded = true
+		}
+	}
+
+	return wasAdded, nil
+}
+
+func (man *Manager) InitWriteRecord(name string, heapSize int) error {
+	val, ok := man.ReadRecords[name]
+	if !ok {
+		return fmt.Errorf("playlist %s was not found", name)
+	}
+
+	for i := 0; i < min(len(val.Ts), heapSize); i++ {
+		man.WriteRecord.Ts = append(man.WriteRecord.Ts, val.Ts[i])
+	}
+	man.WriteRecord.Metadata.Sequence = 0
+	return nil
+
+}
+
+func (man *Manager) UpdateWriteRecord(name string, count, offset int) (bool, error) {
+	// TODO : Fix adding path to output, currently returninng name from playlist not full path
+	// TODO : Fix doesn't put last piece of ts before requesting of update
+	val, ok := man.ReadRecords[name]
+	if !ok {
+		return false, fmt.Errorf("palylist %s was not found", name)
+	}
+	if len(val.Ts) <= offset {
+		return false, fmt.Errorf("offset outside of range")
+	}
+
+	man.WriteRecord.Ts = man.WriteRecord.Ts[count:]
+	man.WriteRecord.Ts = append(man.WriteRecord.Ts, val.Ts[offset:min(len(val.Ts)-1, offset+count)]...)
+	man.WriteRecord.Metadata.Sequence = man.WriteRecord.Metadata.Sequence + uint32(count)
+
+	return count+offset >= len(val.Ts), nil
 }
