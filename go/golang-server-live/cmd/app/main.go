@@ -110,7 +110,7 @@ func printCurrentWritePlaylist(man *channel.Manager) {
 	}
 }
 
-func readStreamming(pathToStrimming string, mutex *sync.RWMutex, man *channel.Manager) http.HandlerFunc {
+func readStreamming(pathToStrimming string, mutex *sync.RWMutex) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("READ")
 		mutex.RLock()
