@@ -1,4 +1,4 @@
-package utils
+package internal_utils
 
 import (
 	"os"

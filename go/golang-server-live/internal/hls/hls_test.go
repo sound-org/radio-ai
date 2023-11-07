@@ -11,7 +11,7 @@ import (
 func TestLoadRecord(t *testing.T) {
 
 	// given
-	file, err := utils.CreateSimpleM3U8(".")
+	file, err := internal_utils.CreateSimpleM3U8(".")
 	if err != nil {
 		log.Fatal(err)
 	}

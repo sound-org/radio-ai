@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/sound-org/radio-ai/server/internal/hls"
-	"github.com/sound-org/radio-ai/server/internal/utils"
+	internal_utils "github.com/sound-org/radio-ai/server/internal/utils"
 )
 
 func TestReadDirectory(t *testing.T) {
@@ -28,7 +28,7 @@ func TestReadDirectory(t *testing.T) {
 }
 
 func TestAddRecord(t *testing.T) {
-	file, err := utils.CreateSimpleM3U8(".")
+	file, err := internal_utils.CreateSimpleM3U8(".")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func TestCreateManager(t *testing.T) {
 	os.Mkdir("temp", 0755)
 	defer os.RemoveAll(path)
 
-	file, err := utils.CreateSimpleM3U8(path)
+	file, err := internal_utils.CreateSimpleM3U8(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestRefresh(t *testing.T) {
 	os.Mkdir("temp", 0755)
 	defer os.RemoveAll(path)
 
-	file, err := utils.CreateSimpleM3U8(path)
+	file, err := internal_utils.CreateSimpleM3U8(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestInitWriteRecord(t *testing.T) {
 	os.Mkdir("temp", 0755)
 	defer os.RemoveAll(path)
 
-	file, err := utils.CreateSimpleM3U8(path)
+	file, err := internal_utils.CreateSimpleM3U8(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func TestUpdateWriteRecords(t *testing.T) {
 	os.Mkdir("temp", 0755)
 	defer os.RemoveAll(path)
 
-	file, err := utils.CreateSimpleM3U8(path)
+	file, err := internal_utils.CreateSimpleM3U8(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -170,8 +170,8 @@ func TestUpdateWriteRecords(t *testing.T) {
 	}
 
 	lastElement := manager.WriteRecord.Ts[len(manager.WriteRecord.Ts)-1]
-	if lastElement.Name != "ts/output002.ts" {
-		log.Fatalf("last record expected to be ts/output002.ts but was %s", lastElement.Name)
+	if lastElement.Name != "temp/ts/output002.ts" {
+		log.Fatalf("last record expected to be temp/ts/output002.ts but was %s", lastElement.Name)
 	}
 
 	manager.StreamingFile.Close()

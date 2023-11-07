@@ -14,20 +14,23 @@ import (
 
 func main() {
 
-	dirBathroom := filepath.Join("..", "..", "music")
-	dirJazz := filepath.Join("..", "..", "music", "jazz")
+	// TODO : there are still race conditions taht need to be fix
+	// TODO : params of how long to waint between changes and how many records to change per tick
+	dir := filepath.Join("..", "..", "music")
+	streamingFilePath := filepath.Join(dir, "stream.m3u8")
+
 	const port = 8080
 	mutex := sync.RWMutex{}
 	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan int)
 
-	// test periodical functions
 	go runStreaming(&mutex, ticker, &quit)
 
-	http.Handle("/", addHeaders(http.FileServer(http.Dir(dirBathroom))))
+	http.Handle("/", addHeaders(http.FileServer(http.Dir(dir))))
+	http.Handle("/channel1", addHeaders(readStreamming(streamingFilePath, &mutex)))
 	http.Handle("/quit", createShutDown(quit))
 	fmt.Printf("Starting server on %v\n", port)
-	log.Printf("Serving %s, %s on HTTP port: %v\n", dirBathroom, dirJazz, port)
+	log.Printf("Serving  music : '%s' on HTTP port: %v\n", dir, port)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
 }
@@ -48,7 +51,9 @@ func createShutDown(quit chan int) http.HandlerFunc {
 }
 
 func runStreaming(mutex *sync.RWMutex, ticker *time.Ticker, quit *chan int) {
-	manager, err := channel.CreateManager(filepath.Join("..", "..", "music"), "stream.m3u8", mutex)
+	dir := filepath.Join("..", "..", "music")
+	streamingFilePath := filepath.Join(dir, "stream.m3u8")
+	manager, err := channel.CreateManager(dir, streamingFilePath, mutex)
 	if err != nil {
 		log.Println(err)
 		ticker.Stop()
@@ -63,6 +68,10 @@ func runStreaming(mutex *sync.RWMutex, ticker *time.Ticker, quit *chan int) {
 	}
 
 	printCurrentWritePlaylist(manager)
+
+	log.Println("Started saving...")
+	manager.Save()
+	log.Println("... done!")
 
 	index := 0
 	mIndex := 0
@@ -81,7 +90,10 @@ func runStreaming(mutex *sync.RWMutex, ticker *time.Ticker, quit *chan int) {
 				mIndex = (mIndex + 1) % 2
 			}
 			log.Printf("Updated (index: %v, music: %s)\n", index, musics[mIndex])
-			printCurrentWritePlaylist(manager)
+			//printCurrentWritePlaylist(manager)
+			log.Println("Started saving...")
+			manager.Save()
+			log.Println("... done!")
 		case <-*quit:
 			ticker.Stop()
 			manager.StreamingFile.Close()
@@ -95,5 +107,15 @@ func printCurrentWritePlaylist(man *channel.Manager) {
 	err := man.WriteRecord.SaveToFile(os.Stdout, ".")
 	if err != nil {
 		log.Println(err)
+	}
+}
+
+func readStreamming(pathToStrimming string, mutex *sync.RWMutex, man *channel.Manager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("READ")
+		mutex.RLock()
+		http.ServeFile(w, r, pathToStrimming)
+		mutex.RUnlock()
+		log.Println("DONE")
 	}
 }

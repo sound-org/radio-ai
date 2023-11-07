@@ -5,15 +5,17 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/sound-org/radio-ai/server/internal/hls"
+	utils "github.com/sound-org/radio-ai/server/pkg"
 )
 
 // hls main streaming file configs
 const version = 3
 const beginSequence = 0
-const enableCache = "NO"
+const enableCache = "YES"
 const maxDuration = 11
 
 func getFiles(path, pattern string) ([]string, error) {
@@ -41,6 +43,7 @@ func getFiles(path, pattern string) ([]string, error) {
 }
 
 type Manager struct {
+	MusicDir      string
 	ReadRecords   map[string]*hls.Playlist
 	WriteRecord   hls.Playlist
 	StreamingFile *os.File
@@ -76,6 +79,7 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 	}
 
 	manager := Manager{
+		MusicDir:    path,
 		ReadRecords: make(map[string]*hls.Playlist),
 		WriteRecord: hls.Playlist{
 			Metadata: hls.Metadata{
@@ -123,17 +127,13 @@ func (man *Manager) InitWriteRecord(name string, heapSize int) error {
 		return fmt.Errorf("playlist %s was not found", name)
 	}
 
-	for i := 0; i < min(len(val.Ts), heapSize); i++ {
-		man.WriteRecord.Ts = append(man.WriteRecord.Ts, val.Ts[i])
-	}
+	man.WriteRecord.Ts = append(man.WriteRecord.Ts, utils.Map(val.Ts[0:min(len(val.Ts), heapSize)], createMapping(name, man.MusicDir))...)
 	man.WriteRecord.Metadata.Sequence = 0
 	return nil
 
 }
 
 func (man *Manager) UpdateWriteRecord(name string, count, offset int) (bool, error) {
-	// TODO : Fix adding path to output, currently returninng name from playlist not full path
-	// TODO : Fix doesn't put last piece of ts before requesting of update
 	val, ok := man.ReadRecords[name]
 	if !ok {
 		return false, fmt.Errorf("palylist %s was not found", name)
@@ -143,8 +143,28 @@ func (man *Manager) UpdateWriteRecord(name string, count, offset int) (bool, err
 	}
 
 	man.WriteRecord.Ts = man.WriteRecord.Ts[count:]
-	man.WriteRecord.Ts = append(man.WriteRecord.Ts, val.Ts[offset:min(len(val.Ts)-1, offset+count)]...)
+	man.WriteRecord.Ts = append(man.WriteRecord.Ts, utils.Map(val.Ts[offset:min(len(val.Ts), offset+count)], createMapping(name, man.MusicDir))...)
 	man.WriteRecord.Metadata.Sequence = man.WriteRecord.Metadata.Sequence + uint32(count)
 
 	return count+offset >= len(val.Ts), nil
+}
+
+func getPathWithoutMusicDirPath(playlistPath, tsPath, musicPath string) string {
+	return filepath.ToSlash(strings.TrimPrefix(filepath.Join(filepath.Dir(playlistPath), tsPath), musicPath+string(os.PathSeparator)))
+}
+
+func createMapping(name, musicDir string) func(ts hls.TsFile) hls.TsFile {
+	return func(ts hls.TsFile) hls.TsFile {
+		return hls.TsFile{
+			Header: ts.Header,
+			Name:   getPathWithoutMusicDirPath(name, ts.Name, musicDir),
+		}
+	}
+}
+
+func (man *Manager) Save() {
+	man.Mutex.Lock()
+	man.StreamingFile.Seek(0, 0)
+	man.WriteRecord.SaveToFile(man.StreamingFile, man.StreamingFile.Name())
+	man.Mutex.Unlock()
 }
