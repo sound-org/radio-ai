@@ -14,20 +14,25 @@ import (
 
 func main() {
 
-	// TODO : there are still race conditions taht need to be fix
 	// TODO : params of how long to waint between changes and how many records to change per tick
 	dir := filepath.Join("..", "..", "music")
 	streamingFilePath := filepath.Join(dir, "stream.m3u8")
+	mutex := sync.RWMutex{}
+
+	manager, err := channel.CreateManager(dir, streamingFilePath, &mutex)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	const port = 8080
-	mutex := sync.RWMutex{}
 	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan int)
 
-	go runStreaming(&mutex, ticker, &quit)
+	go runStreaming(manager, ticker, &quit)
 
 	http.Handle("/", addHeaders(http.FileServer(http.Dir(dir))))
-	http.Handle("/channel1", addHeaders(readStreamming(streamingFilePath, &mutex)))
+	http.Handle("/channel1", addHeaders(readStreamming(manager)))
 	http.Handle("/quit", createShutDown(quit))
 	fmt.Printf("Starting server on %v\n", port)
 	log.Printf("Serving  music : '%s' on HTTP port: %v\n", dir, port)
@@ -50,17 +55,8 @@ func createShutDown(quit chan int) http.HandlerFunc {
 	}
 }
 
-func runStreaming(mutex *sync.RWMutex, ticker *time.Ticker, quit *chan int) {
-	dir := filepath.Join("..", "..", "music")
-	streamingFilePath := filepath.Join(dir, "stream.m3u8")
-	manager, err := channel.CreateManager(dir, streamingFilePath, mutex)
-	if err != nil {
-		log.Println(err)
-		ticker.Stop()
-		return
-	}
-
-	err = manager.InitWriteRecord(filepath.Join("..", "..", "music", "bathroom", "outputlist.m3u8"), 5)
+func runStreaming(manager *channel.Manager, ticker *time.Ticker, quit *chan int) {
+	err := manager.InitWriteRecord(filepath.Join("..", "..", "music", "bathroom", "outputlist.m3u8"), 5)
 	if err != nil {
 		log.Println(err)
 		ticker.Stop()
@@ -110,12 +106,12 @@ func printCurrentWritePlaylist(man *channel.Manager) {
 	}
 }
 
-func readStreamming(pathToStrimming string, mutex *sync.RWMutex) http.HandlerFunc {
+func readStreamming(manager *channel.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("READ")
-		mutex.RLock()
-		http.ServeFile(w, r, pathToStrimming)
-		mutex.RUnlock()
+		manager.Mutex.RLock()
+		manager.WriteRecord.Save(w)
+		manager.Mutex.RUnlock()
 		log.Println("DONE")
 	}
 }

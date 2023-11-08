@@ -15,7 +15,7 @@ import (
 // hls main streaming file configs
 const version = 3
 const beginSequence = 0
-const enableCache = "YES"
+const enableCache = "NO"
 const maxDuration = 11
 
 func getFiles(path, pattern string) ([]string, error) {
