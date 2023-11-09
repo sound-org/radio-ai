@@ -72,8 +72,6 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 	if err != nil {
 		return nil, fmt.Errorf("path %v does not contain any subdirectory", path)
 	}
-
-	file, err := os.Create(streamingName)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +90,7 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 			HasEnd:   false,
 			ToDelete: false,
 		},
-		StreamingFile: file,
-		Mutex:         mutex,
+		Mutex: mutex,
 	}
 
 	for _, entry := range paths {
@@ -141,7 +138,7 @@ func (man *Manager) UpdateWriteRecord(name string, count, offset int) (bool, err
 	if len(val.Ts) <= offset {
 		return false, fmt.Errorf("offset outside of range")
 	}
-
+	// TODO : Updated Sequence number (what if we have read less than count)
 	man.WriteRecord.Ts = man.WriteRecord.Ts[count:]
 	man.WriteRecord.Ts = append(man.WriteRecord.Ts, utils.Map(val.Ts[offset:min(len(val.Ts), offset+count)], createMapping(name, man.MusicDir))...)
 	man.WriteRecord.Metadata.Sequence = man.WriteRecord.Metadata.Sequence + uint32(count)
@@ -160,11 +157,4 @@ func createMapping(name, musicDir string) func(ts hls.TsFile) hls.TsFile {
 			Name:   getPathWithoutMusicDirPath(name, ts.Name, musicDir),
 		}
 	}
-}
-
-func (man *Manager) Save() {
-	man.Mutex.Lock()
-	man.StreamingFile.Seek(0, 0)
-	man.WriteRecord.SaveToFile(man.StreamingFile, man.StreamingFile.Name())
-	man.Mutex.Unlock()
 }

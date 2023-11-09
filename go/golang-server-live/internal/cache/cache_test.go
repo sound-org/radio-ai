@@ -12,7 +12,6 @@ import (
 )
 
 func TestReadDirectory(t *testing.T) {
-	// given
 	path := filepath.Join("..")
 
 	dirs, err := getFiles(path, "*.go")
@@ -37,7 +36,6 @@ func TestAddRecord(t *testing.T) {
 	manager := Manager{
 		ReadRecords:   make(map[string]*hls.Playlist),
 		WriteRecord:   hls.Playlist{},
-		StreamingFile: nil,
 		Mutex:         &sync.RWMutex{},
 	}
 
@@ -66,11 +64,6 @@ func TestCreateManager(t *testing.T) {
 		log.Fatalf("file %s does not exists in the records", file.Name())
 	}
 
-	manager.StreamingFile.Close()
-	err = os.Remove(manager.StreamingFile.Name())
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func TestRefresh(t *testing.T) {
@@ -100,11 +93,6 @@ func TestRefresh(t *testing.T) {
 		log.Fatalf("cache not refreshed for file %v", file.Name())
 	}
 
-	manager.StreamingFile.Close()
-	err = os.Remove(manager.StreamingFile.Name())
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func TestInitWriteRecord(t *testing.T) {
@@ -132,11 +120,6 @@ func TestInitWriteRecord(t *testing.T) {
 		log.Fatal("record was not added")
 	}
 
-	manager.StreamingFile.Close()
-	err = os.Remove(manager.StreamingFile.Name())
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func TestUpdateWriteRecords(t *testing.T) {
@@ -172,11 +155,5 @@ func TestUpdateWriteRecords(t *testing.T) {
 	lastElement := manager.WriteRecord.Ts[len(manager.WriteRecord.Ts)-1]
 	if lastElement.Name != "temp/ts/output002.ts" {
 		log.Fatalf("last record expected to be temp/ts/output002.ts but was %s", lastElement.Name)
-	}
-
-	manager.StreamingFile.Close()
-	err = os.Remove(manager.StreamingFile.Name())
-	if err != nil {
-		log.Fatal(err)
 	}
 }

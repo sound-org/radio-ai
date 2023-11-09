@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -26,7 +25,7 @@ func main() {
 	}
 
 	const port = 8080
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(7 * time.Second)
 	quit := make(chan int)
 
 	go runStreaming(manager, ticker, &quit)
@@ -56,26 +55,23 @@ func createShutDown(quit chan int) http.HandlerFunc {
 }
 
 func runStreaming(manager *channel.Manager, ticker *time.Ticker, quit *chan int) {
-	err := manager.InitWriteRecord(filepath.Join("..", "..", "music", "bathroom", "outputlist.m3u8"), 5)
+	start := 15
+	err := manager.InitWriteRecord(filepath.Join("..", "..", "music", "bathroom", "outputlist.m3u8"), start)
 	if err != nil {
 		log.Println(err)
 		ticker.Stop()
 		return
 	}
 
-	printCurrentWritePlaylist(manager)
-
-	log.Println("Started saving...")
-	manager.Save()
-	log.Println("... done!")
-
-	index := 0
+	index := start
 	mIndex := 0
 	musics := []string{filepath.Join("..", "..", "music", "bathroom", "outputlist.m3u8"), filepath.Join("..", "..", "music", "jazz", "outputlist.m3u8")}
 	for {
 		select {
 		case <-ticker.C:
+			manager.Mutex.Lock()
 			update, err := manager.UpdateWriteRecord(musics[mIndex], 1, index)
+			manager.Mutex.Unlock()
 			if err != nil {
 				log.Print(err)
 				ticker.Stop()
@@ -86,23 +82,10 @@ func runStreaming(manager *channel.Manager, ticker *time.Ticker, quit *chan int)
 				mIndex = (mIndex + 1) % 2
 			}
 			log.Printf("Updated (index: %v, music: %s)\n", index, musics[mIndex])
-			//printCurrentWritePlaylist(manager)
-			log.Println("Started saving...")
-			manager.Save()
-			log.Println("... done!")
 		case <-*quit:
 			ticker.Stop()
-			manager.StreamingFile.Close()
-			os.Remove(manager.StreamingFile.Name())
 			return
 		}
-	}
-}
-
-func printCurrentWritePlaylist(man *channel.Manager) {
-	err := man.WriteRecord.SaveToFile(os.Stdout, ".")
-	if err != nil {
-		log.Println(err)
 	}
 }
 
