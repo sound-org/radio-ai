@@ -54,6 +54,7 @@ const WaveForm = ({ analyzerData }: any) => {
 
         const animate = () => {
             requestAnimationFrame(animate);
+            canvas.width = canvas.width;
             // @ts-ignore
             animateBars(analyzer, canvas, canvasCtx, dataArray, bufferLength);
         };
