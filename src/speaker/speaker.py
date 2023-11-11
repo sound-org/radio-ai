@@ -22,16 +22,20 @@ class Speaker:
         self._name: str = config.name
         self._personality: str = config.personality
         if config.TTS == TTSEnum.ELEVENLABS:
-            self._tts = TextToSpeechElevenLabs(voice_id=config.voice)
+            self._tts = TextToSpeechElevenLabs(
+                output_dir=config.output_dir, voice_id=config.voice
+            )
         elif config.TTS == TTSEnum.PYTTSX3:
-            self._tts = TextToSpeechPyttsx3(voice=config.voice)
+            self._tts = TextToSpeechPyttsx3(
+                output_dir=config.output_dir, voice=config.voice
+            )
         else:
             raise Exception(f"Unknown TTS engine: {config.TTS}")
         self._gmail_connector = GmailService()
         self._llm = LLM(personality=self._personality)
 
     def generate_speaker_lines(self):
-        pass
+        return self._llm.generate_speaker_lines("say next thing")
 
     def _get_last_email(self):
         pass

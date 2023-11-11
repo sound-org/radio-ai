@@ -7,10 +7,10 @@
             "broadcast_output_dir": "channels/channel1/broadcast",
             "streaming_output_dir": "channels/channel1/streaming",
             "speaker": {
-                "name": "speaker1",
+                "name": "Bob",
                 "TTS": "ELEVENLABS",
-                "voice": "Celine",
-                "personality": "normal",
+                "voice": "TX3LPaxmHKxFdv7VOQHJ",
+                "personality": "Your are and radio DJ, you love good hard rock music, and you are a fan of the band ACDC, you are definitely crazy",
                 "output_dir": "channels/channel1/speaker"
             },
             "music": {
@@ -20,9 +20,3 @@
         }
     ]
 }
-// channels/
-// channels/channel1/
-// channels/channel1/speaker/ <speaker audio files>
-// channels/channel1/music/ <music audio files>
-// channels/channel1/broadcast/ <output broadcast audio file>
-// channels/channel1/streaming/ <prepared broacast audio file for Streamer to stream>

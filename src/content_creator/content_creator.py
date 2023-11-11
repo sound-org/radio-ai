@@ -5,7 +5,7 @@ from src.config.radio_config import RadioConfig
 
 
 class ContentCreator:
-    channels: List[Channel]
+    channels: List[Channel] = []
 
     def __init__(self, config: RadioConfig):
         for channel_config in config.channels.values():

@@ -7,8 +7,6 @@ from langchain.docstore.document import Document
 
 from .gmail_message_parser import GmailMessageParser
 
-SCOPES: List[str] = ["https://www.googleapis.com/auth/gmail.readonly"]
-
 logger = logging.getLogger(__name__)
 
 
@@ -46,6 +44,16 @@ class GmailReader:
             document.metadata["message_id"] = msg_id
 
             return document
+        except Exception as error:
+            logger.error(msg=f"An error occurred: {error}")
+
+    def move_to_bin(self, msg_id: str) -> None:
+        """Move a Message with given ID to the bin."""
+        try:
+            if not self.service:
+                self.service = build("gmail", "v1", credentials=self.credentials)
+            self.service.users().messages().trash(userId="me", id=msg_id).execute()
+            logger.info(msg=f"Message with ID {msg_id} moved to bin.")
         except Exception as error:
             logger.error(msg=f"An error occurred: {error}")
 

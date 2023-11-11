@@ -4,7 +4,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import List
 
-from src.text_to_speech.config import TextToSpeechConfig
+from src.speaker.text_to_speech.config import TextToSpeechConfig
 
 from .audio_merger import AudioMerger
 
