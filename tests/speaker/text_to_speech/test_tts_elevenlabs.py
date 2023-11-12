@@ -54,7 +54,7 @@ def test_initialization(mock_set_api_key, mock_voice_class):
 def test_text_to_speech(mock_generate, mock_voice_class):
     tts = TextToSpeechElevenLabs(output_dir="/path/to/output")
     text = "Hello world"
-    tts.text_to_speech(text=text)
+    tts._text_to_speech(text=text)
     mock_generate.assert_called_once_with(
         text=text, voice=mock_voice_class.from_id(), model=tts._model
     )
@@ -63,14 +63,14 @@ def test_text_to_speech(mock_generate, mock_voice_class):
 def test_save_no_audio_generated(mock_save):
     tts = TextToSpeechElevenLabs(output_dir="/path/to/output")
     with pytest.raises(Exception) as excinfo:
-        tts.save()
+        tts._save()
     assert "Tried to save TTS output without generating it first" in str(excinfo.value)
 
 
 def test_save_audio_generated_and_saved(mock_generate, mock_save, mock_voice_class):
     tts = TextToSpeechElevenLabs(output_dir="/path/to/output")
-    tts.text_to_speech(text="Hello world")
-    tts.save()
+    tts._text_to_speech(text="Hello world")
+    tts._save()
     mock_save.assert_called_once()  # Arguments are not checked here, would need to assert with actual bytes or mock return
     assert tts._generated_audio is None
 

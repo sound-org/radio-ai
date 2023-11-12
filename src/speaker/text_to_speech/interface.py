@@ -1,15 +1,11 @@
 from logging import getLogger
+from pathlib import Path
 
 logger = getLogger(__name__)
 
 
 class TextToSpeechInterface:
-
-    
-    def text_to_speech(self, text: str) -> None:
-        raise NotImplementedError
-
-    def save(self, name: str) -> None:
+    def text_to_speech(self, text: str) -> Path:
         raise NotImplementedError
 
     def get_TTS_driver_name(self) -> str:

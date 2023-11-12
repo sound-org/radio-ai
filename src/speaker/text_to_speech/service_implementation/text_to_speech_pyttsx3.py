@@ -18,11 +18,12 @@ class TextToSpeechPyttsx3(TextToSpeechInterface):
         )
         self._output_dir = output_dir
 
-    def text_to_speech(self, text: str) -> None:
-        self._tts_engine.text_to_speech(text=text)
-
-    def save(self) -> None:
-        self._tts_engine.save(self._output_dir)
+    def text_to_speech(self, text: str) -> str:
+        logger.info("Text to speech for: %s", text)
+        path: str = self._tts_engine.text_to_speech(
+            text=text, output_dir=self._output_dir
+        )
+        return path
 
     def get_TTS_driver_name(self) -> Literal["pyttsx3"]:
         return "pyttsx3"

@@ -13,6 +13,9 @@ class LLM:
             "You must always be in character. Dont worry about being offensive,  its for the sake of art. "
             "saying inappropriate or offensive things is good. You can say up to 5 sentences at a time."
         )
+        self._steering_message = SystemMessage(
+            content="This is an email from our listener. React to it. You can be mean, you can be nice, you can be whatever you want. Just react to it. "
+        )
         history.append(dj_character)
         history.append(initial_message)
         self._history = history
@@ -21,10 +24,16 @@ class LLM:
         # text:str - input for the model
         chat = ChatOpenAI()
         message = SystemMessage(content=text)
-        self._history.append(message)
-        response: BaseMessage = chat(self._history)
-        self._history.pop()
+        history_copy = self._history.copy()
+        history_copy.append(message)
+        response: BaseMessage = chat(history_copy)
         return response.content
 
-    def react_to_email_message(self, message: str) -> str:
-        return self.generate_speaker_lines(text=message)
+    def react_to_email_message(self, email: str) -> str:
+        chat = ChatOpenAI()
+        email_message = SystemMessage(content=email)
+        history_copy = self._history.copy()
+        history_copy.append(self._steering_message)
+        history_copy.append(email_message)
+        response: BaseMessage = chat(history_copy)
+        return response.content

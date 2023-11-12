@@ -23,7 +23,6 @@ def test_initialization(tts_instance):
 def test_save(tts_instance, tmp_path):
     # TODO: For some reason file is not creasted
     tts_instance.text_to_speech("Hello world")
-    tts_instance.save()
     # Check if the file was created
     files_in_directory = os.listdir(tmp_path)
     assert len(files_in_directory) > 0

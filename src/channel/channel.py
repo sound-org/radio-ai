@@ -11,8 +11,11 @@ class Channel:
         self._speaker = Speaker(config.speaker)
         self._music_generator = MusicGenerator(config.music)
 
-    def _generate_speaker_lines(self):
-        return self._speaker.generate_speaker_lines()
+    def _generate_speaker_lines(self) -> str:
+        return self._speaker.generate_random_lines()
+
+    def _react_to_email_message(self) -> str:
+        return self._speaker.react_to_email_message()
 
     def _generate_ai_music(self):
         return self._music_generator.generate_ai_music()

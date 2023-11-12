@@ -1,3 +1,5 @@
+import os
+import time
 from logging import getLogger
 from typing import Iterator, Literal, Union
 
@@ -23,14 +25,22 @@ class TextToSpeechElevenLabs(TextToSpeechInterface):
         self._generated_audio = None
 
     def text_to_speech(self, text: str) -> None:
+        self._text_to_speech(text=text)
+        self._save()
+
+    def _text_to_speech(self, text: str) -> None:
         self._generated_audio = generate(
             text=text, voice=self._voice, model=self._model
         )
 
-    def save(self) -> None:
+    def _save(self) -> None:
+        filename: str = time.strftime("%Y%m%d-%H%M%S.mp3")
+
+        path: str = os.path.join(self._output_dir, filename)
+
         if self._generated_audio is None:
             raise Exception("Tried to save TTS output without generating it first")
-        save(audio=self._generated_audio, filename=self._output_dir)
+        save(audio=self._generated_audio, filename=path)
         self._generated_audio = None  # clear state
 
     def get_TTS_driver_name(self) -> Literal["elevenlabs"]:

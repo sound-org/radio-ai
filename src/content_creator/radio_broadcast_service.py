@@ -37,9 +37,9 @@ class ContentCreatorService:
         )
         logger.info("Running TTS for %s", speaker_text)
         # TODO: we should call speaker to get his lines, and then we call TTS to convert it to audio
-        self._text_to_speech_service.text_to_speech(speaker_text)
+        self._text_to_speech_service._text_to_speech(speaker_text)
         logger.info("Saving TTS output to %s", voice_file)
-        self._text_to_speech_service.save(voice_file)
+        self._text_to_speech_service._save(voice_file)
 
         path: Path = broadcast_saver.save(
             input_voice_file=voice_file,

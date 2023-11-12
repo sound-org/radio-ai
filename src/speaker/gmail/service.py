@@ -27,7 +27,7 @@ class GmailService:
     def _get_message_by_id(self, message_id: str) -> Document:
         return self._gmail_connector.get_message_by_id(message_id=message_id)
 
-    def get_latest_message_and_move_to_bin(self) -> Document:
+    def _get_latest_message_and_move_to_bin(self) -> Document:
         self._refresh_authentication()
 
         try:
@@ -41,7 +41,7 @@ class GmailService:
         return doc
 
     def get_latest_message(self) -> str:
-        message: Document = self.get_latest_message_and_move_to_bin()
+        message: Document = self._get_latest_message_and_move_to_bin()
         message = self.clean_document_text(message)
         message.page_content = (
             f"This email title {message.metadata.get('title', 'Unknown')}, "

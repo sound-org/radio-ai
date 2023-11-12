@@ -8,14 +8,32 @@
             "streaming_output_dir": "channels/channel1/streaming",
             "speaker": {
                 "name": "Bob",
-                "TTS": "ELEVENLABS",
-                "voice": "TX3LPaxmHKxFdv7VOQHJ",
+                "TTS": "PYTTSX3",
+                "voice": "english",
                 "personality": "Your are and radio DJ, you love good hard rock music, and you are a fan of the band ACDC, you are definitely crazy",
                 "output_dir": "channels/channel1/speaker"
             },
             "music": {
                 "theme": "theme1",
                 "output_dir": "channels/channel1/music"
+            }
+        },
+        {
+            "id": 2,
+            "name": "channel2",
+            "description": "channel2 description",
+            "broadcast_output_dir": "channels/channel2/broadcast",
+            "streaming_output_dir": "channels/channel2/streaming",
+            "speaker": {
+                "name": "Bob",
+                "TTS": "ELEVENLABS",
+                "voice": "TX3LPaxmHKxFdv7VOQHJ",
+                "personality": "Your are and radio DJ, you love good hard rock music, and you are a fan of the band ACDC, you are definitely crazy",
+                "output_dir": "channels/channel2/speaker"
+            },
+            "music": {
+                "theme": "theme2",
+                "output_dir": "channels/channel2/music"
             }
         }
     ]
