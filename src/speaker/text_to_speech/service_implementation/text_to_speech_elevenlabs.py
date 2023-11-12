@@ -24,16 +24,17 @@ class TextToSpeechElevenLabs(TextToSpeechInterface):
         self._output_dir = output_dir
         self._generated_audio = None
 
-    def text_to_speech(self, text: str) -> None:
+    def text_to_speech(self, text: str) -> str:
         self._text_to_speech(text=text)
-        self._save()
+        path: str = self._save()
+        return path
 
     def _text_to_speech(self, text: str) -> None:
         self._generated_audio = generate(
             text=text, voice=self._voice, model=self._model
         )
 
-    def _save(self) -> None:
+    def _save(self) -> str:
         filename: str = time.strftime("%Y%m%d-%H%M%S.mp3")
 
         path: str = os.path.join(self._output_dir, filename)
@@ -42,6 +43,7 @@ class TextToSpeechElevenLabs(TextToSpeechInterface):
             raise Exception("Tried to save TTS output without generating it first")
         save(audio=self._generated_audio, filename=path)
         self._generated_audio = None  # clear state
+        return path
 
     def get_TTS_driver_name(self) -> Literal["elevenlabs"]:
         return "elevenlabs"

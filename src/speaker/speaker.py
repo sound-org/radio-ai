@@ -40,18 +40,30 @@ class Speaker:
         self._gmail_connector = GmailService()
         self._llm = LLM(personality=self._personality)
 
-    def generate_random_lines(self) -> str:
+    def generate_random_lines(self) -> tuple[str, str]:
+        """
+        Generates random lines for the speaker.
+
+        Returns:
+            tuple[str, str]: (lines, path)
+        """
         logger.info("Generating speaker lines...")
         lines: str = self._say_cool_things()
-        self._text_to_speech(text=lines)
-        return lines
+        path: str = self._text_to_speech(text=lines)
+        return (lines, path)
 
-    def react_to_email_message(self) -> str:
+    def react_to_email_message(self) -> tuple[str, str]:
+        """
+        React to latest email from fans.
+
+        Returns:
+            tuple[str, str]: (lines, path)
+        """
         logger.info("Reacting to email message...")
         email: str = self._get_last_email()
         speaker_reaction: str = self._react_to_email(email)
-        self._text_to_speech(text=speaker_reaction)
-        return speaker_reaction
+        path = self._text_to_speech(text=speaker_reaction)
+        return (speaker_reaction, path)
 
     def _get_last_email(self) -> str:
         logger.info("Getting last email...")
@@ -61,10 +73,11 @@ class Speaker:
         logger.info("Reacting to email...")
         return self._llm.react_to_email_message(email)
 
-    def _say_cool_things(self):
+    def _say_cool_things(self) -> str:
         logger.info("Saying cool things...")
         return self._llm.generate_speaker_lines("say next thing")
 
-    def _text_to_speech(self, text: str):
+    def _text_to_speech(self, text: str) -> str:
         logger.info("Converting text to speech...")
-        self._tts.text_to_speech(text=text)
+        path: str = self._tts.text_to_speech(text=text)
+        return path

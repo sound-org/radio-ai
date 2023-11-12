@@ -7,10 +7,9 @@ import dotenv
 dotenv.load_dotenv()
 from fastapi import FastAPI
 
+from src.channel.router import router as channel_router
 from src.speaker.gmail.router import router as gmail_router
 from src.speaker.speaker_router import router as speaker_router
-
-# from src.speaker.speaker_router import router as speaker_router
 
 logging.config.fileConfig("logging.ini", disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -21,3 +20,4 @@ app = FastAPI()
 
 app.include_router(gmail_router)
 app.include_router(speaker_router)
+app.include_router(channel_router)
