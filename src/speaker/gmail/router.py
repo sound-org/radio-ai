@@ -1,14 +1,11 @@
 import logging
-from typing import List, Tuple
+from typing import Tuple
 
 from fastapi import APIRouter, Request, Response, status
-from langchain.docstore.document import Document
 
-from . import converter as gmail_converter
 from .authenticaion_service import AuthenticationService
+from .gmail import Gmail
 from .gmail_config import GmailConfig
-from .schema import GmailMessageSchema
-from .service import GmailService
 
 router = APIRouter(prefix="/gmail", tags=["gmail"])
 
@@ -56,39 +53,11 @@ def callback(request: Request, response: Response):
     return "Successfully saved credentials"
 
 
-@router.get(
-    path="/{message_id}",
-    description="",
-    status_code=200,
-    response_model=GmailMessageSchema,
-)
-def get_message(response: Response, message_id: str) -> GmailMessageSchema:
-    logger.info("Getting message from gmail with id %s", message_id)
-    gmail_integration = GmailService()
-    gmail_message: Document = gmail_integration.get_message_by_id(message_id=message_id)
-    gmail_message_schema: GmailMessageSchema = (
-        gmail_converter.convert_gmail_message_model_to_schema(
-            gmail_message=gmail_message
-        )
-    )
-    logger.info("Successfully returned message from gmail with id %s", message_id)
-    return gmail_message_schema
+@router.get(path="/latest-message")
+def get_latest_mesage(response: Response) -> str:
+    logger.info("Getting latest message from gmail")
+    gmail = Gmail()
+    gmail_message: str = gmail.get_latest_message()
 
-
-@router.get(
-    path="",
-    description="Ingest all messages from gmail into a vector database",
-    status_code=status.HTTP_200_OK,
-    response_description="List of messages successfully ingested",
-    response_model=List[GmailMessageSchema],
-)
-def get_all_messages(response: Response) -> List[GmailMessageSchema]:
-    logger.info("Ingesting messages from gmail")
-    gmail_integration = GmailService()
-    messages: List[Document] = gmail_integration.get_messages()
-    messages_schema: List[
-        GmailMessageSchema
-    ] = gmail_converter.convert_gmail_messages_model_to_schema(gmail_messages=messages)
-
-    logger.info(msg="Successfully saved data to vector store")
-    return messages_schema
+    logger.info("Successfully returned latest message from gmail")
+    return gmail_message

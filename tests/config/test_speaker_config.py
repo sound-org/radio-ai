@@ -11,6 +11,7 @@ def test_speaker_config_complete():
     assert speaker_config.voice == "Voice1"
     assert speaker_config.TTS == TTSEnum.ELEVENLABS
     assert speaker_config.personality == "Friendly"
+    assert speaker_config.output_dir == "output_dir"
 
 
 def test_speaker_config_incomplete():

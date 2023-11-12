@@ -3,11 +3,8 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-class TextToSpeechServiceInterface:
-    def text_to_speech(self, text: str) -> None:
-        raise NotImplementedError
-
-    def save(self, name: str) -> None:
+class TextToSpeechInterface:
+    def text_to_speech(self, text: str) -> str:
         raise NotImplementedError
 
     def get_TTS_driver_name(self) -> str:

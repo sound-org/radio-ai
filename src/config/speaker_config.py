@@ -10,11 +10,13 @@ class TTSEnum(Enum):
 class SpeakerConfig:
     def __init__(self, speaker_config: Dict[str, str]) -> None:
         self.name: str = speaker_config.get("name")
-        self.voice: str = speaker_config.get("voice")
         self.TTS: TTSEnum = (
             TTSEnum(speaker_config.get("TTS")) if speaker_config.get("TTS") else None
         )
+        self.voice: str = speaker_config.get("voice")
         self.personality: str = speaker_config.get("personality")
-
-        if not all([self.name, self.voice, self.TTS, self.personality]):
+        self.output_dir: str = speaker_config.get("output_dir")
+        if not all(
+            [self.name, self.TTS, self.voice, self.personality, self.output_dir]
+        ):
             raise Exception("Speaker configuration is incomplete")

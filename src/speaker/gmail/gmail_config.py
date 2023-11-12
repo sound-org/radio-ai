@@ -9,4 +9,4 @@ class GmailConfig:
     scopes: List[str] = ["https://mail.google.com/"]
     host = "localhost"
     port = "8000"
-    redirect_uri: str = "http://" + host + ":" + port + callbackRoute
+    redirect_uri: str = "http://" + host + ":" + port + "/gmail" + callbackRoute

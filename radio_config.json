@@ -4,20 +4,37 @@
             "id": 1,
             "name": "channel1",
             "description": "channel1 description",
-            "music_theme": "music_theme1",
+            "broadcast_output_dir": "channels/channel1/broadcast",
+            "streaming_output_dir": "channels/channel1/streaming",
             "speaker": {
-                "name": "speaker1",
-                "TTS": "ELEVENLABS",
-                "voice": "Celine",
-                "personality": "normal"
+                "name": "Bob",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "Your are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "output_dir": "channels/channel1/speaker"
             },
-            "output_dir": "output_dir"
+            "music": {
+                "theme": "theme1",
+                "output_dir": "channels/channel1/music"
+            }
+        },
+        {
+            "id": 2,
+            "name": "channel2",
+            "description": "channel2 description",
+            "broadcast_output_dir": "channels/channel2/broadcast",
+            "streaming_output_dir": "channels/channel2/streaming",
+            "speaker": {
+                "name": "Mathieu",
+                "TTS": "ELEVENLABS",
+                "voice": "TX3LPaxmHKxFdv7VOQHJ",
+                "personality": "Your are the dullest radio DJ ever. You are not a fan of music, you are not a fan of anything. You are just a miserable person.",
+                "output_dir": "channels/channel2/speaker"
+            },
+            "music": {
+                "theme": "theme2",
+                "output_dir": "channels/channel2/music"
+            }
         }
     ]
 }
-// channels/
-// channels/channel1/
-// channels/channel1/speaker/ <speaker audio files>
-// channels/channel1/music/ <music audio files>
-// channels/channel1/broadcast/ <output broadcast audio file>
-// channels/channel1/streaming/ <prepared broacast audio file for Streamer to stream>
