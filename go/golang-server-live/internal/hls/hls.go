@@ -3,6 +3,7 @@ package hls
 import (
 	"bufio"
 	"fmt"
+	"net/http"
 	"os"
 	"regexp"
 	"strconv"
@@ -22,14 +23,14 @@ type Metadata struct {
 	Duration float32
 }
 
-type Record struct {
+type Playlist struct {
 	Metadata Metadata
 	Ts       []TsFile
 	HasEnd   bool
 	ToDelete bool
 }
 
-func Load(rd *os.File) (*Record, error) {
+func Load(rd *os.File) (*Playlist, error) {
 	scanner := bufio.NewScanner(rd)
 
 	metadata := parseMetadata(scanner)
@@ -42,7 +43,7 @@ func Load(rd *os.File) (*Record, error) {
 		return nil, err
 	}
 
-	return &Record{
+	return &Playlist{
 		Metadata: *metadata,
 		Ts:       *ts,
 		ToDelete: false,
@@ -120,12 +121,12 @@ func extract(line, pattern string) string {
 
 }
 
-func (record *Record) SaveToFile(wr *os.File, path string) error {
+func (record *Playlist) SaveToFile(wr *os.File, path string) error {
 	str := "#EXTM3U\n" +
 		"#EXT-X-VERSION:{{ .Metadata.Version }}\n" +
 		"#EXT-X-MEDIA-SEQUENCE:{{ .Metadata.Sequence }}\n" +
 		"#EXT-X-ALLOW-CACHE:{{ .Metadata.Cache }}\n" +
-		"#EXT-X-TARGETDURATION{{ .Metadata.Duration }}\n" +
+		"#EXT-X-TARGETDURATION:{{ .Metadata.Duration }}\n" +
 		"{{ range .Ts }}{{ .Header }}\n{{ .Name }}\n{{ end }}" +
 		"{{ if .HasEnd }}#EXT-X-ENDLIST{{ else }}{{ end }}\n"
 
@@ -135,6 +136,28 @@ func (record *Record) SaveToFile(wr *os.File, path string) error {
 	}
 
 	err = t.Execute(wr, record)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (playlist *Playlist) Save(wr http.ResponseWriter) error {
+	str := "#EXTM3U\n" +
+		"#EXT-X-VERSION:{{ .Metadata.Version }}\n" +
+		"#EXT-X-MEDIA-SEQUENCE:{{ .Metadata.Sequence }}\n" +
+		"#EXT-X-ALLOW-CACHE:{{ .Metadata.Cache }}\n" +
+		"#EXT-X-TARGETDURATION:{{ .Metadata.Duration }}\n" +
+		"{{ range .Ts }}{{ .Header }}\n{{ .Name }}\n{{ end }}" +
+		"{{ if .HasEnd }}#EXT-X-ENDLIST{{ else }}{{ end }}\n"
+
+	t, err := template.New("manifest").Parse(str)
+	if err != nil {
+		return err
+	}
+
+	err = t.Execute(wr, playlist)
 	if err != nil {
 		return err
 	}

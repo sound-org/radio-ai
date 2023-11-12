@@ -1,24 +1,22 @@
-package reader
+package channel
 
 import (
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
-	"time"
 
 	"github.com/sound-org/radio-ai/server/internal/hls"
+	utils "github.com/sound-org/radio-ai/server/pkg"
 )
 
-const maxFileLifespan = 2 // in days
 // hls main streaming file configs
 const version = 3
 const beginSequence = 0
 const enableCache = "NO"
 const maxDuration = 11
-const maxCapacity = 30
 
 func getFiles(path, pattern string) ([]string, error) {
 	var paths []string
@@ -45,8 +43,9 @@ func getFiles(path, pattern string) ([]string, error) {
 }
 
 type Manager struct {
-	ReadRecords   map[string]*hls.Record
-	WriteRecord   hls.Record
+	MusicDir      string
+	ReadRecords   map[string]*hls.Playlist
+	WriteRecord   hls.Playlist
 	StreamingFile *os.File
 	Mutex         *sync.RWMutex
 }
@@ -68,62 +67,30 @@ func (man *Manager) addRecord(path string) int {
 	return len(man.ReadRecords)
 }
 
-func (man *Manager) delete() {
-	for key := range man.ReadRecords {
-		if man.ReadRecords[key].ToDelete {
-			delete(man.ReadRecords, key)
-			root := filepath.Dir(key)
-			err := os.RemoveAll(root)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-	}
-}
-
-func (man *Manager) markToDelete() {
-	today := time.Now()
-	for key := range man.ReadRecords {
-		entry, err := os.Stat(key)
-		if err == nil {
-			if isToDelete(today, entry.ModTime(), maxFileLifespan) {
-				man.ReadRecords[key].ToDelete = true
-			}
-		}
-	}
-}
-
-func isToDelete(today, fileCreationDate time.Time, maxLifeSpan int) bool {
-	// return true if file is older than lifespan
-	return fileCreationDate.Add(time.Duration(maxLifeSpan) * 24 * time.Hour).Before(today)
-}
-
 func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, error) {
 	paths, err := getFiles(path, "*.m3u8")
 	if err != nil {
 		return nil, fmt.Errorf("path %v does not contain any subdirectory", path)
 	}
-
-	file, err := os.Create(streamingName)
 	if err != nil {
 		return nil, err
 	}
 
 	manager := Manager{
-		ReadRecords: make(map[string]*hls.Record),
-		WriteRecord: hls.Record{
+		MusicDir:    path,
+		ReadRecords: make(map[string]*hls.Playlist),
+		WriteRecord: hls.Playlist{
 			Metadata: hls.Metadata{
 				Version:  version,
 				Sequence: beginSequence,
 				Cache:    enableCache,
 				Duration: maxDuration,
 			},
-			Ts:       make([]hls.TsFile, maxCapacity),
+			Ts:       []hls.TsFile{},
 			HasEnd:   false,
 			ToDelete: false,
 		},
-		StreamingFile: file,
-		Mutex:         mutex,
+		Mutex: mutex,
 	}
 
 	for _, entry := range paths {
@@ -131,4 +98,63 @@ func CreateManager(path, streamingName string, mutex *sync.RWMutex) (*Manager, e
 	}
 
 	return &manager, nil
+}
+
+func (man *Manager) refresh(path string) (bool, error) {
+	paths, err := getFiles(path, "*.m3u8")
+	if err != nil {
+		return false, err
+	}
+
+	wasAdded := false
+
+	for _, p := range paths {
+		if _, ok := man.ReadRecords[p]; !ok {
+			man.addRecord(p)
+			wasAdded = true
+		}
+	}
+
+	return wasAdded, nil
+}
+
+func (man *Manager) InitWriteRecord(name string, heapSize int) error {
+	val, ok := man.ReadRecords[name]
+	if !ok {
+		return fmt.Errorf("playlist %s was not found", name)
+	}
+
+	man.WriteRecord.Ts = append(man.WriteRecord.Ts, utils.Map(val.Ts[0:min(len(val.Ts), heapSize)], createMapping(name, man.MusicDir))...)
+	man.WriteRecord.Metadata.Sequence = 0
+	return nil
+
+}
+
+func (man *Manager) UpdateWriteRecord(name string, count, offset int) (bool, error) {
+	val, ok := man.ReadRecords[name]
+	if !ok {
+		return false, fmt.Errorf("palylist %s was not found", name)
+	}
+	if len(val.Ts) <= offset {
+		return false, fmt.Errorf("offset outside of range")
+	}
+	// TODO : Updated Sequence number (what if we have read less than count)
+	man.WriteRecord.Ts = man.WriteRecord.Ts[count:]
+	man.WriteRecord.Ts = append(man.WriteRecord.Ts, utils.Map(val.Ts[offset:min(len(val.Ts), offset+count)], createMapping(name, man.MusicDir))...)
+	man.WriteRecord.Metadata.Sequence = man.WriteRecord.Metadata.Sequence + uint32(count)
+
+	return count+offset >= len(val.Ts), nil
+}
+
+func getPathWithoutMusicDirPath(playlistPath, tsPath, musicPath string) string {
+	return filepath.ToSlash(strings.TrimPrefix(filepath.Join(filepath.Dir(playlistPath), tsPath), musicPath+string(os.PathSeparator)))
+}
+
+func createMapping(name, musicDir string) func(ts hls.TsFile) hls.TsFile {
+	return func(ts hls.TsFile) hls.TsFile {
+		return hls.TsFile{
+			Header: ts.Header,
+			Name:   getPathWithoutMusicDirPath(name, ts.Name, musicDir),
+		}
+	}
 }

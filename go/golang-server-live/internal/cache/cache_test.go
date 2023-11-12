@@ -1,20 +1,17 @@
-package reader
+package channel
 
 import (
-	"errors"
 	"log"
 	"os"
 	"path/filepath"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/sound-org/radio-ai/server/internal/hls"
-	"github.com/sound-org/radio-ai/server/internal/utils"
+	internal_utils "github.com/sound-org/radio-ai/server/internal/utils"
 )
 
 func TestReadDirectory(t *testing.T) {
-	// given
 	path := filepath.Join("..")
 
 	dirs, err := getFiles(path, "*.go")
@@ -29,28 +26,16 @@ func TestReadDirectory(t *testing.T) {
 	}
 }
 
-func TestIsToDelete(t *testing.T) {
-	// given
-	now := time.Now()
-	fileModification := time.Now().Add(-2*24*time.Hour + 2*time.Minute)
-	maxLifespan := 2
-
-	if isToDelete(now, fileModification, maxLifespan) {
-		log.Fatal("time is wrongly calculated")
-	}
-}
-
 func TestAddRecord(t *testing.T) {
-	file, err := utils.CreateSimpleM3U8(".")
+	file, err := internal_utils.CreateSimpleM3U8(".")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer os.Remove(file.Name())
 
 	manager := Manager{
-		ReadRecords:   make(map[string]*hls.Record),
-		WriteRecord:   hls.Record{},
-		StreamingFile: nil,
+		ReadRecords:   make(map[string]*hls.Playlist),
+		WriteRecord:   hls.Playlist{},
 		Mutex:         &sync.RWMutex{},
 	}
 
@@ -59,71 +44,12 @@ func TestAddRecord(t *testing.T) {
 	}
 }
 
-func TestMarkToDelete(t *testing.T) {
-	file, err := utils.CreateSimpleM3U8(".")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(file.Name())
-
-	err = utils.ChModTime(file, 2, 20)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	manager := Manager{
-		ReadRecords:   make(map[string]*hls.Record),
-		WriteRecord:   hls.Record{},
-		StreamingFile: nil,
-		Mutex:         &sync.RWMutex{},
-	}
-
-	if manager.addRecord(file.Name()) != 1 {
-		log.Fatal("file was not added")
-	}
-
-	manager.markToDelete()
-	if !manager.ReadRecords[file.Name()].ToDelete {
-		log.Fatal("file was not marked to be deleted")
-	}
-}
-
-func TestDelete(t *testing.T) {
-	path := filepath.Join(".", "temp")
-	os.Mkdir("temp", 0755)
-	log.Println(path)
-	file, err := utils.CreateSimpleM3U8(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = utils.ChModTime(file, 2, 20)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	manager := Manager{
-		ReadRecords:   make(map[string]*hls.Record),
-		WriteRecord:   hls.Record{},
-		StreamingFile: nil,
-		Mutex:         &sync.RWMutex{},
-	}
-
-	manager.addRecord(file.Name())
-	manager.markToDelete()
-	manager.delete()
-
-	if _, err := os.Stat(file.Name()); !errors.Is(err, os.ErrNotExist) || len(manager.ReadRecords) != 0 {
-		log.Fatal("file was not deleted")
-	}
-
-}
-
-func TestCreateMAnager(t *testing.T) {
+func TestCreateManager(t *testing.T) {
 	path := filepath.Join(".", "temp")
 	os.Mkdir("temp", 0755)
 	defer os.RemoveAll(path)
 
-	file, err := utils.CreateSimpleM3U8(path)
+	file, err := internal_utils.CreateSimpleM3U8(path)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -138,9 +64,96 @@ func TestCreateMAnager(t *testing.T) {
 		log.Fatalf("file %s does not exists in the records", file.Name())
 	}
 
-	manager.StreamingFile.Close()
-	err = os.Remove(manager.StreamingFile.Name())
+}
+
+func TestRefresh(t *testing.T) {
+
+	mutex := sync.RWMutex{}
+	manager, err := CreateManager(".", "streaming1.m3u8", &mutex)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	path := filepath.Join(".", "temp")
+	os.Mkdir("temp", 0755)
+	defer os.RemoveAll(path)
+
+	file, err := internal_utils.CreateSimpleM3U8(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Close()
+
+	wasAdded, err := manager.refresh(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if !wasAdded {
+		log.Fatalf("cache not refreshed for file %v", file.Name())
+	}
+
+}
+
+func TestInitWriteRecord(t *testing.T) {
+	path := filepath.Join(".", "temp")
+	os.Mkdir("temp", 0755)
+	defer os.RemoveAll(path)
+
+	file, err := internal_utils.CreateSimpleM3U8(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mutex := sync.RWMutex{}
+	manager, err := CreateManager(".", "streaming1.m3u8", &mutex)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = manager.InitWriteRecord(file.Name(), 4)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(manager.WriteRecord.Ts) == 0 {
+		log.Fatal("record was not added")
+	}
+
+}
+
+func TestUpdateWriteRecords(t *testing.T) {
+	path := filepath.Join(".", "temp")
+	os.Mkdir("temp", 0755)
+	defer os.RemoveAll(path)
+
+	file, err := internal_utils.CreateSimpleM3U8(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mutex := sync.RWMutex{}
+	manager, err := CreateManager(".", "streaming1.m3u8", &mutex)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = manager.InitWriteRecord(file.Name(), 5)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	update, err := manager.UpdateWriteRecord(file.Name(), 2, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if update {
+		log.Fatal("case should not require update")
+	}
+
+	lastElement := manager.WriteRecord.Ts[len(manager.WriteRecord.Ts)-1]
+	if lastElement.Name != "temp/ts/output002.ts" {
+		log.Fatalf("last record expected to be temp/ts/output002.ts but was %s", lastElement.Name)
 	}
 }
