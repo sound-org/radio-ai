@@ -4,8 +4,8 @@ from typing import Tuple
 from fastapi import APIRouter, Request, Response, status
 
 from .authenticaion_service import AuthenticationService
+from .gmail import Gmail
 from .gmail_config import GmailConfig
-from .service import GmailService
 
 router = APIRouter(prefix="/gmail", tags=["gmail"])
 
@@ -54,10 +54,10 @@ def callback(request: Request, response: Response):
 
 
 @router.get(path="/latest-message")
-def get_latest_mesage(response: Response):
+def get_latest_mesage(response: Response) -> str:
     logger.info("Getting latest message from gmail")
-    gmail_integration = GmailService()
-    gmail_message: str = gmail_integration.get_latest_message()
+    gmail = Gmail()
+    gmail_message: str = gmail.get_latest_message()
 
     logger.info("Successfully returned latest message from gmail")
     return gmail_message

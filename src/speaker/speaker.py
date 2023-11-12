@@ -2,7 +2,7 @@ from logging import getLogger
 
 from src.config.speaker_config import SpeakerConfig, TTSEnum
 from src.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
-from src.speaker.gmail.service import GmailService
+from src.speaker.gmail.gmail import Gmail
 from src.speaker.llm.llm import LLM
 
 from .text_to_speech.interface import TextToSpeechInterface
@@ -20,7 +20,7 @@ class Speaker:
     _tts: TextToSpeechInterface
     _name: str
     _personality: str
-    _gmail_connector: GmailService
+    _gmail: Gmail
     _llm: LLM
 
     def __init__(self, config: SpeakerConfig):
@@ -40,7 +40,7 @@ class Speaker:
         else:
             raise Exception(f"Unknown TTS engine: {config.TTS}")
 
-        self._gmail_connector = GmailService()
+        self._gmail = Gmail()
         self._llm = LLM(personality=self._personality)
 
     def generate_random_lines(self) -> tuple[str, str]:
@@ -70,7 +70,7 @@ class Speaker:
 
     def _get_last_email(self) -> str:
         logger.info("Getting last email...")
-        return self._gmail_connector.get_latest_message()
+        return self._gmail.get_latest_message()
 
     def _react_to_email(self, email: str) -> str:
         logger.info("Reacting to email...")

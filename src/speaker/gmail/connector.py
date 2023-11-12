@@ -23,14 +23,6 @@ class GmailConnector:
     def refresh_authentication(self) -> None:
         self.authentication_service.refresh_credentials()
 
-    def get_message_by_id(self, message_id: str, query="") -> Document:
-        credentials: Credentials = self.authentication_service.get_credentials()
-        reader = GmailReader(query=query, credentials=credentials)
-        message: Document = reader.get_message(msg_id=message_id)
-        if message is None:
-            raise Exception("Message not found")
-        return message
-
     def get_latest_message_from_trash(self):
         credentials = self.authentication_service.get_credentials()
         reader = GmailReader(query="in:trash", credentials=credentials)
