@@ -12,5 +12,8 @@ router = APIRouter(prefix="/channels", tags=["channel"])
 
 @router.get(path="/prepare-broadcast")
 def get_speaker_lines():
-    content_creator.channels[0].create_broadcast()
+    for channel in content_creator.channels:
+        if channel._speaker._tts.get_TTS_driver_name() == "elevenlabs":
+            continue
+        channel.create_broadcast()
     return "OK"
