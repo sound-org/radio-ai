@@ -12,5 +12,5 @@ router = APIRouter(prefix="/channels", tags=["channel"])
 
 @router.get(path="/prepare-broadcast")
 def get_speaker_lines():
-    content_creator.channels[0]._compose_broadcast()
+    content_creator.channels[0].create_broadcast()
     return "OK"

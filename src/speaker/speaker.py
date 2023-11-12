@@ -1,6 +1,7 @@
 from logging import getLogger
 
 from src.config.speaker_config import SpeakerConfig, TTSEnum
+from src.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
 from src.speaker.gmail.service import GmailService
 from src.speaker.llm.llm import LLM
 
@@ -26,6 +27,8 @@ class Speaker:
         logger.info(f"Initializing Speaker with config: {config}")
         self._name: str = config.name
         self._personality: str = config.personality
+        create_dir_if_not_exists(config.output_dir)
+
         if config.TTS == TTSEnum.ELEVENLABS:
             self._tts = TextToSpeechElevenLabs(
                 output_dir=config.output_dir, voice_id=config.voice
