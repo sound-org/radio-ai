@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+import time
 
 from src.channel.audio_merger import AudioMerger
 from src.config.channel_config import ChannelConfig
@@ -26,8 +27,11 @@ class Channel:
         create_dir_if_not_exists(self._streaming_output_dir)
 
     def create_broadcast(self):
-        broadcast_file: str = self._compose_broadcast()
-        self._prepare_broadcast_for_streaming(broadcast_file=broadcast_file)
+        ts = str(int(time.time()))
+        broadcast_file: str = self._compose_broadcast(timestamp=ts)
+        self._prepare_broadcast_for_streaming(
+            broadcast_file=broadcast_file, timestamp=ts
+        )
 
     def _generate_speaker_lines(self) -> tuple[str, str]:
         return self._speaker.generate_random_lines()
@@ -48,13 +52,16 @@ class Channel:
         # TODO: it's just a mock for now
         return "algorithm_1.wav"
 
-    def _prepare_broadcast_for_streaming(self, broadcast_file: str):
+    def _prepare_broadcast_for_streaming(self, broadcast_file: str, timestamp: str):
         logger.info("Preparing broadcast in file %s for streaming...", broadcast_file)
+        output_dir = os.path.join(self._streaming_output_dir, timestamp)
+        create_dir_if_not_exists(output_dir)
+
         os_command = (
             f"ffmpeg -i {broadcast_file} -c:a libmp3lame -b:a 128k "
             f"-map 0:0 -f segment -segment_time 10 "
-            f"-segment_list {self._streaming_output_dir}/outputlist.m3u8 "
-            f"-segment_format mpegts {self._streaming_output_dir}/output%03d.ts"
+            f"-segment_list {output_dir}/outputlist.m3u8 "
+            f"-segment_format mpegts {output_dir}/output-{timestamp}%03d.ts"
         )
         try:
             os.system(os_command)
@@ -68,12 +75,12 @@ class Channel:
     def _get_outro(self):
         return "audio_data/samples/sample-2.mp3"
 
-    def _compose_broadcast(self) -> str:
+    def _compose_broadcast(self, timestamp: str) -> str:
         logger.info("Composing broadcast...")
 
         logger.info("Generating speaker lines...")
         _, speaker_lines_path = self._generate_speaker_lines()
-        _, speaker_reaction_to_email_path = self._react_to_email_message()
+        # _, speaker_reaction_to_email_path = self._react_to_email_message()
 
         logger.info("Generating music...")
         ai_music_path = self._generate_ai_music()
@@ -85,12 +92,15 @@ class Channel:
         paths_to_audio_files = [
             intro_path,
             speaker_lines_path,
-            speaker_reaction_to_email_path,
+            # speaker_reaction_to_email_path,
             ai_music_path,
             algorithmic_music_path,
             outro_path,
         ]
-        output_file = os.path.join(self._broadcast_output_dir, "broadcast.mp3")
+        output_file = os.path.join(
+            self._broadcast_output_dir, f"broadcast-{timestamp}.mp3"
+        )
+
         logger.info("Merging audio files and saving to %s", output_file)
         AudioMerger.merge_audio_files(paths_to_audio_files, output_file)
         return output_file
