@@ -17,37 +17,30 @@ body {
 .Channels {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 20px;
+  /*justify-content: center;*/
+  padding: 20vh 0 20vh 0;
+  gap: 1.5vh;
 }
 
-.Channel {
+.Channel, .Channel-active {
   background-color: #23547d;
-  min-width: 50px;
-  min-height: 50px;
-  width: 4vw;
-  height: 4vw;
+  min-width: 30px;
+  min-height: 30px;
+  width: 7vh;
+  height: 7vh;
   border-radius: 5px;
   color: #d8d8d8;
-  font-size: 28px;
+  font-size: calc(12px + 2vh);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: bolder;
 }
 
+/* override property */
 .Channel-active {
   background-color: #f26841;
-  min-width: 50px;
-  min-height: 50px;
-  width: 4vw;
-  height: 4vw;
-  border-radius: 5px;
-  color: #d8d8d8;
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .Radio-header {
@@ -55,7 +48,7 @@ body {
   color: white;
   padding: 3vh;
   text-align: center;
-  font-weight: 500;
+  font-weight: bolder;
 }
 
 .Player {
@@ -68,12 +61,34 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  /*width: 30vw;*/
-  /*height: 55vh;*/
+  max-width: 45vh;
 }
 
-/* Moved to App.tsx in order to allow changing the path */
+/* Background image path added in App.tsx */
 .Image {
+  background-position: center;
+  background-size: cover;
+  min-width: 100px;
+  min-height: 100px;
+  width: 40vh;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.Title {
+  font-size: calc(16px + 2vmin);
+  font-weight: bold;
+  padding: 20px 0 10px 0;
+}
+
+.Description {
+  font-size: calc(8px + 2vmin);
+  padding: 10px 0 10px 0;
+  word-wrap: normal;
+  height: 10vh;
 }
 
 .Player-btn {

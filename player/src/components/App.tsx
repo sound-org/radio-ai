@@ -1,6 +1,6 @@
 import './App.css';
 import './Slider.css'
-import Music from "../interface/Music";
+import ChannelInfo from "../interface/ChannelInfo";
 import * as React from "react";
 import {ReactElement, useEffect, useRef, useState} from "react";
 import {PauseIcon, PlayIcon, SpeakerWaveIcon} from "@heroicons/react/24/solid";
@@ -9,20 +9,6 @@ import WaveForm from './WaveForm'
 import Channel from './Channel';
 
 const App: React.FC = (): ReactElement => {
-
-    const SongsList: Music[]  = [
-        {
-            source: "assets/sample-music.mp3",
-            image: "assets/thumbnail.jpg",
-            title: "Sample local song"
-        },
-        {
-            source: "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3",
-            image: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80",
-            title: "Sample online song"
-        }
-    ];
-    const music: Music = SongsList[1];
 
     // Music controls
     const MAX_VOLUME = 20;
@@ -33,20 +19,23 @@ const App: React.FC = (): ReactElement => {
     const audioRef = useRef<HTMLAudioElement>(null);
 
     // Channel handling
+    const [channelsInfo, setChannelsInfo] = useState<ChannelInfo[]>([]);
     const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
     const [hlsUrl, setHlsUrl] = useState<string>("http://localhost:8080/jazz/outputlist.m3u8");
     const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
+    const [resumePlaying, setResumePlaying] = useState(false);
 
     const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
         setHlsUrl(newUrl);
         setActiveChannelIdx(newIdx);
-        setThumbnailPath(newImgPath)
+        setThumbnailPath(newImgPath);
+        setResumePlaying(true);
     }
 
     // HLS
     const hlsRef = useRef<Hls | null>(null);
 
-    // HLS setup - call once on render
+    // HLS setup
     useEffect(() => {
         if (audioRef.current) {
             hlsRef.current = new Hls();
@@ -59,16 +48,34 @@ const App: React.FC = (): ReactElement => {
                         const duration = data.details.totalduration;
                         setDuration(duration);
                         setCurrentTime(0);
-                        audioRef.current!.play();
-                        setIsPlaying(true);
-                        if (analyzerData === null) {
-                            audioAnalyzer();
+                        if (resumePlaying) {
+                            audioRef.current!.play();
+                            setIsPlaying(true);
+                            setResumePlaying(false);
                         }
                     })
                 })
             })
         }
     }, [hlsUrl])
+
+    // Radio config
+    useEffect(() => {
+        fetch("../radio_config.json", {
+                headers : {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+            }).then((json) => {
+                const info: ChannelInfo[] = json as ChannelInfo[];
+                setChannelsInfo(info);
+            }
+        );
+    }, [])
 
     // Audio analyzer
     const [analyzerData, setAnalyzerData] = useState<any>(null);
@@ -98,6 +105,9 @@ const App: React.FC = (): ReactElement => {
         } else {
             audioRef.current!.play();
             setIsPlaying(true);
+            if (analyzerData === null) {
+                audioAnalyzer();
+            }
         }
     }
 
@@ -110,26 +120,14 @@ const App: React.FC = (): ReactElement => {
 
     const musicBgStyle = {
         backgroundImage: `url('${thumbnailPath}')`,
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        minWidth: "100px",
-        minHeight: "100px",
-        width: "50vh",
-        height: "50vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer"
     };
 
     return (
         <div className="App">
             <div className="Channels">
-                <Channel num={1} hlsPath="http://localhost:8080/jazz/outputlist.m3u8" thumbnailPath="/assets/thumb1.jpg" active={activeChannelIdx === 1} switchChannel={switchChannel}/>
-                <Channel num={2} hlsPath="http://localhost:8080/bathroom/outputlist.m3u8" thumbnailPath="/assets/thumb2.jpg" active={activeChannelIdx === 2} switchChannel={switchChannel}/>
-                <Channel num={3} hlsPath="http://localhost:8080/channel1" thumbnailPath="/assets/thumb3.jpg" active={activeChannelIdx === 3} switchChannel={switchChannel}/>
-                <Channel num={4} hlsPath="" thumbnailPath="/assets/thumb4.jpg" active={activeChannelIdx === 4} switchChannel={switchChannel}/>
-                <Channel num={5} hlsPath="" thumbnailPath="/assets/thumb5.jpg" active={activeChannelIdx === 5} switchChannel={switchChannel}/>
+                {channelsInfo.map((info, i) => {
+                    return <Channel key={i} num={info.id} hlsPath={info.hlsPath} thumbnailPath={`/assets/thumb${info.id}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
+                })}
             </div>
             <div className="Radio">
                 <header className="Radio-header">
@@ -144,6 +142,12 @@ const App: React.FC = (): ReactElement => {
                                 <PauseIcon className="Player-icon" aria-hidden="true"/>
                             )}
                         </button>
+                    </div>
+                    <div className="Title">
+                        {channelsInfo[activeChannelIdx-1]?.name}
+                    </div>
+                    <div className="Description">
+                        {channelsInfo[activeChannelIdx-1]?.description}
                     </div>
                     <div className="Analyzer">
                         {analyzerData && <WaveForm analyzerData={analyzerData}/>}

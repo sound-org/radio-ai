@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Main channel",
+        "description": "We have implemented live streaming - enjoy!",
+        "hlsPath": "http://localhost:8080/channel1"
+    },
+    {
+        "id": 2,
+        "name": "Jazz",
+        "description": "The best local jazz music",
+        "hlsPath": "http://localhost:8080/jazz/outputlist.m3u8"
+    },
+    {
+        "id": 3,
+        "name": "Bathroom",
+        "description": "A perfect choice to enjoy your bathroom break",
+        "hlsPath": "http://localhost:8080/bathroom/outputlist.m3u8"
+    }
+]
