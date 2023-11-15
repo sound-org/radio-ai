@@ -16,6 +16,14 @@
             "music": {
                 "theme": "theme1",
                 "output_dir": "channels/channel1/music"
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 2,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false 
             }
         },
         {
@@ -34,7 +42,21 @@
             "music": {
                 "theme": "theme2",
                 "output_dir": "channels/channel2/music"
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 2,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false 
             }
         }
-    ]
+    ],
+
+    "server": {
+        "port": "8080",
+        "readTimeout": 10000,
+        "writeTimeout": 10000
+    }
 }

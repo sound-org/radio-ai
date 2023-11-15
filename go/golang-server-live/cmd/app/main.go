@@ -7,14 +7,20 @@ import (
 	"path/filepath"
 
 	"github.com/sound-org/radio-ai/server/internal/channel"
+	"github.com/sound-org/radio-ai/server/internal/config"
 )
 
 func main() {
 
-	// TODO : params of how long to waint between changes and how many records to change per tick
 	dir := filepath.Join("..", "..", "music")
 
 	channel1 := channel.CreateChannel(dir)
+	cnf, err := config.Load(filepath.Join("..", "..", "..", "..", "radio_config.json"))
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println(cnf)
 
 	const port = 8080
 	quit := make(chan bool)
@@ -24,6 +30,7 @@ func main() {
 	http.Handle("/", addHeaders(http.FileServer(http.Dir(dir))))
 	http.Handle("/channel1", addHeaders(readStreamming(channel1)))
 	http.Handle("/quit", createShutDown(quit))
+	http.Handle("/info", config.InfoHandler(cnf))
 	fmt.Printf("Starting server on %v\n", port)
 	log.Printf("Serving  music : '%s' on HTTP port: %v\n", dir, port)
 
