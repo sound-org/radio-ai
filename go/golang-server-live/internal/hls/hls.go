@@ -121,28 +121,6 @@ func extract(line, pattern string) string {
 
 }
 
-func (record *Playlist) SaveToFile(wr *os.File, path string) error {
-	str := "#EXTM3U\n" +
-		"#EXT-X-VERSION:{{ .Metadata.Version }}\n" +
-		"#EXT-X-MEDIA-SEQUENCE:{{ .Metadata.Sequence }}\n" +
-		"#EXT-X-ALLOW-CACHE:{{ .Metadata.Cache }}\n" +
-		"#EXT-X-TARGETDURATION:{{ .Metadata.Duration }}\n" +
-		"{{ range .Ts }}{{ .Header }}\n{{ .Name }}\n{{ end }}" +
-		"{{ if .HasEnd }}#EXT-X-ENDLIST{{ else }}{{ end }}\n"
-
-	t, err := template.New("manifest").Parse(str)
-	if err != nil {
-		return err
-	}
-
-	err = t.Execute(wr, record)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (playlist *Playlist) Save(wr http.ResponseWriter) error {
 	str := "#EXTM3U\n" +
 		"#EXT-X-VERSION:{{ .Metadata.Version }}\n" +
