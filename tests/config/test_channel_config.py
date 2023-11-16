@@ -1,6 +1,6 @@
 import pytest
 
-from src.config import ChannelConfig, SpeakerConfig
+from radio.config import ChannelConfig, SpeakerConfig
 
 from .configs import incomplete_channel_config, valid_channel_config
 

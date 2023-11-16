@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.speaker.text_to_speech.service_implementation.text_to_speech_pyttsx3 import (
+from radio.speaker.text_to_speech.service_implementation.text_to_speech_pyttsx3 import (
     TextToSpeechPyttsx3,
 )
 

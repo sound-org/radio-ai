@@ -1,8 +1,10 @@
 import pytest
 
-from src.config.config_parser import ConfigParser
-from src.config.radio_config import RadioConfig
+from radio.config.config_parser import ConfigParser
+from radio.config.radio_config import RadioConfig
+
 from .utils import create_valid_radio_config_file
+
 
 def test_radio_config_complete(create_valid_radio_config_file):
     ConfigParser.path = create_valid_radio_config_file

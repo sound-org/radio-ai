@@ -1,9 +1,9 @@
 from logging import getLogger
 
-from src.config.speaker_config import SpeakerConfig, TTSEnum
-from src.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
-from src.speaker.gmail.gmail import Gmail
-from src.speaker.llm.llm import LLM
+from radio.config.speaker_config import SpeakerConfig, TTSEnum
+from radio.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
+from radio.speaker.gmail.gmail import Gmail
+from radio.speaker.llm.llm import LLM
 
 from .text_to_speech.interface import TextToSpeechInterface
 from .text_to_speech.service_implementation.text_to_speech_elevenlabs import (

@@ -3,11 +3,11 @@ import os
 import random
 import time
 
-from src.channel.audio_merger import AudioMerger
-from src.config.channel_config import ChannelConfig
-from src.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
-from src.music_generator.music_generator import MusicGenerator
-from src.speaker.speaker import Speaker
+from radio.channel.audio_merger import AudioMerger
+from radio.config.channel_config import ChannelConfig
+from radio.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
+from radio.music_generator.music_generator import MusicGenerator
+from radio.speaker.speaker import Speaker
 
 logger = logging.getLogger(__name__)
 
@@ -43,14 +43,14 @@ class Channel:
         # TODO: it's just a mock for now
 
         filenames = [
-            "musicgen_1.wav",
-            "musicgen_2.wav",
+            "audio_samples/musicgen_1.wav",
+            "audio_samples/musicgen_2.wav",
         ]
         return random.choice(filenames)
 
     def _generate_algorithmic_music(self):
         # TODO: it's just a mock for now
-        return "algorithm_1.wav"
+        return "audio_samples/algorithm_1.wav"
 
     def _prepare_broadcast_for_streaming(self, broadcast_file: str, timestamp: str):
         logger.info("Preparing broadcast in file %s for streaming...", broadcast_file)
@@ -70,10 +70,10 @@ class Channel:
             logger.error(f"Error message: {e}")
 
     def _get_intro(self):
-        return "audio_data/samples/sample-1.mp3"
+        return "audio_samples/sample-1.mp3"
 
     def _get_outro(self):
-        return "audio_data/samples/sample-2.mp3"
+        return "audio_samples/sample-2.mp3"
 
     def _compose_broadcast(self, timestamp: str) -> str:
         logger.info("Composing broadcast...")

@@ -15,12 +15,12 @@ class TextToSpeechConfig:
     """Available voices: https://pyttsx3.readthedocs.io/en/latest/engine.html#pyttsx3.voice.Voice"""
     """['afrikaans', 'aragonese', 'bulgarian', 'bengali', 'bosnian', 'catalan', 'czech', 'welsh',
     'danish', 'german', 'greek', 'default', 'english', 'en-scottish', 'english-north', 'english_rp',
-    'english_wmids', 'english-us', 'en-westindies', 'esperanto', 'spanish', 'spanish-latin-am', 'estonian', 
+    'english_wmids', 'english-us', 'en-westindies', 'esperanto', 'spanish', 'spanish-latin-am', 'estonian',
     'basque-test', 'Persian+English-UK', 'Persian+English-US', 'persian-pinglish', 'finnish', 'french-Belgium',
     'french', 'irish-gaeilge', 'greek-ancient', 'gujarati-test', 'hindi', 'croatian', 'hungarian', 'armenian',
-    'armenian-west', 'interlingua', 'indonesian', 'icelandic', 'italian', 'lojban', 'georgian', 'kannada', 'kurdish', 
-    'latin', 'lingua_franca_nova', 'lithuanian', 'latvian', 'macedonian', 'malayalam', 'malay', 'nepali', 'dutch', 
-    'norwegian', 'punjabi', 'polish', 'brazil', 'portugal', 'romanian', 'russian', 'slovak', 'albanian', 'serbian', 
+    'armenian-west', 'interlingua', 'indonesian', 'icelandic', 'italian', 'lojban', 'georgian', 'kannada', 'kurdish',
+    'latin', 'lingua_franca_nova', 'lithuanian', 'latvian', 'macedonian', 'malayalam', 'malay', 'nepali', 'dutch',
+    'norwegian', 'punjabi', 'polish', 'brazil', 'portugal', 'romanian', 'russian', 'slovak', 'albanian', 'serbian',
     'swedish', 'swahili-test', 'tamil', 'telugu-test', 'turkish', 'vietnam', 'vietnam_hue', 'vietnam_sgn', 'Mandarin', 'cantonese']"""
     rate: int = 200
     volume: float = 1.0

@@ -1,7 +1,7 @@
 from typing import List
 
-from src.channel.channel import Channel
-from src.config.radio_config import RadioConfig
+from radio.channel.channel import Channel
+from radio.config.radio_config import RadioConfig
 
 
 class ContentCreator:

@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.speaker.text_to_speech.config import TextToSpeechConfig
-from src.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs import (
+from radio.speaker.text_to_speech.config import TextToSpeechConfig
+from radio.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs import (
     TextToSpeechElevenLabs,
 )
 
@@ -12,7 +12,7 @@ from src.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs
 @pytest.fixture
 def mock_voice_class(mocker):
     mock = mocker.patch(
-        "src.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.Voice"
+        "radio.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.Voice"
     )
     mock.from_id.return_value = MagicMock(name="MockVoice", id="TX3LPaxmHKxFdv7VOQHJ")
     return mock
@@ -21,21 +21,21 @@ def mock_voice_class(mocker):
 @pytest.fixture
 def mock_set_api_key(mocker):
     return mocker.patch(
-        "src.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.set_api_key"
+        "radio.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.set_api_key"
     )
 
 
 @pytest.fixture
 def mock_generate(mocker):
     return mocker.patch(
-        "src.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.generate"
+        "radio.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.generate"
     )
 
 
 @pytest.fixture
 def mock_save(mocker):
     return mocker.patch(
-        "src.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.save"
+        "radio.speaker.text_to_speech.service_implementation.text_to_speech_elevenlabs.save"
     )
 
 

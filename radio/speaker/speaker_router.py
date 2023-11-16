@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter
 
-from src.content_creator.content_creator_instance import content_creator
+from radio.content_creator.content_creator_instance import content_creator
 
 logger = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from src.config import SpeakerConfig, TTSEnum
+from radio.config import SpeakerConfig, TTSEnum
 
 from .configs import incomplete_speaker_config, valid_speaker_config
 

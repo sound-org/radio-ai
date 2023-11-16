@@ -1,7 +1,7 @@
 import json
 
-from src.config.radio_config import RadioConfig
-from src.content_creator.content_creator import ContentCreator
+from radio.config.radio_config import RadioConfig
+from radio.content_creator.content_creator import ContentCreator
 
 # TODO: come up with something better
 with open("radio_config.json", "r") as f:

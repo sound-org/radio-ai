@@ -1,6 +1,6 @@
 from typing import Dict
 
-from src.config.music_config import MusicConfig
+from radio.config.music_config import MusicConfig
 
 from .speaker_config import SpeakerConfig
 
