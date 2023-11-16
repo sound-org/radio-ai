@@ -4,6 +4,7 @@
             "id": 1,
             "name": "channel1",
             "description": "channel1 description",
+            "hls_path": "channel1",
             "broadcast_output_dir": "channels/channel1/broadcast",
             "streaming_output_dir": "channels/channel1/streaming",
             "speaker": {
@@ -30,6 +31,7 @@
             "id": 2,
             "name": "channel2",
             "description": "channel2 description",
+            "hls_path": "channel2",
             "broadcast_output_dir": "channels/channel2/broadcast",
             "streaming_output_dir": "channels/channel2/streaming",
             "speaker": {

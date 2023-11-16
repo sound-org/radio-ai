@@ -34,7 +34,7 @@ func main() {
 	fmt.Printf("Starting server on %v\n", port)
 	log.Printf("Serving  music : '%s' on HTTP port: %v\n", dir, port)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%v", port), nil))
 }
 
 func addHeaders(h http.Handler) http.HandlerFunc {

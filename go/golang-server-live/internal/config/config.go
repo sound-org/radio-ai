@@ -15,7 +15,8 @@ type Config struct {
 type channelConfig struct {
 	Id   uint   `json:"id"`
 	Name string `json:"name"`
-	Src  string `json:"streaming_output_dir"`
+	Desc  string `json:"description"`
+	Hls  string `json:"hls_path"`
 }
 
 type serverConfig struct {
@@ -60,6 +61,9 @@ func createHandlers(config *Config) http.Handler {
 func InfoHandler(config *Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(config.Channels)
 	}

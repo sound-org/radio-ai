@@ -10,23 +10,27 @@ import Channel from './Channel';
 
 const App: React.FC = (): ReactElement => {
 
+    // Settings
+    const useLocalConfig:boolean = true;
+    const serverRoot:string = "http://localhost:8080/";
+
     // Music controls
     const MAX_VOLUME = 20;
-    const [volume, setVolume] = useState(MAX_VOLUME)
-    const [duration, setDuration] = useState(0);
-    const [currentTime, setCurrentTime] = useState(0);
+    const [, setVolume] = useState(MAX_VOLUME)
+    const [, setDuration] = useState(0);
+    const [, setCurrentTime] = useState(0);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
 
     // Channel handling
     const [channelsInfo, setChannelsInfo] = useState<ChannelInfo[]>([]);
     const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
-    const [hlsUrl, setHlsUrl] = useState<string>("http://localhost:8080/jazz/outputlist.m3u8");
+    const [manifestUrl, setManifestUrl] = useState<string>(serverRoot + "channel1");
     const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
     const [resumePlaying, setResumePlaying] = useState(false);
 
     const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
-        setHlsUrl(newUrl);
+        setManifestUrl(newUrl);
         setActiveChannelIdx(newIdx);
         setThumbnailPath(newImgPath);
         setResumePlaying(true);
@@ -41,7 +45,7 @@ const App: React.FC = (): ReactElement => {
             hlsRef.current = new Hls();
             hlsRef.current.attachMedia(audioRef.current);
             hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hlsRef.current?.loadSource(hlsUrl);
+                hlsRef.current?.loadSource(manifestUrl);
 
                 hlsRef.current?.on(Hls.Events.MANIFEST_PARSED, () => {
                     hlsRef.current?.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
@@ -57,14 +61,14 @@ const App: React.FC = (): ReactElement => {
                 })
             })
         }
-    }, [hlsUrl])
+    }, [manifestUrl])
 
     // Radio config
     useEffect(() => {
-        fetch("../radio_config.json", {
+        fetch(useLocalConfig ? "../radio_config.json" : serverRoot + "info", {
                 headers : {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
                 }
             }).then((response) => {
                 if (response.ok) {
@@ -73,9 +77,9 @@ const App: React.FC = (): ReactElement => {
             }).then((json) => {
                 const info: ChannelInfo[] = json as ChannelInfo[];
                 setChannelsInfo(info);
-            }
-        );
-    }, [])
+                }
+            );
+        }, []);
 
     // Audio analyzer
     const [analyzerData, setAnalyzerData] = useState<any>(null);
@@ -126,7 +130,7 @@ const App: React.FC = (): ReactElement => {
         <div className="App">
             <div className="Channels">
                 {channelsInfo.map((info, i) => {
-                    return <Channel key={i} num={info.id} hlsPath={info.hlsPath} thumbnailPath={`/assets/thumb${info.id}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
+                    return <Channel key={i} num={info.id} hlsPath={serverRoot + info.hls_path} thumbnailPath={`/assets/thumb${info.id}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
                 })}
             </div>
             <div className="Radio">
