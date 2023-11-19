@@ -6,8 +6,7 @@ profile = "black"
 "__init__.py" = ["E402"]
 
 [tool.pytest.ini_options]
-addopts = "-v --import-mode=importlib"
-pythonpath = ["src"]
+pythonpath = ["."]
 testpaths = [
     "tests"
 ]
