@@ -10,6 +10,9 @@ GO:
  Klienta możnma odpalić tu : <https://hlsjs-dev.video-dev.org/demo/>  w linku do src wpicas <http://localhost:8080/outputlist.m3u8>
  Server odpalać z pliku /cmd/app/main.go komendą go run .
 
+ Odpalanie:
+ w `/golang-server-live` zrób go build **./cmd/app/.** następnie wykonaj **./golang-server-live/app.exe ./radio_config.json** z poziomu folderu `radio-ai`
+
 HLS:
 
  Tworzenie plików .ts oraz playlisty .m3u8 przez ffmpeg :
