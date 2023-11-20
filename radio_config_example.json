@@ -1,0 +1,64 @@
+{
+    "channels": [
+        {
+            "id": 1,
+            "name": "channel1",
+            "description": "channel1 description",
+            "hls_path": "channel1",
+            "broadcast_output_dir": "channels/channel1/broadcast",
+            "streaming_output_dir": "channels/channel1/streaming",
+            "speaker": {
+                "name": "Bob",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "Your are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "output_dir": "channels/channel1/speaker"
+            },
+            "music": {
+                "theme": "theme1",
+                "output_dir": "channels/channel1/music"
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 2,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false 
+            }
+        },
+        {
+            "id": 2,
+            "name": "channel2",
+            "description": "channel2 description",
+            "hls_path": "channel2",
+            "broadcast_output_dir": "channels/channel2/broadcast",
+            "streaming_output_dir": "channels/channel2/streaming",
+            "speaker": {
+                "name": "Mathieu",
+                "TTS": "ELEVENLABS",
+                "voice": "TX3LPaxmHKxFdv7VOQHJ",
+                "personality": "Your are the dullest radio DJ ever. You are not a fan of music, you are not a fan of anything. You are just a miserable person.",
+                "output_dir": "channels/channel2/speaker"
+            },
+            "music": {
+                "theme": "theme2",
+                "output_dir": "channels/channel2/music"
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 2,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false 
+            }
+        }
+    ],
+
+    "server": {
+        "port": "8080",
+        "readTimeout": 10000,
+        "writeTimeout": 10000
+    }
+}
