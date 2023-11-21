@@ -31,7 +31,7 @@ class PyTTSx3Engine:
             self._get_engine()
         )  # NOTE: save_to_file never returns after second call, so we need to create a new engine every time...
         logger.info("Saying: %s", text)
-        engine.save_to_file(text=text, filename=filename, name="my_file")
+        engine.save_to_file(text=text, filename=filename)
         engine.runAndWait()
 
         time.sleep(0.5)

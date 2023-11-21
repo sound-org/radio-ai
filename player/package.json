@@ -14,7 +14,8 @@
     "react-jinke-music-player": "^4.24.2",
     "react-scripts": "5.0.1",
     "react-use-websocket": "^4.5.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "typescript": "^4.5.5"
   },
   "scripts": {
     "start": "react-scripts start",

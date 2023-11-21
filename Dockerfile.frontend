@@ -2,11 +2,11 @@ FROM node:14-alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-
+COPY player/package*.json ./
+COPY player/tsconfig.json ./
 RUN npm install
 
-COPY /player .
+COPY player ./
 
 RUN npm run build
 
