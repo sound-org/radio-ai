@@ -11,7 +11,7 @@ import Channel from './Channel';
 const App: React.FC = (): ReactElement => {
 
     // Settings
-    const useLocalConfig:boolean = true;
+    const useLocalConfig:boolean = false;
     const serverRoot:string = "http://localhost:8080/";
 
     // Music controls
@@ -25,7 +25,7 @@ const App: React.FC = (): ReactElement => {
     // Channel handling
     const [channelsInfo, setChannelsInfo] = useState<ChannelInfo[]>([]);
     const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
-    const [manifestUrl, setManifestUrl] = useState<string>(serverRoot + "channel1");
+    const [manifestUrl, setManifestUrl] = useState<string>(serverRoot + "channels/1/streaming/manifest");
     const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
     const [resumePlaying, setResumePlaying] = useState(false);
 
