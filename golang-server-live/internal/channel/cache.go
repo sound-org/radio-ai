@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 
@@ -71,8 +72,9 @@ func (cache *Cache) Refresh() error {
 func (cache *Cache) Keys() []string {
 	cache.mutex.RLock()
 	defer cache.mutex.RUnlock()
-
-	return utils.Keys[string, *hls.Playlist](cache.playlists)
+	keys := utils.Keys[string, *hls.Playlist](cache.playlists)
+	slices.Sort(keys)
+	return keys
 }
 
 func (cache *Cache) Get(id string) (hls.Playlist, error) {
