@@ -80,7 +80,7 @@ class Channel:
 
         logger.info("Generating speaker lines...")
         _, speaker_lines_path = self._generate_speaker_lines()
-        # _, speaker_reaction_to_email_path = self._react_to_email_message()
+        _, speaker_reaction_to_email_path = self._react_to_email_message()
 
         logger.info("Generating music...")
         ai_music_path = self._generate_ai_music()
@@ -92,7 +92,7 @@ class Channel:
         paths_to_audio_files = [
             intro_path,
             speaker_lines_path,
-            # speaker_reaction_to_email_path,
+            speaker_reaction_to_email_path,
             ai_music_path,
             algorithmic_music_path,
             outro_path,

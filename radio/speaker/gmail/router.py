@@ -9,13 +9,6 @@ from .gmail_config import GmailConfig
 
 router = APIRouter(prefix="/gmail", tags=["gmail"])
 
-authentication_service = AuthenticationService(
-    secrets_file=GmailConfig.secrets_file,
-    scopes=GmailConfig.scopes,
-    redirect_uri=GmailConfig.redirect_uri,
-    token_file=GmailConfig.token_path,
-)
-
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +21,13 @@ logger = logging.getLogger(__name__)
     response_description="Successfully returned auth url",
 )
 def get_auth_url(response: Response) -> str:
+    authentication_service = AuthenticationService(
+        secrets_file=GmailConfig.secrets_file,
+        scopes=GmailConfig.scopes,
+        redirect_uri=GmailConfig.redirect_uri,
+        token_file=GmailConfig.token_path,
+    )
+
     logger.info(msg="Getting auth url for gmail integration")
     auth_url_state: Tuple[str, str] = authentication_service.get_auth_url()
     # Generate the URL for the user to be redirected to
@@ -47,6 +47,13 @@ def get_auth_url(response: Response) -> str:
     response_model=str,
 )
 def callback(request: Request, response: Response):
+    authentication_service = AuthenticationService(
+        secrets_file=GmailConfig.secrets_file,
+        scopes=GmailConfig.scopes,
+        redirect_uri=GmailConfig.redirect_uri,
+        token_file=GmailConfig.token_path,
+    )
+
     logger.info("Callback route was called for gmail integration")
     authentication_service.callback_handler(request=request)
     logger.info("Callback route finished for google drive integration")

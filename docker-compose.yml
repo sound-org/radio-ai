@@ -30,7 +30,7 @@ services:
         context: .
         dockerfile: Dockerfile.streaming
       ports:
-        - "8080:8080"  # Map the port to the host (change if different)
+        - "8080:8080"
       networks:
         - app-network
 

@@ -30,6 +30,7 @@ class TextToSpeechElevenLabs(TextToSpeechInterface):
         return path
 
     def _text_to_speech(self, text: str) -> None:
+        logger.info("Text to speech for: %s", text)
         self._generated_audio = generate(
             text=text, voice=self._voice, model=self._model
         )

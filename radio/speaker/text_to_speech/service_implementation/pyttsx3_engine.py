@@ -23,7 +23,6 @@ class PyTTSx3Engine:
         return engine
 
     def text_to_speech(self, text: str, output_dir: str) -> str:
-        logger.info("Running pyttsx3 text to speech for %s", text)
         filename: str = time.strftime("%Y%m%d-%H%M%S.mp3")
         path: str = os.path.join(output_dir, filename)
 
