@@ -24,11 +24,10 @@
                 "version": 3,
                 "sequence": 0,
                 "duration": 11,
-                "cache": false 
+                "cache": false
             }
         }
     ],
-
     "server": {
         "port": "8080",
         "readTimeout": 10000,
