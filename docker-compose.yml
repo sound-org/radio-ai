@@ -14,25 +14,25 @@ services:
     #   - .env
     networks:
       - app-network
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "3000:3000"
-    restart: always
-    networks:
-      - app-network
-  streaming:
-      volumes:
-        - .:/usr/src/app
-      build:
-        context: .
-        dockerfile: Dockerfile.streaming
-      ports:
-        - "8080:8080"
-      networks:
-        - app-network
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   ports:
+  #     - "3000:3000"
+  #   restart: always
+  #   networks:
+  #     - app-network
+  # streaming:
+  #     volumes:
+  #       - .:/usr/src/app
+  #     build:
+  #       context: .
+  #       dockerfile: Dockerfile.streaming
+  #     ports:
+  #       - "8080:8080"
+  #     networks:
+  #       - app-network
 
 networks:
   app-network:

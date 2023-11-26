@@ -15,8 +15,21 @@
                 "output_dir": "channels/1/speaker"
             },
             "music": {
-                "theme": "theme1",
-                "output_dir": "channels/1/music"
+                "music_generators": [
+                    {
+                        "type": "ai",
+                        "theme": "theme1",
+                        "output_dir": "channels/1/music/ai"
+                    },
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/1/music/algorithmic"
+                    },
+                    {
+                        "type": "custom",
+                        "output_dir": "channels/1/music/custom"
+                    }
+                ]
             },
             "hls": {
                 "buffer": 10,
