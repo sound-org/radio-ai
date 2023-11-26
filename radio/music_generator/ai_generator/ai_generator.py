@@ -1,8 +1,12 @@
 from radio.config.music_config import AIMusicConfig
 
+from ..abstract_generator import AbstractMusicGenerator
 
-class AIGenerator:
+
+class AIGenerator(AbstractMusicGenerator):
     def __init__(self, config: AIMusicConfig) -> None:
-        self.config = config
+        super().__init__(config)
         self.theme = config.theme
-        self.output_dir = config.output_dir
+
+    def generate(self, n: int):
+        pass

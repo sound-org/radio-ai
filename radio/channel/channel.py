@@ -33,13 +33,16 @@ class Channel:
             broadcast_file=broadcast_file, timestamp=ts
         )
 
+    def _generate_music(self, n: int):
+        self._music_generator.generate_music(n)
+
     def _generate_speaker_lines(self) -> tuple[str, str]:
         return self._speaker.generate_random_lines()
 
     def _react_to_email_message(self) -> tuple[str, str]:
         return self._speaker.react_to_email_message()
 
-    def _generate_ai_music(self):
+    def _get_ai_music(self):
         # TODO: it's just a mock for now
 
         filenames = [
@@ -48,7 +51,7 @@ class Channel:
         ]
         return random.choice(filenames)
 
-    def _generate_algorithmic_music(self):
+    def _get_algorithmic_music(self):
         # TODO: it's just a mock for now
         return "audio_samples/algorithm_1.wav"
 
@@ -83,8 +86,8 @@ class Channel:
         _, speaker_reaction_to_email_path = self._react_to_email_message()
 
         logger.info("Generating music...")
-        ai_music_path = self._generate_ai_music()
-        algorithmic_music_path = self._generate_algorithmic_music()
+        ai_music_path = self._get_ai_music()
+        algorithmic_music_path = self._get_algorithmic_music()
 
         intro_path = self._get_intro()
         outro_path = self._get_outro()

@@ -1,22 +1,15 @@
-from typing import List
+import os
+import random
 
 
-class AbstractMusicGenerator(object):
-    """
-    Abstract class for music generator.
-    """
+class AbstractMusicGenerator:
+    def __init__(self, config):
+        self.output_dir = config.output_dir
 
-    def __init__(self):
-        pass
+    def get_music(self, n: int):
+        music_files = os.listdir(self.output_dir)
+        sampled_files = random.sample(music_files, n)
+        return sampled_files
 
-    def generate(self) -> None:
-        """
-        Generate music.
-        """
-        pass
-
-    def get_music(self, n: int) -> List[str]:
-        """
-        Get a list of files with music.
-        """
-        pass
+    def generate(self, n: int):
+        raise NotImplementedError

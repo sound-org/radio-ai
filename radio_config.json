@@ -24,10 +24,6 @@
                     {
                         "type": "algorithmic",
                         "output_dir": "channels/1/music/algorithmic"
-                    },
-                    {
-                        "type": "custom",
-                        "output_dir": "channels/1/music/custom"
                     }
                 ]
             },

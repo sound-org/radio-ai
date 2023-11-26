@@ -344,8 +344,22 @@ def notes_to_midi(
         )
 
 
-def save_midi_file(file: MIDIFile, name: str, path="out/") -> None:
-    """Save the MIDI file on disk"""
+import os
+import subprocess
 
-    with open(path + name + ".mid", "wb") as output_file:
-        file.writeFile(output_file)
+
+def save_midi_as_mp3(
+    midi_file: MIDIFile, midi_filename: str, mp3_filename: str
+) -> None:
+    """Convert the MIDI file to an MP3 file and save on disk, then delete the MIDI file."""
+    soundfont_path = "/usr/share/sounds/sf2/FluidR3_GM.sf2"
+    with open(midi_filename, "wb") as output_file:
+        midi_file.writeFile(output_file)
+
+    # fluidsynth_command = f"fluidsynth -ni {soundfont_path} {midi_filename} -F - | ffmpeg -f s32le -i - {mp3_filename}"
+    fluidsynth_command = f"fluidsynth -ni {soundfont_path} {midi_filename} -F temp.wav"
+    ffmpeg_command = f"ffmpeg -i temp.wav {mp3_filename}"
+
+    subprocess.run(fluidsynth_command, shell=True, check=True)
+    subprocess.run(ffmpeg_command, shell=True, check=True)
+    os.remove(midi_filename)

@@ -1,4 +1,6 @@
+import os
 import random
+import time
 
 from midiutil import MIDIFile
 from mingus.core import chords
@@ -11,12 +13,13 @@ from . import utils
 
 class AlgorithmicGenerator(AbstractMusicGenerator):
     def __init__(self, config: AlgorithmicMusicConfig):
-        pass
+        super().__init__(config)
 
-    def get_music(self, n: int):
-        pass
+    def generate(self, n: int):
+        for _ in range(n):
+            self._generate_music()
 
-    def generate(self):
+    def _generate_music(self):
         keys = ["C", "D", "E", "F", "G", "A", "B"]
         addon = [0, 3, 6, 7, 9]
         primary_key = random.choice(keys)
@@ -65,7 +68,12 @@ class AlgorithmicGenerator(AbstractMusicGenerator):
             start_time=len(notes_melody) / 8,
         )
 
-        utils.save_midi_file(myMIDI, "algorithmic-music")
+        name = str(
+            int(time.time() * 100)
+        )  # take first two decimal place, so we can have 100 songs per second
+        midi_file = os.path.join(self.output_dir, name + ".midi")
+        mp3_file = os.path.join(self.output_dir, name + ".mp3")
+        utils.save_midi_as_mp3(myMIDI, midi_file, mp3_file)
 
     def _create_diatonic_map(self, key: str) -> list[str]:
         """
@@ -191,7 +199,3 @@ class AlgorithmicGenerator(AbstractMusicGenerator):
             key=key, addon=addon, chords_num=no_of_chords
         )
         return utils.chords_to_notes(chord_progression)  # noqa: F821
-
-
-# TODO : Add andalusian chord progressions
-# TODO : Add andalusian chord progressions

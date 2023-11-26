@@ -1,5 +1,7 @@
 from typing import Dict
 
+from radio.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
+
 
 class AIMusicConfig:
     def __init__(self, generator_config: Dict[str, str]) -> None:
@@ -7,6 +9,7 @@ class AIMusicConfig:
         self.output_dir = generator_config.get("output_dir")
         if not all([self.theme, self.output_dir]):
             raise Exception("AI music configuration is incomplete")
+        create_dir_if_not_exists(self.output_dir)
 
 
 class AlgorithmicMusicConfig:
@@ -14,6 +17,7 @@ class AlgorithmicMusicConfig:
         self.output_dir = generator_config.get("output_dir")
         if not all([self.output_dir]):
             raise Exception("Algorithmic music configuration is incomplete")
+        create_dir_if_not_exists(self.output_dir)
 
 
 class CustomMusicConfig:
@@ -21,6 +25,7 @@ class CustomMusicConfig:
         self.output_dir = generator_config.get("output_dir")
         if not all([self.output_dir]):
             raise Exception("Custom music configuration is incomplete")
+        create_dir_if_not_exists(self.output_dir)
 
 
 class MusicConfig:

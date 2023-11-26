@@ -1,6 +1,11 @@
 from radio.config.music_config import CustomMusicConfig
 
+from ..abstract_generator import AbstractMusicGenerator
 
-class CustomGenerator:
+
+class CustomGenerator(AbstractMusicGenerator):
     def __init__(self, config: CustomMusicConfig):
-        self.config = config
+        super().__init__(config)
+
+    def generate(self, n: int):
+        raise NotImplementedError
