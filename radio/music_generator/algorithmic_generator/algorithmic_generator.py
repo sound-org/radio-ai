@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 import time
@@ -10,12 +11,15 @@ from radio.config.music_config import AlgorithmicMusicConfig
 from ..abstract_generator import AbstractMusicGenerator
 from . import utils
 
+logger = logging.getLogger(__name__)
+
 
 class AlgorithmicGenerator(AbstractMusicGenerator):
     def __init__(self, config: AlgorithmicMusicConfig):
         super().__init__(config)
 
     def generate(self, n: int):
+        logger.info("Generating %d songs...", n)
         for _ in range(n):
             self._generate_music()
 

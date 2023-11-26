@@ -38,7 +38,7 @@ class MusicGenerator:
         self._generate_algorithmic_music(n)
         self._generate_custom_music(n)
 
-    def get_music(self, n: int):
+    def get_music(self, n: int) -> List[str]:
         music_files = []
         for generator in self.ai_generators:
             music_files += generator.get_music(n)

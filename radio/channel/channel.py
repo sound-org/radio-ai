@@ -1,7 +1,7 @@
 import logging
 import os
-import random
 import time
+from typing import List
 
 from radio.channel.audio_merger import AudioMerger
 from radio.config.channel_config import ChannelConfig
@@ -42,18 +42,20 @@ class Channel:
     def _react_to_email_message(self) -> tuple[str, str]:
         return self._speaker.react_to_email_message()
 
-    def _get_ai_music(self):
-        # TODO: it's just a mock for now
+    # def _get_ai_music(self):
+    #     # TODO: it's just a mock for now
 
-        filenames = [
-            "audio_samples/musicgen_1.wav",
-            "audio_samples/musicgen_2.wav",
-        ]
-        return random.choice(filenames)
+    #     filenames = [
+    #         "audio_samples/musicgen_1.wav",
+    #         "audio_samples/musicgen_2.wav",
+    #     ]
+    #     return random.choice(filenames)
 
-    def _get_algorithmic_music(self):
-        # TODO: it's just a mock for now
-        return "audio_samples/algorithm_1.wav"
+    # def _get_algorithmic_music(self):
+    #     # TODO: it's just a mock for now
+    #     return "audio_samples/algorithm_1.wav"
+    def _get_music(self, n: int) -> List[str]:
+        return self._music_generator.get_music(n)
 
     def _prepare_broadcast_for_streaming(self, broadcast_file: str, timestamp: str):
         logger.info("Preparing broadcast in file %s for streaming...", broadcast_file)
@@ -86,20 +88,18 @@ class Channel:
         _, speaker_reaction_to_email_path = self._react_to_email_message()
 
         logger.info("Generating music...")
-        ai_music_path = self._get_ai_music()
-        algorithmic_music_path = self._get_algorithmic_music()
+        music_paths: List[str] = self._get_music(n=2)
 
         intro_path = self._get_intro()
         outro_path = self._get_outro()
 
-        paths_to_audio_files = [
-            intro_path,
-            speaker_lines_path,
-            speaker_reaction_to_email_path,
-            ai_music_path,
-            algorithmic_music_path,
-            outro_path,
-        ]
+        paths_to_audio_files: List[str] = []
+        paths_to_audio_files.append(intro_path)
+        paths_to_audio_files.append(speaker_lines_path)
+        paths_to_audio_files.append(speaker_reaction_to_email_path)
+        paths_to_audio_files.extend(music_paths)
+        paths_to_audio_files.append(outro_path)
+
         output_file = os.path.join(
             self._broadcast_output_dir, f"broadcast-{timestamp}.mp3"
         )

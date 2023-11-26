@@ -363,3 +363,4 @@ def save_midi_as_mp3(
     subprocess.run(fluidsynth_command, shell=True, check=True)
     subprocess.run(ffmpeg_command, shell=True, check=True)
     os.remove(midi_filename)
+    os.remove("temp.wav")
