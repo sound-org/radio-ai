@@ -15,8 +15,59 @@
                 "output_dir": "channels/1/speaker"
             },
             "music": {
-                "theme": "theme1",
-                "output_dir": "channels/1/music"
+                "music_generators": [
+                    {
+                        "type": "ai",
+                        "theme": "Classic jazz music with a modern twist",
+                        "output_dir": "channels/1/music/ai"
+                    },
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/1/music/algorithmic"
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 2,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 2,
+            "name": "channel-2",
+            "description": "channel-2 description",
+            "hls_path": "channels/2/streaming/manifest",
+            "broadcast_output_dir": "channels/2/broadcast",
+            "streaming_output_dir": "channels/2/streaming",
+            "speaker": {
+                "name": "Bob",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "Your are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "output_dir": "channels/2/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "ai",
+                        "theme": "Classic jazz music with a modern twist",
+                        "output_dir": "channels/2/music/ai"
+                    },
+                    {
+                        "type": "ai",
+                        "theme": "Good old rock music",
+                        "output_dir": "channels/2/music/ai"
+                    },
+                    {
+                        "type": "ai",
+                        "theme": "Psychedelic and alternative rock music like a Pink Floyd",
+                        "output_dir": "channels/2/music/ai"
+                    }
+                ]
             },
             "hls": {
                 "buffer": 10,
