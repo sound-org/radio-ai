@@ -12,7 +12,7 @@ const App: React.FC = (): ReactElement => {
 
     // Settings
     const useLocalConfig:boolean = false;
-    const serverRoot:string = "http://streaming:8080/";
+    const serverRoot:string = "http://localhost:8080/";
 
     // Music controls
     const MAX_VOLUME = 20;
