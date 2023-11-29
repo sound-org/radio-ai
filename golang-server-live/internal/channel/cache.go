@@ -49,7 +49,6 @@ func (cache *Cache) add(path string) error {
 	defer file.Close()
 
 	name := strings.TrimLeft(filepath.Dir(path), cache.src)
-	log.Printf("[DEBUG] Added %s (%s) to cache\n", path, name)
 
 	if _, ok := cache.playlists[name]; !ok {
 		playlist, err := hls.Load(file)
@@ -57,6 +56,7 @@ func (cache *Cache) add(path string) error {
 			return err
 		}
 		cache.playlists[name] = playlist
+		log.Printf("[DEBUG] Added %s (%s) to cache\n", path, name)
 	}
 
 	return nil

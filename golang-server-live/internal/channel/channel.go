@@ -67,6 +67,9 @@ func Run(channel *Channel, quit *chan bool) {
 
 	stream := time.NewTicker(10 * time.Second)
 	go startUpdating(channel, stream, quit)
+
+	refresh := time.NewTicker(20 * time.Second)
+	go startRefreshing(channel, refresh, quit)
 }
 
 func startUpdating(channel *Channel, ticker *time.Ticker, quit *chan bool) {
@@ -105,6 +108,21 @@ func startUpdating(channel *Channel, ticker *time.Ticker, quit *chan bool) {
 			return
 		}
 	}
+}
+
+func startRefreshing(channel *Channel, ticker *time.Ticker, quit *chan bool) {
+
+	for {
+		select {
+		case <-ticker.C:
+			channel.cache.Refresh()
+			log.Printf("Channel(%v) Refreshed\n", channel.Config.Id)
+		case <-*quit:
+			ticker.Stop()
+			return
+		}
+	}
+
 }
 
 func (channel *Channel) Stream() hls.Playlist {
