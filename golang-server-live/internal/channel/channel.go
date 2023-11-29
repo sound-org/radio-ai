@@ -130,7 +130,7 @@ func (channel *Channel) Stream() hls.Playlist {
 }
 
 func mapTs(path string, playlist *hls.Playlist) hls.Playlist {
-	log.Printf("[DEBUG] Mapping to %s\n", filepath.Base(path))
+	log.Printf("[DEBUG] Mapping %s to %s\n", path, filepath.Base(path))
 	return hls.Playlist{
 		Metadata: playlist.Metadata,
 		ToDelete: playlist.ToDelete,
