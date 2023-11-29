@@ -19,11 +19,13 @@
                     {
                         "type": "ai",
                         "theme": "Classic jazz music with a modern twist",
-                        "output_dir": "channels/1/music/ai"
+                        "output_dir": "channels/1/music/ai",
+                        "num_tracks_to_combine": 5
                     },
                     {
                         "type": "algorithmic",
-                        "output_dir": "channels/1/music/algorithmic"
+                        "output_dir": "channels/1/music/algorithmic",
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },
@@ -55,17 +57,8 @@
                     {
                         "type": "ai",
                         "theme": "jazz with epic saxophone solo",
-                        "output_dir": "channels/2/music/ai"
-                    },
-                    {
-                        "type": "ai",
-                        "theme": "Good old rock music",
-                        "output_dir": "channels/2/music/ai"
-                    },
-                    {
-                        "type": "ai",
-                        "theme": "Psychedelic and alternative rock music like a Pink Floyd",
-                        "output_dir": "channels/2/music/ai"
+                        "output_dir": "channels/2/music/ai",
+                        "num_tracks_to_combine": 5
                     }
                 ]
             },
