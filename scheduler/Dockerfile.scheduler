@@ -1,0 +1,18 @@
+FROM alpine:latest
+
+# Install cron and curl
+RUN apk add --no-cache curl dcron
+
+# Copy the scripts that will be executed by cron
+COPY generate_music.sh /usr/src/app/
+COPY generate_new_broadcast.sh /usr/src/app/
+
+COPY my_crontab /etc/crontabs/root
+
+RUN chmod +x /usr/src/app/generate_music.sh
+RUN chmod +x /usr/src/app/generate_new_broadcast.sh
+
+RUN touch /var/log/cron.log
+
+# Start the cron daemon
+CMD crond -l 2 -f && tail -f /var/log/cron.log

@@ -30,17 +30,24 @@ class PyTTSx3Engine:
         engine: pyttsx3.Engine = (
             self._get_engine()
         )  # NOTE: save_to_file never returns after second call, so we need to create a new engine every time...
-        logger.info("Saying: %s", text)
         engine.save_to_file(text=text, filename=filename)
         engine.runAndWait()
 
-        time.sleep(0.5)
+        while not os.path.exists(filename):
+            logger.info("Waiting for file %s to be created...", filename)
+            time.sleep(2)
+
         logger.info("Renaming %s to %s", filename, path)
         # os.renames(
         #     filename, path
         # )  # NOTE: a hack to save the file to correct directory, pyttsx3 don't allow (or just don't work) to save a file to a specific directory...
-        shutil.move(filename, path)
-
-        del engine
+        try:
+            shutil.move(filename, path)
+        except Exception as e:
+            logger.error("Failed to move file: %s", e)
+            raise e
+        finally:
+            engine.stop()
+            del engine
 
         return path

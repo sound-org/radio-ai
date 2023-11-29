@@ -25,14 +25,17 @@ valid_music_config = {
             "type": "ai",
             "theme": "theme1",
             "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "algorithmic",
             "output_dir": "channels/1/music/algorithmic",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "custom",
             "output_dir": "channels/1/music/custom",
+            "num_tracks_to_combine": 2,
         },
     ]
 }
@@ -43,10 +46,12 @@ invalid_music_config_missing_output_path_for_custom_generator = {
             "type": "ai",
             "theme": "theme1",
             "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "algorithmic",
             "output_dir": "channels/1/music/algorithmic",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "custom",
@@ -61,14 +66,17 @@ invalid_music_generator_unknown_type = {
             "type": "ai",
             "theme": "theme1",
             "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "algorithmic",
             "output_dir": "channels/1/music/algorithmic",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "unknown",
             "output_dir": "channels/1/music/custom",
+            "num_tracks_to_combine": 2,
         },
     ]
 }
@@ -79,19 +87,23 @@ valid_muisc_config_with_multiple_ai_generators = {
             "type": "ai",
             "theme": "theme1",
             "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "ai",
             "theme": "theme2",
             "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "algorithmic",
             "output_dir": "channels/1/music/algorithmic",
+            "num_tracks_to_combine": 2,
         },
         {
             "type": "custom",
             "output_dir": "channels/1/music/custom",
+            "num_tracks_to_combine": 2,
         },
     ]
 }
@@ -102,6 +114,7 @@ valid_music_config_with_single_ai_generator = {
             "type": "ai",
             "theme": "theme1",
             "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
         },
     ]
 }

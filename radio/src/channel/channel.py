@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 import time
 from typing import List
 
@@ -27,10 +28,15 @@ class Channel:
         create_dir_if_not_exists(self._streaming_output_dir)
 
     def create_broadcast(self):
-        ts = str(int(time.time()))
-        broadcast_file: str = self._compose_broadcast(timestamp=ts)
+        ts = int(time.time())
+        filename: str = time.strftime("%Y%m%d-%H%M%S")
+        broadcast_file: str = self._compose_broadcast(
+            filename=filename, timestamp=str(ts)
+        )
         self._prepare_broadcast_for_streaming(
-            broadcast_file=broadcast_file, timestamp=ts
+            broadcast_file=broadcast_file,
+            human_readable_timestamp=filename,
+            timestamp=str(ts),
         )
 
     def _generate_music(self, n: int):
@@ -42,22 +48,12 @@ class Channel:
     def _react_to_email_message(self) -> tuple[str, str]:
         return self._speaker.react_to_email_message()
 
-    # def _get_ai_music(self):
-    #     # TODO: it's just a mock for now
+    def _get_music(self) -> List[str]:
+        return self._music_generator.get_music()
 
-    #     filenames = [
-    #         "audio_samples/musicgen_1.wav",
-    #         "audio_samples/musicgen_2.wav",
-    #     ]
-    #     return random.choice(filenames)
-
-    # def _get_algorithmic_music(self):
-    #     # TODO: it's just a mock for now
-    #     return "audio_samples/algorithm_1.wav"
-    def _get_music(self, n: int) -> List[str]:
-        return self._music_generator.get_music(n)
-
-    def _prepare_broadcast_for_streaming(self, broadcast_file: str, timestamp: str):
+    def _prepare_broadcast_for_streaming(
+        self, broadcast_file: str, human_readable_timestamp: str, timestamp: str
+    ):
         logger.info("Preparing broadcast in file %s for streaming...", broadcast_file)
         output_dir = os.path.join(self._streaming_output_dir, timestamp)
         create_dir_if_not_exists(output_dir)
@@ -69,7 +65,13 @@ class Channel:
             f"-segment_format mpegts {output_dir}/output-{timestamp}%03d.ts"
         )
         try:
-            os.system(os_command)
+            subprocess.run(
+                args=os_command,
+                shell=True,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
         except Exception as e:
             logger.error(f"Error while running command: {os_command}")
             logger.error(f"Error message: {e}")
@@ -80,7 +82,7 @@ class Channel:
     def _get_outro(self):
         return "audio_samples/sample-2.mp3"
 
-    def _compose_broadcast(self, timestamp: str) -> str:
+    def _compose_broadcast(self, filename: str, timestamp: str) -> str:
         logger.info("Composing broadcast...")
 
         logger.info("Generating speaker lines...")
@@ -88,7 +90,7 @@ class Channel:
         _, speaker_reaction_to_email_path = self._react_to_email_message()
 
         logger.info("Generating music...")
-        music_paths: List[str] = self._get_music(n=2)
+        music_paths: List[str] = self._get_music()
 
         intro_path = self._get_intro()
         outro_path = self._get_outro()
@@ -101,7 +103,8 @@ class Channel:
         paths_to_audio_files.append(outro_path)
 
         output_file = os.path.join(
-            self._broadcast_output_dir, f"broadcast-{timestamp}.mp3"
+            self._broadcast_output_dir,
+            f"broadcast-{filename}-{timestamp}.mp3",
         )
 
         logger.info("Merging audio files and saving to %s", output_file)
