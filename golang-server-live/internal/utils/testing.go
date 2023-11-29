@@ -4,8 +4,8 @@ import (
 	"os"
 )
 
-func CreateFile(content, path string) (*os.File, error) {
-	file, err := os.CreateTemp(path, "test*.m3u8")
+func CreateFile(content, path, nameRegex string) (*os.File, error) {
+	file, err := os.CreateTemp(path, nameRegex)
 	if err != nil {
 		return nil, err
 	}

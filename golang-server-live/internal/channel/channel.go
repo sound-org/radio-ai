@@ -73,7 +73,7 @@ func Run(channel *Channel, quit *chan bool) {
 }
 
 func startUpdating(channel *Channel, ticker *time.Ticker, quit *chan bool) {
-	log.Printf("Channel(%d) \"%s\" running...\n", channel.Config.Id, channel.Config.Desc)
+	log.Printf("[INFO] Channel(%d) \"%s\" running...\n", channel.Config.Id, channel.Config.Desc)
 	current := 0
 	// TODO : fow to get  offset for the 1st time?
 	offset := int(channel.Config.Stream.Buffer)
@@ -116,7 +116,7 @@ func startRefreshing(channel *Channel, ticker *time.Ticker, quit *chan bool) {
 		select {
 		case <-ticker.C:
 			channel.cache.Refresh()
-			log.Printf("Channel(%v) Refreshed\n", channel.Config.Id)
+			log.Printf("[INFO] Channel(%v) refreshed\n", channel.Config.Id)
 		case <-*quit:
 			ticker.Stop()
 			return
@@ -130,7 +130,6 @@ func (channel *Channel) Stream() hls.Playlist {
 }
 
 func mapTs(path string, playlist *hls.Playlist) hls.Playlist {
-	log.Printf("[DEBUG] Mapping %s to %s\n", path, filepath.Base(path))
 	return hls.Playlist{
 		Metadata: playlist.Metadata,
 		ToDelete: playlist.ToDelete,
@@ -138,7 +137,7 @@ func mapTs(path string, playlist *hls.Playlist) hls.Playlist {
 		Ts: utils.Map[hls.TsFile, hls.TsFile](playlist.Ts, func(ts hls.TsFile) hls.TsFile {
 			return hls.TsFile{
 				Header: ts.Header,
-				Name:   filepath.ToSlash(filepath.Join(filepath.Base(path), ts.Name)),
+				Name:   filepath.ToSlash(filepath.Join(path, ts.Name)),
 			}
 		}),
 	}

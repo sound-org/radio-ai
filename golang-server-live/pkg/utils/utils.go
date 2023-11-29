@@ -59,7 +59,6 @@ func GetDirectories(path string) ([]string, error) {
 	for _, e := range entries {
 		if e.IsDir() {
 			dirs = append(dirs, e.Name())
-
 		}
 	}
 

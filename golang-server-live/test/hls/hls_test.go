@@ -1,4 +1,4 @@
-package hls
+package hls_test
 
 import (
 	"log"
@@ -6,13 +6,13 @@ import (
 	"testing"
 
 	"github.com/sound-org/radio-ai/server/internal/hls"
-	test_utils "github.com/sound-org/radio-ai/server/test/utils"
+	test_utils "github.com/sound-org/radio-ai/server/internal/utils"
 )
 
 func TestLoadRecord(t *testing.T) {
 
 	// given
-	file, err := test_utils.CreateFile(test_utils.GetM3U8(), ".")
+	file, err := test_utils.CreateFile(test_utils.GetM3U8(), ".", "test*.m3u8")
 	if err != nil {
 		log.Fatal(err)
 	}

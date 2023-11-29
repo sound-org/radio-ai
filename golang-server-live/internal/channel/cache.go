@@ -34,7 +34,6 @@ func (cache *Cache) refresh() error {
 	}
 
 	for _, entry := range files {
-		log.Printf("[DEBUG] Refreshig... %s \n", entry)
 		cache.add(entry)
 	}
 
@@ -49,9 +48,7 @@ func (cache *Cache) add(path string) error {
 	}
 	defer file.Close()
 
-	//name := strings.TrimLeft(filepath.Dir(path), cache.src) for some reason it is not deterministic! >:-( 
-	name := strings.Split(path, "/")[3]
-	log.Printf("[DEBUG] Adding key %s for path %s (%s)\n", name, filepath.Dir(path), cache.src)
+	name := strings.Split(filepath.ToSlash(path), "/")[3]
 
 	if _, ok := cache.playlists[name]; !ok {
 		playlist, err := hls.Load(file)
@@ -74,8 +71,8 @@ func (cache *Cache) Refresh() error {
 
 func (cache *Cache) Keys() []string {
 	cache.mutex.RLock()
-	defer cache.mutex.RUnlock()
 	keys := utils.Keys[string, *hls.Playlist](cache.playlists)
+	cache.mutex.RUnlock()
 	slices.Sort(keys)
 	return keys
 }
