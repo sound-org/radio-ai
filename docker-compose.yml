@@ -3,16 +3,22 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: radio/Dockerfile.backend
     volumes:
-      - ./channels/:/usr/src/app/channels/
+      - ./channels/:/usr/src/app/radio/channels/
       - ./radio_config.json:/usr/src/app/radio_config.json
-      - ./model_cache:/usr/src/app/model_cache
-      - ./audio_samples:/usr/src/app/audio_samples
-    command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "radio.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
+      - ./model_cache:/usr/src/app/radio/model_cache
+      - ./audio_samples:/usr/src/app/radio/audio_samples
+      - ./radio/src:/usr/src/app/radio/src
+      - ./radio/token_gmail.json:/usr/src/app/radio/token_gmail.json
+    working_dir: /usr/src/app/radio
+    # command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000","--reload"]
+    command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
     ports:
       - 8000:8000
       - 5678:5678
+    env_file:
+      - radio/.env
     networks:
       - app-network
   frontend:
@@ -36,6 +42,15 @@ services:
       networks:
         - app-network
       command: /usr/src/app/golang-server-live/main radio_config.json
+  scheduler:
+      build:
+        context: scheduler
+        dockerfile: Dockerfile.scheduler
+      volumes:
+        - ./scheduler/generate_music.sh:/usr/src/app/generate_music.sh
+        - ./scheduler/generate_new_broadcast.sh:/usr/src/app/generate_new_broadcast.sh
+      networks:
+        - app-network
 
 networks:
   app-network:
