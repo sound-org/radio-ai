@@ -54,7 +54,7 @@
                 "music_generators": [
                     {
                         "type": "ai",
-                        "theme": "Classic jazz music with a modern twist",
+                        "theme": "jazz with epic saxophone solo",
                         "output_dir": "channels/2/music/ai"
                     },
                     {

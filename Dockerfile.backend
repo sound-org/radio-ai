@@ -15,4 +15,8 @@ RUN apt update && apt install -y  espeak ffmpeg fluid-soundfont-gm
 RUN apt-get update && apt-get install -y fluidsynth
 RUN pip install elevenlabs
 COPY --from=build-deps /usr/local /usr/local
-COPY . .
+COPY radio/ ./radio/
+COPY .env .
+COPY logging.ini .
+COPY credentials.json .
+COPY token_gmail.json .

@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import time
 
 import pyttsx3
@@ -35,9 +36,10 @@ class PyTTSx3Engine:
 
         time.sleep(0.5)
         logger.info("Renaming %s to %s", filename, path)
-        os.renames(
-            filename, path
-        )  # NOTE: a hack to save the file to correct directory, pyttsx3 don't allow (or just don't work) to save a file to a specific directory...
+        # os.renames(
+        #     filename, path
+        # )  # NOTE: a hack to save the file to correct directory, pyttsx3 don't allow (or just don't work) to save a file to a specific directory...
+        shutil.move(filename, path)
 
         del engine
 

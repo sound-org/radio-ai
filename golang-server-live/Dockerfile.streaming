@@ -5,7 +5,7 @@ FROM golang:1.21.3 as builder
 WORKDIR /usr/src/app
 
 # Copy the source from the current directory to the Working Directory inside the container
-COPY . .
+COPY ./golang-server-live .
 
 # Change to the directory where go.mod exists
 WORKDIR /usr/src/app/golang-server-live
@@ -20,4 +20,4 @@ WORKDIR /usr/src/app
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
-CMD ["/usr/src/app/golang-server-live/main", "radio_config.json"]
+# CMD ["/usr/src/app/golang-server-live/main", "radio_config.json"]

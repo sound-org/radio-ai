@@ -5,34 +5,37 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     volumes:
-      - .:/usr/src/app
+      - ./channels/:/usr/src/app/channels/
+      - ./radio_config.json:/usr/src/app/radio_config.json
+      - ./model_cache:/usr/src/app/model_cache
+      - ./audio_samples:/usr/src/app/audio_samples
     command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "radio.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
     ports:
       - 8000:8000
       - 5678:5678
-    # env_file:
-    #   - .env
     networks:
       - app-network
-  # frontend:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.frontend
-  #   ports:
-  #     - "3000:3000"
-  #   restart: always
-  #   networks:
-  #     - app-network
-  # streaming:
-  #     volumes:
-  #       - .:/usr/src/app
-  #     build:
-  #       context: .
-  #       dockerfile: Dockerfile.streaming
-  #     ports:
-  #       - "8080:8080"
-  #     networks:
-  #       - app-network
+  frontend:
+    build:
+      context: .
+      dockerfile: player/Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - app-network
+  streaming:
+      build:
+        context: .
+        dockerfile: golang-server-live/Dockerfile.streaming
+      volumes:
+        - ./radio_config.json:/usr/src/app/radio_config.json
+        - ./channels:/usr/src/app/channels
+      ports:
+        - "8080:8080"
+      networks:
+        - app-network
+      command: /usr/src/app/golang-server-live/main radio_config.json
 
 networks:
   app-network:
