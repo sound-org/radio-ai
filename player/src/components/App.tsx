@@ -17,54 +17,45 @@ const App: React.FC = (): ReactElement => {
     // Music controls
     const MAX_VOLUME = 20;
     const [, setVolume] = useState(MAX_VOLUME)
-    const [, setDuration] = useState(0);
-    const [, setCurrentTime] = useState(0);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
 
     // Channel handling
     const [channelsInfo, setChannelsInfo] = useState<ChannelInfo[]>([]);
     const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
-    const [manifestUrl, setManifestUrl] = useState<string>(serverRoot + "channels/1/streaming/manifest");
+    const [manifestUrl, setManifestUrl] = useState<string>();
     const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
-    const [resumePlaying, setResumePlaying] = useState(false);
+    const [firstPlay, setFirstPlay] = useState(true);
 
     const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
         setManifestUrl(newUrl);
+        console.log("Switched channel")
         setActiveChannelIdx(newIdx);
         setThumbnailPath(newImgPath);
-        setResumePlaying(true);
+        if (analyzerData === null) {
+            audioAnalyzer();
+        }
+        setIsPlaying(false);
+        setFirstPlay(false);
     }
 
     // HLS
     const hlsRef = useRef<Hls | null>(null);
 
-    // HLS setup
+    // HLS manifest change
     useEffect(() => {
-        if (audioRef.current) {
-            hlsRef.current = new Hls();
-            hlsRef.current.attachMedia(audioRef.current);
-            hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
-                hlsRef.current?.loadSource(manifestUrl);
-
-                hlsRef.current?.on(Hls.Events.MANIFEST_PARSED, () => {
-                    hlsRef.current?.on(Hls.Events.LEVEL_LOADED, (_: string, data) => {
-                        const duration = data.details.totalduration;
-                        setDuration(duration);
-                        setCurrentTime(0);
-                        if (resumePlaying) {
-                            audioRef.current!.play();
-                            setIsPlaying(true);
-                            setResumePlaying(false);
-                        }
-                    })
-                })
-            })
+        if (manifestUrl !== undefined) {
+            console.log("New manifest loaded: " + serverRoot + manifestUrl)
+            hlsRef.current?.loadSource(serverRoot + manifestUrl);
+            if(!firstPlay) {
+                togglePlay();
+            }
         }
     }, [manifestUrl])
 
-    // Radio config
+    // Radio config = run once
     useEffect(() => {
+        // Fetch info
         fetch(useLocalConfig ? "../radio_config.json" : serverRoot + "info", {
                 headers : {
                     'Content-Type': 'application/json',
@@ -77,9 +68,18 @@ const App: React.FC = (): ReactElement => {
             }).then((json) => {
                 const info: ChannelInfo[] = json as ChannelInfo[];
                 setChannelsInfo(info);
+                setManifestUrl(info[0].hls_path);
                 }
-            );
-        }, []);
+            ).catch(() => {
+              console.error("SERVER ERROR");
+        });
+
+        // Setup HLS
+        hlsRef.current = new Hls();
+        if (audioRef.current) {
+            hlsRef.current.attachMedia(audioRef.current);
+        }
+    }, []);
 
     // Audio analyzer
     const [analyzerData, setAnalyzerData] = useState<any>(null);
@@ -104,8 +104,11 @@ const App: React.FC = (): ReactElement => {
 
     function togglePlay(): void {
         if (isPlaying) {
-            audioRef.current!.pause();
-            setIsPlaying(false);
+            // console.log(audioRef.current!.currentTime)
+            if (audioRef.current!.currentTime > 0) {
+                audioRef.current!.pause();
+                setIsPlaying(false);
+            }
         } else {
             audioRef.current!.play();
             setIsPlaying(true);
@@ -130,7 +133,7 @@ const App: React.FC = (): ReactElement => {
         <div className="App">
             <div className="Channels">
                 {channelsInfo.map((info, i) => {
-                    return <Channel key={i} num={info.id} hlsPath={serverRoot + info.hls_path} thumbnailPath={`/assets/thumb${info.id}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
+                    return <Channel key={i} num={info.id} hlsPath={info.hls_path} thumbnailPath={`/assets/thumb${info.id}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
                 })}
             </div>
             <div className="Radio">
