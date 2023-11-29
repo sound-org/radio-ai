@@ -56,16 +56,6 @@
                         "type": "ai",
                         "theme": "jazz with epic saxophone solo",
                         "output_dir": "channels/2/music/ai"
-                    },
-                    {
-                        "type": "ai",
-                        "theme": "Good old rock music",
-                        "output_dir": "channels/2/music/ai"
-                    },
-                    {
-                        "type": "ai",
-                        "theme": "Psychedelic and alternative rock music like a Pink Floyd",
-                        "output_dir": "channels/2/music/ai"
                     }
                 ]
             },
