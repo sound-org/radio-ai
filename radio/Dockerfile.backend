@@ -1,19 +1,20 @@
-
 FROM python:3.9-slim as build-deps
 
 WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y gcc portaudio19-dev
+
+RUN pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 -f https://download.pytorch.org/whl/torch_stable.html
+
 COPY radio/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 # RUN --mount=type=cache,target=/root/.cache pip install --no-cache-dir
-RUN pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 -f https://download.pytorch.org/whl/torch_stable.html
 FROM python:3.9-slim
+
+RUN apt-get update && apt-get install -y  fluidsynth
+RUN apt update && apt install -y  espeak ffmpeg fluid-soundfont-gm
 
 WORKDIR /usr/src/app
 
-RUN apt update && apt install -y  espeak ffmpeg fluid-soundfont-gm
-RUN apt-get update && apt-get install -y fluidsynth
-RUN pip install elevenlabs
 COPY --from=build-deps /usr/local /usr/local
 COPY radio/ radio/
 # ENV PYTHONPATH=/usr/src/app/radio/src

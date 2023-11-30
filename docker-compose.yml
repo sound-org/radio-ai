@@ -7,7 +7,7 @@ services:
     volumes:
       - ./channels/:/usr/src/app/channels/
       - ./radio_config.json:/usr/src/app/radio_config.json
-      - ./model_cache:/usr/src/app/model_cache
+      - ./model_cache:/usr/src/app/radio/model_cache
       - ./audio_samples:/usr/src/app/audio_samples
       - ./radio/src:/usr/src/app/radio/src
     working_dir: /usr/src/app/radio
