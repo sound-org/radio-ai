@@ -15,28 +15,6 @@ logger = logging.getLogger(__name__)
 # Define the cache directory path
 CACHE_DIR = "model_cache"
 
-# Check if the cache directory exists, if not, create it
-if not os.path.exists(CACHE_DIR):
-    os.makedirs(CACHE_DIR)
-
-# Check if the model files exist in the cache directory, if not, download them
-if not os.path.exists(os.path.join(CACHE_DIR, "processor")):
-    processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
-    processor.save_pretrained(os.path.join(CACHE_DIR, "processor"))
-else:
-    processor = AutoProcessor.from_pretrained(os.path.join(CACHE_DIR, "processor"))
-
-if not os.path.exists(os.path.join(CACHE_DIR, "model")):
-    model = MusicgenForConditionalGeneration.from_pretrained("facebook/musicgen-small")
-    model.save_pretrained(os.path.join(CACHE_DIR, "model"))
-else:
-    model = MusicgenForConditionalGeneration.from_pretrained(
-        os.path.join(CACHE_DIR, "model")
-    )
-
-# 512 is equivalent to around 10 seconds of audio
-model.generation_config.max_new_tokens = 256 * 6 - 128  # 512 * 3 - 128
-
 
 class AIGenerator(AbstractMusicGenerator):
     def __init__(self, config: AIMusicConfig) -> None:
@@ -44,6 +22,31 @@ class AIGenerator(AbstractMusicGenerator):
         self.theme = config.theme
 
     def generate(self, n: int):
+        # Check if the cache directory exists, if not, create it
+        if not os.path.exists(CACHE_DIR):
+            os.makedirs(CACHE_DIR)
+
+        # Check if the model files exist in the cache directory, if not, download them
+        if not os.path.exists(os.path.join(CACHE_DIR, "processor")):
+            processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
+            processor.save_pretrained(os.path.join(CACHE_DIR, "processor"))
+        else:
+            processor = AutoProcessor.from_pretrained(
+                os.path.join(CACHE_DIR, "processor")
+            )
+
+        if not os.path.exists(os.path.join(CACHE_DIR, "model")):
+            model = MusicgenForConditionalGeneration.from_pretrained(
+                "facebook/musicgen-small"
+            )
+            model.save_pretrained(os.path.join(CACHE_DIR, "model"))
+        else:
+            model = MusicgenForConditionalGeneration.from_pretrained(
+                os.path.join(CACHE_DIR, "model")
+            )
+
+        # 512 is equivalent to around 10 seconds of audio
+        model.generation_config.max_new_tokens = 256 * 6 - 128  # 512 * 3 - 128
         logger.info("Generating %d songs with theme %s", n, self.theme)
         inputs = processor(
             text=[theme for theme in [self.theme] * n],
@@ -58,6 +61,8 @@ class AIGenerator(AbstractMusicGenerator):
 
         print("generation time: ", end_time_generation - start_time_generation)
         sampling_rate = model.config.audio_encoder.sampling_rate
+
+        del model
 
         for song in audio_values:
             scipy.io.wavfile.write(

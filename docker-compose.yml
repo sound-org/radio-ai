@@ -10,6 +10,7 @@ services:
       - ./model_cache:/usr/src/app/radio/model_cache
       - ./audio_samples:/usr/src/app/audio_samples
       - ./radio/src:/usr/src/app/radio/src
+      - ./radio/token_gmail.json:/usr/src/app/radio/token_gmail.json
     working_dir: /usr/src/app/radio
     command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
     ports:
