@@ -25,7 +25,7 @@ class AIGenerator(AbstractMusicGenerator):
         # Check if the cache directory exists, if not, create it
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
-
+        logger.info("Loading model for music generation")
         # Check if the model files exist in the cache directory, if not, download them
         if not os.path.exists(os.path.join(CACHE_DIR, "processor")):
             processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
@@ -46,7 +46,7 @@ class AIGenerator(AbstractMusicGenerator):
             )
 
         # 512 is equivalent to around 10 seconds of audio
-        model.generation_config.max_new_tokens = 256 * 6 - 128  # 512 * 3 - 128
+        model.generation_config.max_new_tokens = 128  # 512 * 3 - 128
         logger.info("Generating %d songs with theme %s", n, self.theme)
         inputs = processor(
             text=[theme for theme in [self.theme] * n],

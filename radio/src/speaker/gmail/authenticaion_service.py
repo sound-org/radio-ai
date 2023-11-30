@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from typing import List, Tuple, cast
 
@@ -20,8 +19,6 @@ class AuthenticationService:
         )
         self.scopes: List[str] = scopes
 
-        print("cwd", os.getcwd())
-        print("000000000000000000000000000000000000000000000")
         self.flow: Flow = Flow.from_client_secrets_file(
             client_secrets_file=secrets_file, scopes=scopes, redirect_uri=redirect_uri
         )
