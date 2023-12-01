@@ -1,4 +1,4 @@
-package streaming_test
+package channel_test
 
 import (
 	"log"
