@@ -15,7 +15,7 @@ const App: React.FC = (): ReactElement => {
     const serverRoot:string = "http://localhost:8080/";
 
     // Music controls
-    const MAX_VOLUME = 20;
+    const MAX_VOLUME = 30;
     const [, setVolume] = useState(MAX_VOLUME)
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -75,7 +75,14 @@ const App: React.FC = (): ReactElement => {
         });
 
         // Setup HLS
-        hlsRef.current = new Hls();
+        hlsRef.current = new Hls({
+            enableWorker: true,
+            maxBufferLength: 1,
+            liveSyncDuration: 0,
+            liveMaxLatencyDuration: 5,
+            liveDurationInfinity: true,
+            highBufferWatchdogPeriod: 1
+        });
         if (audioRef.current) {
             hlsRef.current.attachMedia(audioRef.current);
         }
