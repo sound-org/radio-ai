@@ -12,6 +12,7 @@ router = APIRouter(prefix="/channels", tags=["channel"])
 
 @router.get(path="/create-broadcast")
 def create_broadcast():
+    logger.info("Create broadcast endpoint called")
     for channel in content_creator.channels:
         if channel._speaker._tts.get_TTS_driver_name() == "elevenlabs":
             continue

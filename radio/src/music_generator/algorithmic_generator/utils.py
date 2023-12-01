@@ -1,8 +1,11 @@
+import logging
+import os
 from enum import Enum
 
 from midiutil import MIDIFile
 from mingus.core import chords
 
+logger = logging.getLogger(__name__)
 errors = {"notes": "Bad input :(\n", "length": "Incorrect length of the input list\n"}
 
 NOTES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"]
@@ -355,12 +358,24 @@ def save_midi_as_mp3(
     soundfont_path = "/usr/share/sounds/sf2/FluidR3_GM.sf2"
     with open(midi_filename, "wb") as output_file:
         midi_file.writeFile(output_file)
-
+    logger.info("Converting MIDI file to MP3...")
     # fluidsynth_command = f"fluidsynth -ni {soundfont_path} {midi_filename} -F - | ffmpeg -f s32le -i - {mp3_filename}"
     fluidsynth_command = f"fluidsynth -ni {soundfont_path} {midi_filename} -F temp.wav"
     ffmpeg_command = f"ffmpeg -i temp.wav {mp3_filename}"
-
-    subprocess.run(fluidsynth_command, shell=True, check=True)
-    subprocess.run(ffmpeg_command, shell=True, check=True)
+    subprocess.run(
+        fluidsynth_command,
+        shell=True,
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    subprocess.run(
+        ffmpeg_command,
+        shell=True,
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     os.remove(midi_filename)
     os.remove("temp.wav")
+    logger.info("Conversion finished, output file: %s", mp3_filename)

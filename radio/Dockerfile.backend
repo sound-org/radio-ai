@@ -17,4 +17,3 @@ WORKDIR /usr/src/app
 
 COPY --from=build-deps /usr/local /usr/local
 COPY radio/ radio/
-# ENV PYTHONPATH=/usr/src/app/radio/src

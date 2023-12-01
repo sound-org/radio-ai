@@ -19,7 +19,7 @@ class AlgorithmicGenerator(AbstractMusicGenerator):
         super().__init__(config)
 
     def generate(self, n: int):
-        logger.info("Generating %d songs...", n)
+        logger.info("Generating %d songs algorithimcally...", n)
         for _ in range(n):
             self._generate_music()
 
@@ -32,19 +32,19 @@ class AlgorithmicGenerator(AbstractMusicGenerator):
 
         # main line --> quarter notes
         notes_melody = self._create_random_melody(primary_key, 0, no_of_chords=base_len)
-        print(notes_melody)
+        # print(notes_melody)
 
         # bass line --> whole notes
         notes_bass = self._create_random_melody(
             secondary_key, 0, no_of_chords=base_len // 4
         )
-        print(notes_bass)
+        # print(notes_bass)
 
         # additional line --> eight notes with offset
         additional_notes = self._create_random_melody(
             "C", 0, no_of_chords=base_len * 2 * 3 // 4
         )
-        print(additional_notes)
+        # print(additional_notes)
 
         myMIDI = MIDIFile(1)
         myMIDI.addTempo(track=0, time=0, tempo=60)
@@ -194,7 +194,7 @@ class AlgorithmicGenerator(AbstractMusicGenerator):
             + [random.choice(middle) for _ in range(chords_num - 2)]
             + [random.choice(ending)]
         )
-        print(progression)
+        # print(progression)
 
         return self._get_from_progression(key=key, progression=progression, addon=addon)
 
