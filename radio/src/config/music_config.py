@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, List
 
 from src.data_storage.create_dir_if_not_exist import create_dir_if_not_exists
 
@@ -45,9 +45,9 @@ class MusicConfig:
         if not isinstance(music_generators, list):
             raise Exception("Music generators should be a list")
 
-        self.ai_generators = []
-        self.algorithmic_generators = []
-        self.custom_generators = []
+        self.ai_generators: List[AIMusicConfig] = []
+        self.algorithmic_generators: List[AlgorithmicMusicConfig] = []
+        self.custom_generators: List[CustomMusicConfig] = []
         for music_generator in music_generators:
             music_generator_type = music_generator.get("type")
             if not music_generator_type:

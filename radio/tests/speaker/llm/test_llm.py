@@ -4,7 +4,7 @@ from tests.conftest import RUN_EXTERNAL_API_TESTS
 
 def test_get_random_lines():
     if not RUN_EXTERNAL_API_TESTS:
-        assert False
+        assert False, "Not running external API tests"
     llm = LLM("test personality, say exacly one word")
     lines = llm.generate_speaker_lines("get next lines")
     assert isinstance(lines, str)
@@ -13,7 +13,7 @@ def test_get_random_lines():
 
 def test_react_to_email_message():
     if not RUN_EXTERNAL_API_TESTS:
-        assert False
+        assert False, "Not running external API tests"
     llm = LLM("test personality, say exacly one word")
     lines = llm.react_to_email_message("this is random email    ")
     assert isinstance(lines, str)

@@ -14,42 +14,45 @@ from ..abstract_generator import AbstractMusicGenerator
 logger = logging.getLogger(__name__)
 
 # Define the cache directory path
-CACHE_DIR = "model_cache"
 
 
 class AIGenerator(AbstractMusicGenerator):
-    def __init__(self, config: AIMusicConfig) -> None:
+    def __init__(
+        self, config: AIMusicConfig, max_new_tokens: int = 512 * 2 + 128
+    ) -> None:
         super().__init__(config)
         self.theme = config.theme
+        self.max_new_tokens = max_new_tokens
+        self.CACHE_DIR = "model_cache"
 
     def generate(self, n: int):
         # Check if the cache directory exists, if not, create it
-        if not os.path.exists(CACHE_DIR):
-            os.makedirs(CACHE_DIR)
+        if not os.path.exists(self.CACHE_DIR):
+            os.makedirs(self.CACHE_DIR)
         logger.info("Loading model for music generation for theme %s", self.theme)
         # Check if the model files exist in the cache directory, if not, download them
-        if not os.path.exists(os.path.join(CACHE_DIR, "processor")):
+        if not os.path.exists(os.path.join(self.CACHE_DIR, "processor")):
             logger.info("Model not found, downloading")
             processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
-            processor.save_pretrained(os.path.join(CACHE_DIR, "processor"))
+            processor.save_pretrained(os.path.join(self.CACHE_DIR, "processor"))
         else:
             processor = AutoProcessor.from_pretrained(
-                os.path.join(CACHE_DIR, "processor")
+                os.path.join(self.CACHE_DIR, "processor")
             )
 
-        if not os.path.exists(os.path.join(CACHE_DIR, "model")):
+        if not os.path.exists(os.path.join(self.CACHE_DIR, "model")):
             logger.info("Model not found, downloading")
             model = MusicgenForConditionalGeneration.from_pretrained(
                 "facebook/musicgen-small"
             )
-            model.save_pretrained(os.path.join(CACHE_DIR, "model"))
+            model.save_pretrained(os.path.join(self.CACHE_DIR, "model"))
         else:
             model = MusicgenForConditionalGeneration.from_pretrained(
-                os.path.join(CACHE_DIR, "model")
+                os.path.join(self.CACHE_DIR, "model")
             )
 
         # 512 is equivalent to around 10 seconds of audio
-        model.generation_config.max_new_tokens = 512 * 2 + 128
+        model.generation_config.max_new_tokens = self.max_new_tokens
         logger.info("Generating %d songs with theme %s", n, self.theme)
         inputs = processor(
             text=[self.theme for _ in range(n)],

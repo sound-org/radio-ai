@@ -16,7 +16,7 @@ speaker_config_json = {
 
 def test_generate_random_lines():
     if not RUN_EXTERNAL_API_TESTS:
-        assert False
+        assert False, "Not running external API tests"
     tmp_dir = tempfile.mkdtemp()
     assert os.path.exists(tmp_dir)
     speaker_config_json["output_dir"] = tmp_dir
