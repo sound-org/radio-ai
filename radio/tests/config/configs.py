@@ -1,11 +1,5 @@
 # Sample data for testing
-valid_speaker_config = {
-    "name": "Speaker1",
-    "voice": "Voice1",
-    "TTS": "ELEVENLABS",
-    "personality": "Friendly",
-    "output_dir": "output_dir",
-}
+
 
 incomplete_speaker_config = {
     "name": "Speaker1"
@@ -18,27 +12,6 @@ incomplete_channel_config = {
     # Missing other fields
 }
 
-
-valid_music_config = {
-    "music_generators": [
-        {
-            "type": "ai",
-            "theme": "theme1",
-            "output_dir": "channels/1/music/ai",
-            "num_tracks_to_combine": 2,
-        },
-        {
-            "type": "algorithmic",
-            "output_dir": "channels/1/music/algorithmic",
-            "num_tracks_to_combine": 2,
-        },
-        {
-            "type": "custom",
-            "output_dir": "channels/1/music/custom",
-            "num_tracks_to_combine": 2,
-        },
-    ]
-}
 
 invalid_music_config_missing_output_path_for_custom_generator = {
     "music_generators": [
@@ -118,6 +91,49 @@ valid_music_config_with_single_ai_generator = {
         },
     ]
 }
+
+valid_ai_generator_config = {
+    "type": "ai",
+    "theme": "theme1",
+    "output_dir": "channels/1/music/ai",
+    "num_tracks_to_combine": 2,
+}
+
+valid_algorithmic_generator_config = {
+    "type": "algorithmic",
+    "output_dir": "channels/1/music/algorithmic",
+    "num_tracks_to_combine": 2,
+}
+
+valid_speaker_config = {
+    "name": "Bob",
+    "TTS": "PYTTSX3",
+    "voice": "english",
+    "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+    "output_dir": "channels/test/speaker",
+}
+
+valid_music_config = {
+    "music_generators": [
+        {
+            "type": "ai",
+            "theme": "theme1",
+            "output_dir": "channels/1/music/ai",
+            "num_tracks_to_combine": 2,
+        },
+        {
+            "type": "algorithmic",
+            "output_dir": "channels/1/music/algorithmic",
+            "num_tracks_to_combine": 2,
+        },
+        {
+            "type": "custom",
+            "output_dir": "channels/1/music/custom",
+            "num_tracks_to_combine": 2,
+        },
+    ]
+}
+
 valid_channel_config = {
     "id": 1,
     "name": "Channel1",
@@ -125,6 +141,8 @@ valid_channel_config = {
     "broadcast_output_dir": "broadcast_output_dir",
     "streaming_output_dir": "streaming_output_dir",
     "speaker": valid_speaker_config,
-    "music": valid_music_config,  # Updated music field
+    "music": {
+        "music_generators": [valid_algorithmic_generator_config],
+    },
 }
 valid_radio_config = {"channels": [valid_channel_config]}

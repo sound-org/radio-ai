@@ -16,4 +16,4 @@ def change_test_dir(request):
     yield
 
 
-RUN_EXTERNAL_API_TESTS = True
+RUN_EXTERNAL_API_TESTS = False

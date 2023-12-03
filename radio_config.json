@@ -11,7 +11,7 @@
                 "name": "Bob",
                 "TTS": "PYTTSX3",
                 "voice": "english",
-                "personality": "Your are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
                 "output_dir": "channels/1/speaker"
             },
             "music": {
@@ -49,7 +49,7 @@
                 "name": "Bob",
                 "TTS": "PYTTSX3",
                 "voice": "english",
-                "personality": "Your are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
                 "output_dir": "channels/2/speaker"
             },
             "music": {
