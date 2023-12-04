@@ -8,10 +8,10 @@ import Hls from "hls.js";
 import WaveForm from './WaveForm'
 import Channel from './Channel';
 
-const App: React.FC = (): ReactElement => {
+const App: React.FC<{ useLocalConfig: boolean }> = (props): ReactElement => {
 
     // Settings
-    const useLocalConfig:boolean = false;
+    const useLocalConfig:boolean = props.useLocalConfig;
     const serverRoot:string = "http://localhost:8080/";
 
     // Music controls
@@ -86,7 +86,7 @@ const App: React.FC = (): ReactElement => {
         if (audioRef.current) {
             hlsRef.current.attachMedia(audioRef.current);
         }
-    }, []);
+    }, [useLocalConfig]);
 
     // Audio analyzer
     const [analyzerData, setAnalyzerData] = useState<any>(null);

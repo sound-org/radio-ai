@@ -16,7 +16,7 @@ const Channel: React.FC<ChannelProps> = (props) => {
     }
 
     return (
-      <div className={props.active ? "Channel-active" : "Channel"} onClick={handleClick}>
+      <div className={props.active ? "Channel-active" : "Channel"} onClick={handleClick} data-testid={"channel"}>
           {props.num}
       </div>
     );
