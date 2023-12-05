@@ -70,6 +70,39 @@
                 "duration": 11,
                 "cache": false
             }
+        },
+        {
+            "id": 3,
+            "name": "channel-3",
+            "description": "channel-3 description",
+            "hls_path": "channels/3/streaming/manifest",
+            "broadcast_output_dir": "channels/3/broadcast",
+            "streaming_output_dir": "channels/3/streaming",
+            "speaker": {
+                "name": "Bob",
+                "TTS": "ELEVENLABS",
+                "voice": "TV94IYK8Yq40qu0jf5dD",
+                "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "output_dir": "channels/3/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "ai",
+                        "theme": "jazz with piano and saxophone",
+                        "output_dir": "channels/3/music/ai",
+                        "num_tracks_to_combine": 5
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 2,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
         }
     ],
     "server": {

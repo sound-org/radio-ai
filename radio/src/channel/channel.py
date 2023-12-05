@@ -106,6 +106,9 @@ class Channel:
             self._broadcast_output_dir,
             f"broadcast-{filename}-{timestamp}.mp3",
         )
+        logger.info("Merging audio files and saving to %s", output_file)
+        for path in paths_to_audio_files:
+            logger.info("Path: %s", path)
 
         logger.info("Merging audio files and saving to %s", output_file)
         AudioMerger.merge_audio_files(paths_to_audio_files, output_file)

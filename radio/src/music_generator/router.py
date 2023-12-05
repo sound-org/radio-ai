@@ -16,3 +16,10 @@ def generate_music(n: int = 2):
     for channel in content_creator.channels:
         channel._generate_music(n)
     return "OK"
+
+
+@router.get(path="/music/generate/{channel}")
+def generate_music_for_channel(n: int = 2, channel: int = 0):
+    logger.info("Generate music endpoint called")
+    content_creator.channels[channel]._generate_music(n)
+    return "OK"
