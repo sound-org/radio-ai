@@ -2,6 +2,10 @@ import os
 
 
 class TextToSpeechConfig:
+    """
+    Configuration class for text-to-speech settings.
+    """
+
     audio_data_dir: str = os.path.join(os.getcwd(), "audio_data")
     samples_dir: str = os.path.join(audio_data_dir, "samples")
     generated_dir: str = os.path.join(audio_data_dir, "generated")

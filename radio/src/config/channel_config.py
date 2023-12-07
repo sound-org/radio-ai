@@ -7,6 +7,16 @@ from .speaker_config import SpeakerConfig
 
 class ChannelConfig:
     def __init__(self, channel_config: Dict[str, str]) -> None:
+        """
+        Initializes a ChannelConfig object.
+
+        Args:
+            channel_config (Dict[str, str]): A dictionary containing the channel configuration.
+
+        Raises:
+            Exception: If the channel configuration is incomplete.
+
+        """
         self.id: int = channel_config.get("id")
         self.name: str = channel_config.get("name")
         self.description: str = channel_config.get("description")

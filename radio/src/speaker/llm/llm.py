@@ -5,6 +5,13 @@ from langchain.schema import BaseMessage, SystemMessage
 
 
 class LLM:
+    """
+    LLM (Radio Speaker) class represents a DJ radio speaker in a radio AI system.
+
+    Parameters:
+        personality (str): The personality of the DJ radio speaker.
+    """
+
     def __init__(self, personality: str):
         history: List[BaseMessage] = []
         dj_character = SystemMessage(content=personality)
@@ -21,7 +28,16 @@ class LLM:
         self._history = history
 
     def generate_speaker_lines(self, text: str) -> str:
-        # text:str - input for the model
+        """
+        Generates speaker lines based on the input text.
+
+        Parameters:
+            text (str): The input for the model.
+
+        Returns:
+            str: The generated speaker lines.
+
+        """
         chat = ChatOpenAI()
         message = SystemMessage(content=text)
         history_copy = self._history.copy()
@@ -30,6 +46,16 @@ class LLM:
         return response.content
 
     def react_to_email_message(self, email: str) -> str:
+        """
+        Reacts to an email message.
+
+        Parameters:
+            email (str): The email message.
+
+        Returns:
+            str: The reaction/response to the email message.
+
+        """
         chat = ChatOpenAI()
         email_message = SystemMessage(content=email)
         history_copy = self._history.copy()

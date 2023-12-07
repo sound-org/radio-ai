@@ -13,10 +13,16 @@ from ..abstract_generator import AbstractMusicGenerator
 
 logger = logging.getLogger(__name__)
 
-# Define the cache directory path
-
 
 class AIGenerator(AbstractMusicGenerator):
+    """
+    A music generator that uses AI to generate music based on a given theme.
+
+    Args:
+        config (AIMusicConfig): The configuration for the AI music generator.
+        max_new_tokens (int): The maximum number of new tokens to generate.
+    """
+
     def __init__(
         self, config: AIMusicConfig, max_new_tokens: int = 512 * 2 + 128
     ) -> None:
@@ -26,6 +32,13 @@ class AIGenerator(AbstractMusicGenerator):
         self.CACHE_DIR = "model_cache"
 
     def generate(self, n: int):
+        """
+        Generate music based on the given theme.
+
+        Args:
+            n (int): The number of songs to generate.
+
+        """
         # Check if the cache directory exists, if not, create it
         if not os.path.exists(self.CACHE_DIR):
             os.makedirs(self.CACHE_DIR)
