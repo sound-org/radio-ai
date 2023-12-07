@@ -3,6 +3,10 @@ from typing import List
 
 
 class GmailConfig:
+    """
+    Configuration class for Gmail integration.
+    """
+
     callbackRoute: str = "/oauth2-callback"
     secrets_file: str = "credentials.json"
     token_path: Path = Path("token_gmail.json")

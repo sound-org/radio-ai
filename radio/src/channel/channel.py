@@ -28,6 +28,10 @@ class Channel:
         create_dir_if_not_exists(self._streaming_output_dir)
 
     def create_broadcast(self):
+        """
+        Creates a broadcast by generating a timestamp and filename,
+        composing the broadcast file, and preparing it for streaming.
+        """
         ts = int(time.time())
         filename: str = time.strftime("%Y%m%d-%H%M%S")
         broadcast_file: str = self._compose_broadcast(

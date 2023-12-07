@@ -21,6 +21,15 @@ logger = logging.getLogger(__name__)
     response_description="Successfully returned auth url",
 )
 def get_auth_url(response: Response) -> str:
+    """
+    Get the authentication URL for Gmail integration.
+
+    Args:
+        response (Response): The response object.
+
+    Returns:
+        str: The authentication URL.
+    """
     authentication_service = AuthenticationService(
         secrets_file=GmailConfig.secrets_file,
         scopes=GmailConfig.scopes,
@@ -47,6 +56,16 @@ def get_auth_url(response: Response) -> str:
     response_model=str,
 )
 def callback(request: Request, response: Response):
+    """
+    Callback function for Gmail integration.
+
+    Args:
+        request (Request): The incoming request object.
+        response (Response): The response object.
+
+    Returns:
+        str: A success message indicating that the credentials were successfully saved.
+    """
     authentication_service = AuthenticationService(
         secrets_file=GmailConfig.secrets_file,
         scopes=GmailConfig.scopes,
@@ -62,9 +81,18 @@ def callback(request: Request, response: Response):
 
 @router.get(path="/latest-message")
 def get_latest_mesage(response: Response) -> str:
-    logger.info("Getting latest message from gmail")
+    """
+    Get the latest message from Gmail.
+
+    Args:
+        response (Response): The response object.
+
+    Returns:
+        str: The latest message from Gmail.
+    """
+    logger.info("Getting latest message from Gmail")
     gmail = Gmail()
     gmail_message: str = gmail.get_latest_message()
 
-    logger.info("Successfully returned latest message from gmail")
+    logger.info("Successfully returned latest message from Gmail")
     return gmail_message

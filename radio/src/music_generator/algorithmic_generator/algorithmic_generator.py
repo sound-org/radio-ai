@@ -15,10 +15,23 @@ logger = logging.getLogger(__name__)
 
 
 class AlgorithmicGenerator(AbstractMusicGenerator):
+    """
+    AlgorithmicGenerator is a class that generates music algorithmically based on predefined chord progressions.
+
+    Args:
+        config (AlgorithmicMusicConfig): The configuration for the algorithmic music generator.
+    """
+
     def __init__(self, config: AlgorithmicMusicConfig):
         super().__init__(config)
 
     def generate(self, n: int):
+        """
+        Generates a specified number of songs algorithmically.
+
+        Args:
+            n (int): The number of songs to generate.
+        """
         logger.info("Generating %d songs algorithimcally...", n)
         for _ in range(n):
             self._generate_music()

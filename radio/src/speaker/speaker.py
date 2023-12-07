@@ -17,6 +17,10 @@ logger = getLogger(__name__)
 
 
 class Speaker:
+    """
+    Represents a speaker that generates random lines and reacts to email messages.
+    """
+
     _tts: TextToSpeechInterface
     _name: str
     _personality: str
@@ -24,6 +28,12 @@ class Speaker:
     _llm: LLM
 
     def __init__(self, config: SpeakerConfig):
+        """
+        Initializes a Speaker instance with the given configuration.
+
+        Args:
+            config (SpeakerConfig): The configuration for the speaker.
+        """
         logger.info(f"Initializing Speaker with config: {config}")
         self._name: str = config.name
         self._personality: str = config.personality
@@ -48,7 +58,7 @@ class Speaker:
         Generates random lines for the speaker.
 
         Returns:
-            tuple[str, str]: (lines, path)
+            tuple[str, str]: A tuple containing the generated lines and the path to the generated speech file.
         """
         logger.info("Generating speaker lines...")
         lines: str = self._say_cool_things()
@@ -57,10 +67,10 @@ class Speaker:
 
     def react_to_email_message(self) -> tuple[str, str]:
         """
-        React to latest email from fans.
+        Reacts to the latest email from fans.
 
         Returns:
-            tuple[str, str]: (lines, path)
+            tuple[str, str]: A tuple containing the speaker's reaction to the email and the path to the generated speech file.
         """
         logger.info("Reacting to email message...")
         email: str = self._get_last_email()
@@ -69,18 +79,48 @@ class Speaker:
         return (speaker_reaction, path)
 
     def _get_last_email(self) -> str:
+        """
+        Gets the latest email.
+
+        Returns:
+            str: The content of the latest email.
+        """
         logger.info("Getting last email...")
         return self._gmail.get_latest_message()
 
     def _react_to_email(self, email: str) -> str:
+        """
+        Reacts to an email.
+
+        Args:
+            email (str): The content of the email.
+
+        Returns:
+            str: The speaker's reaction to the email.
+        """
         logger.info("Reacting to email...")
         return self._llm.react_to_email_message(email)
 
     def _say_cool_things(self) -> str:
+        """
+        Generates cool things for the speaker to say.
+
+        Returns:
+            str: The generated lines for the speaker.
+        """
         logger.info("Saying cool things...")
         return self._llm.generate_speaker_lines("say next thing")
 
     def _text_to_speech(self, text: str) -> str:
+        """
+        Converts text to speech.
+
+        Args:
+            text (str): The text to convert.
+
+        Returns:
+            str: The path to the generated speech file.
+        """
         logger.info("Converting text to speech...")
         path: str = self._tts.text_to_speech(text=text)
         return path
