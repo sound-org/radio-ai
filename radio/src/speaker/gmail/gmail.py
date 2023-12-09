@@ -60,14 +60,17 @@ class Gmail:
         Returns:
             str: The content of the latest email message.
         """
-        message: Document = self._get_latest_message_and_move_to_bin()
-        message = self._clean_document_text(message)
-        message.page_content = (
-            f"This email title {message.metadata.get('title', 'Unknown')}, "
-            f"Sender of this email is {message.metadata.get('from','Unknown')}, "
-            f"Recipient of this email is {message.metadata.get('to','Unknown')}, "
-            f"This email was received on {message.metadata.get('date','Unknown')}, "
-            f"This document's content: {message.page_content}"
-        )
-
-        return message.page_content
+        try:
+            message: Document = self._get_latest_message_and_move_to_bin()
+            message = self._clean_document_text(message)
+            message.page_content = (
+                f"This email title {message.metadata.get('title', 'Unknown')}, "
+                f"Sender of this email is {message.metadata.get('from','Unknown')}, "
+                f"Recipient of this email is {message.metadata.get('to','Unknown')}, "
+                f"This email was received on {message.metadata.get('date','Unknown')}, "
+                f"This document's content: {message.page_content}"
+            )
+            return message.page_content
+        except Exception:
+            logger.error("failed to get any message from gmail")
+            return "No message found in inbox"

@@ -7,15 +7,14 @@
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-            "source.fixAll": true
+            "source.fixAll": "explicit"
         }
     },
     "python.formatting.provider": "none",
     "python.linting.enabled": true,
     "python.analysis.typeCheckingMode": "basic",
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true,
-        // "editor.formatOnSave": true
+        "source.organizeImports": "explicit"
     },
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
