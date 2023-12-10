@@ -1,3 +1,8 @@
+/**
+ * The main application component
+ *
+ * @packageDocumentation
+ */
 import './App.css';
 import './Slider.css'
 import ChannelInfo from "../interface/ChannelInfo";
@@ -8,7 +13,12 @@ import Hls from "hls.js";
 import WaveForm from './WaveForm'
 import Channel from './Channel';
 
-const App: React.FC<{ useLocalConfig: boolean }> = (props): ReactElement => {
+/**
+ * Renders main application
+ *
+ * @param props contains one boolean flag whether to use local configuration file
+ */
+export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConfig: false}): ReactElement => {
 
     // Settings
     const useLocalConfig:boolean = props.useLocalConfig;

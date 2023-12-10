@@ -37,7 +37,10 @@ afterAll(() => {
 
 test('should load and display name', async () => {
     // given
-    render(<App useLocalConfig={true}/>);
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async  () => {
+        await render(<App useLocalConfig={true}/>);
+    })
 
     // when then
     expect(screen.getByText("rAIdio")).toBeTruthy();
@@ -45,7 +48,10 @@ test('should load and display name', async () => {
 
 test('should display play/pause button', async () => {
     // given
-    render(<App useLocalConfig={true}/>);
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async  () => {
+        await render(<App useLocalConfig={true}/>);
+    })
 
     // when
     const buttons = screen.getAllByRole("button");

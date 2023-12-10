@@ -1,14 +1,28 @@
 import React from "react";
 
-interface ChannelProps {
+/**
+ * An interface containing the input data necessary to render a {@link Channel}
+ */
+export interface ChannelProps {
+    /** Index of the channel */
     num: number,
+    /** Path to HLS playlist */
     hlsPath: string,
+    /** Path to a thumbnail image */
     thumbnailPath: string,
+    /** Flag indicated whether the channel is clicked */
     active: boolean,
-    switchChannel: (a: string, idx: number, b: string) => void
+    /** Function to be called after clicking a channel */
+    switchChannel: (a: string, idx: number, b: string) => void;
 }
 
-const Channel: React.FC<ChannelProps> = (props) => {
+/**
+ * A channel component
+ *
+ * @param props ChannelProps object
+ * @returns React functional component
+ */
+export const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
     const handleClick = () => {
         if (!props.active) {
             props.switchChannel(props.hlsPath, props.num, props.thumbnailPath);
