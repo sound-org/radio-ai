@@ -34,6 +34,22 @@ type HlsConfig struct {
 	Cache    bool `json:"cache"`
 }
 
+// Load reads a JSON configuration file from the specified path and returns a Config instance.
+//
+// Parameters:
+//   - path: The path to the JSON configuration file.
+//
+// Returns:
+//   - *Config: A pointer to the Config instance representing the loaded configuration.
+//   - error: An error, if any, encountered during the loading process.
+//
+// Example usage:
+//
+//	configPath := "/path/to/config.json"
+//	loadedConfig, err := Load(configPath)
+//	if err != nil {
+//	    // handle the error
+//	}
 func Load(path string) (*Config, error) {
 	var config Config
 	f, err := os.Open(path)

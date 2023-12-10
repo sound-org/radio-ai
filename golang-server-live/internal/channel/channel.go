@@ -12,12 +12,26 @@ import (
 	"github.com/sound-org/radio-ai/server/pkg/utils"
 )
 
+// Channel represents a streaming channel with associated configuration, cache, and streamer.
 type Channel struct {
 	Config   cnf.ChannelConfig
 	cache    *Cache
 	streamer *Streamer
 }
 
+// FromConfig creates a Channel instance based on the provided ChannelConfig.
+// It initializes a cache and a streamer using the configuration details.
+//
+// Parameters:
+//   - cc: The ChannelConfig containing the configuration details for the channel.
+//
+// Returns:
+//   - *Channel: A pointer to the created Channel instance.
+//
+// Example usage:
+//
+//	config := // initialize your ChannelConfig
+//	myChannel := FromConfig(config)
 func FromConfig(cc cnf.ChannelConfig) *Channel {
 
 	cacheMutex := sync.RWMutex{}
@@ -33,6 +47,19 @@ func FromConfig(cc cnf.ChannelConfig) *Channel {
 	}
 }
 
+// init initializes the Channel by refreshing the cache, retrieving the playlist,
+// mapping .ts files, and initializing the streamer.
+//
+// Returns:
+//   - error: An error, if any, encountered during the initialization process.
+//
+// Example usage:
+//
+//	myChannel := // initialize your Channel
+//	err := myChannel.init()
+//	if err != nil {
+//	    // handle the error
+//	}
 func (channel *Channel) init() error {
 	err := channel.cache.Refresh()
 	if err != nil {
@@ -53,10 +80,20 @@ func (channel *Channel) init() error {
 	return channel.streamer.init(&playlist)
 }
 
+// Run starts the operations for a given channel, including initialization, updating, and refreshing.
+//
+// Parameters:
+//   - channel: A pointer to the Channel instance to run operations on.
+//   - quit:    A channel used for signaling when to stop the operations.
+//
+// Example usage:
+//
+//	myChannel := // initialize your Channel
+//	quit := make(chan bool)
+//	go Run(myChannel, &quit)
+//	// Perform other operations...
+//	// To stop the operations, close the 'quit' channel: close(quit)
 func Run(channel *Channel, quit *chan bool) {
-	// TODO : initialize channel
-	// TODO : start routinge for cache update
-	// (?)TODO : start routine for cache delete
 
 	log.Printf("[INIT] Channel(%d) \"%s\"\n", channel.Config.Id, channel.Config.Desc)
 
@@ -72,10 +109,25 @@ func Run(channel *Channel, quit *chan bool) {
 	go startRefreshing(channel, refresh, quit)
 }
 
+// startUpdating handles the periodic updating of the channel's streaming operations.
+// It pushes chunks of the playlist to the streamer at a specified interval.
+//
+// Parameters:
+//   - channel: A pointer to the Channel instance to update.
+//   - ticker:  A time.Ticker controlling the update interval.
+//   - quit:    A channel used for signaling when to stop the operations.
+//
+// Example usage:
+//
+//	myChannel := // initialize your Channel
+//	ticker := time.NewTicker(10 * time.Second)
+//	quit := make(chan bool)
+//	go startUpdating(myChannel, ticker, &quit)
+//	// Perform other operations...
+//	// To stop the operations, close the 'quit' channel: close(quit)
 func startUpdating(channel *Channel, ticker *time.Ticker, quit *chan bool) {
 	log.Printf("[INFO] Channel(%d) \"%s\" running...\n", channel.Config.Id, channel.Config.Desc)
 	current := 0
-	// TODO : fow to get  offset for the 1st time?
 	offset := int(channel.Config.Stream.Buffer)
 	next := channel.cache.Keys()
 
@@ -110,6 +162,21 @@ func startUpdating(channel *Channel, ticker *time.Ticker, quit *chan bool) {
 	}
 }
 
+// startRefreshing handles the periodic refreshing of the channel's cache.
+//
+// Parameters:
+//   - channel: A pointer to the Channel instance to refresh.
+//   - ticker:  A time.Ticker controlling the refresh interval.
+//   - quit:    A channel used for signaling when to stop the operations.
+//
+// Example usage:
+//
+//	myChannel := // initialize your Channel
+//	ticker := time.NewTicker(20 * time.Second)
+//	quit := make(chan bool)
+//	go startRefreshing(myChannel, ticker, &quit)
+//	// Perform other operations...
+//	// To stop the operations, close the 'quit' channel: close(quit)
 func startRefreshing(channel *Channel, ticker *time.Ticker, quit *chan bool) {
 
 	for {
@@ -122,13 +189,35 @@ func startRefreshing(channel *Channel, ticker *time.Ticker, quit *chan bool) {
 			return
 		}
 	}
-
 }
 
+// Stream retrieves the current playlist from the Channel's streamer.
+//
+// Returns:
+//   - hls.Playlist: The current playlist for streaming.
+//
+// Example usage:
+//
+//	myChannel := // initialize your Channel
+//	playlist := myChannel.Stream()
 func (channel *Channel) Stream() hls.Playlist {
 	return channel.streamer.Get()
 }
 
+// mapTs maps the file paths in the playlist to the specified directory path.
+//
+// Parameters:
+//   - path:     The base directory path to map to the playlist files.
+//   - playlist: A pointer to the original playlist to map.
+//
+// Returns:
+//   - hls.Playlist: A new playlist with mapped file paths.
+//
+// Example usage:
+//
+//	baseDirectory := "/path/to/files"
+//	originalPlaylist := // initialize your Playlist
+//	mappedPlaylist := mapTs(baseDirectory, &originalPlaylist)
 func mapTs(path string, playlist *hls.Playlist) hls.Playlist {
 	return hls.Playlist{
 		Metadata: playlist.Metadata,
