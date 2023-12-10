@@ -11,29 +11,47 @@ logger = logging.getLogger(__name__)
 
 
 class GmailReader:
+    """
+    GmailReader class for loading and interacting with Gmail messages.
+
+    Args:
+        query (str): The query string used to filter the emails.
+        credentials (Credentials): The credentials used to authenticate the Gmail API.
+
+    """
+
     def __init__(
         self,
         query: str,
         credentials: Credentials,
-        service=None,
     ):
         self.query: str = query
         self.credentials = credentials
-        self.service = service
         self.gmail_message_parser = GmailMessageParser()
+        self.service = None
 
     def load_data(self) -> List[Document]:
-        """Load emails from the user's account"""
+        """Load emails from the user's account.
 
+        Returns:
+            List[Document]: A list of Document objects representing the loaded emails.
+        """
         if not self.service:
             self.service = build("gmail", "v1", credentials=self.credentials)
 
-        messsages: List[Document] = self.__search_messages()
+        messsages: List[Document] = self._search_messages()
 
         return messsages
 
     def get_message(self, msg_id: str) -> Document:
-        """Get a Message with given ID."""
+        """Get a Message with given ID.
+
+        Args:
+            msg_id (str): The ID of the message to retrieve.
+
+        Returns:
+            Document: The Document object representing the retrieved message.
+        """
         try:
             if not self.service:
                 self.service = build("gmail", "v1", credentials=self.credentials)
@@ -46,9 +64,14 @@ class GmailReader:
             return document
         except Exception as error:
             logger.error(msg=f"An error occurred: {error}")
+            raise error
 
     def move_to_bin(self, msg_id: str) -> None:
-        """Move a Message with given ID to the bin."""
+        """Move a Message with given ID to the bin.
+
+        Args:
+            msg_id (str): The ID of the message to move to the bin.
+        """
         try:
             if not self.service:
                 self.service = build("gmail", "v1", credentials=self.credentials)
@@ -57,7 +80,12 @@ class GmailReader:
         except Exception as error:
             logger.error(msg=f"An error occurred: {error}")
 
-    def __search_messages(self) -> List[Document]:
+    def _search_messages(self) -> List[Document]:
+        """Search for messages based on the query.
+
+        Returns:
+            List[Document]: A list of Document objects representing the searched messages.
+        """
         query = self.query
 
         results = self.service.users().messages().list(userId="me", q=query).execute()

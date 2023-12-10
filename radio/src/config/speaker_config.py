@@ -8,6 +8,23 @@ class TTSEnum(Enum):
 
 
 class SpeakerConfig:
+    """
+    Represents the configuration for a speaker.
+
+    Args:
+        speaker_config (Dict[str, str]): A dictionary containing the speaker configuration.
+
+    Attributes:
+        name (str): The name of the speaker.
+        TTS (TTSEnum): The text-to-speech engine used by the speaker.
+        voice (str): The voice used by the speaker.
+        personality (str): The personality of the speaker.
+        output_dir (str): The output directory for the speaker.
+
+    Raises:
+        Exception: If any of the required attributes are missing in the speaker configuration.
+    """
+
     def __init__(self, speaker_config: Dict[str, str]) -> None:
         self.name: str = speaker_config.get("name")
         self.TTS: TTSEnum = (

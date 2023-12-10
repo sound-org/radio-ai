@@ -9,12 +9,22 @@ logger = logging.getLogger(__name__)
 
 
 class PyTTSx3Engine:
+    """
+    PyTTSx3Engine is a class that provides text-to-speech functionality using the pyttsx3 library.
+    """
+
     def __init__(self, voice: str, rate: int, volume: float) -> None:
         self._voice: str = voice
         self._rate: int = rate
         self._volume: float = volume
 
     def _get_engine(self) -> pyttsx3.Engine:
+        """
+        Private method to get a new pyttsx3 engine instance with the specified voice, rate, and volume settings.
+
+        Returns:
+            pyttsx3.Engine: The pyttsx3 engine instance.
+        """
         logger.info("Getting new pyttsx3 engine")
         logger.info("Getting pyttsx3 engine")
         engine = pyttsx3.init("espeak")
@@ -24,6 +34,16 @@ class PyTTSx3Engine:
         return engine
 
     def text_to_speech(self, text: str, output_dir: str) -> str:
+        """
+        Converts the given text to speech and saves the resulting audio file in the specified output directory.
+
+        Args:
+            text (str): The text to convert to speech.
+            output_dir (str): The directory where the audio file should be saved.
+
+        Returns:
+            str: The path to the saved audio file.
+        """
         filename: str = time.strftime("%Y%m%d-%H%M%S.mp3")
         path: str = os.path.join(output_dir, filename)
 
@@ -40,9 +60,11 @@ class PyTTSx3Engine:
         logger.info("Renaming %s to %s", filename, path)
         # os.renames(
         #     filename, path
-        # )  # NOTE: a hack to save the file to correct directory, pyttsx3 don't allow (or just don't work) to save a file to a specific directory...
+        # )
         try:
-            shutil.move(filename, path)
+            shutil.move(
+                filename, path
+            )  # NOTE: a hack to save the file to correct directory, pyttsx3 don't allow (or just don't work) to save a file to a specific directory...       except Exception as e:
         except Exception as e:
             logger.error("Failed to move file: %s", e)
             raise e
