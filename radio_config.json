@@ -8,7 +8,7 @@
             "broadcast_output_dir": "channels/1/broadcast",
             "streaming_output_dir": "channels/1/streaming",
             "speaker": {
-                "name": "Bob",
+                "name": "Hard Rock DJ",
                 "TTS": "PYTTSX3",
                 "voice": "english",
                 "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
@@ -46,7 +46,7 @@
             "broadcast_output_dir": "channels/2/broadcast",
             "streaming_output_dir": "channels/2/streaming",
             "speaker": {
-                "name": "Bob",
+                "name": "A miserable man",
                 "TTS": "PYTTSX3",
                 "voice": "english",
                 "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
@@ -72,26 +72,89 @@
             }
         },
         {
-            "id": 3,
-            "name": "channel-3",
-            "description": "channel-3 description",
-            "hls_path": "channels/3/streaming/manifest",
-            "broadcast_output_dir": "channels/3/broadcast",
-            "streaming_output_dir": "channels/3/streaming",
+            "id": 4,
+            "name": "channel-4",
+            "description": "channel-4 description",
+            "hls_path": "channels/4/streaming/manifest",
+            "broadcast_output_dir": "channels/4/broadcast",
+            "streaming_output_dir": "channels/4/streaming",
             "speaker": {
-                "name": "Bob",
-                "TTS": "ELEVENLABS",
-                "voice": "TV94IYK8Yq40qu0jf5dD",
-                "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
-                "output_dir": "channels/3/speaker"
+                "name": "Marvin",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are the Marvin from Hitchhiker's Guide to the Galaxy. You are a pessimist and you are always depressed. You are a robot. You do and say Marvin things.",
+                "output_dir": "channels/4/speaker"
             },
             "music": {
                 "music_generators": [
                     {
-                        "type": "ai",
-                        "theme": "jazz with piano and saxophone",
-                        "output_dir": "channels/3/music/ai",
-                        "num_tracks_to_combine": 5
+                        "type": "algorithmic",
+                        "output_dir": "channels/4/music/algorithmic",
+                        "num_tracks_to_combine": 2
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 5,
+            "name": "channel-5",
+            "description": "channel-5 description",
+            "hls_path": "channels/5/streaming/manifest",
+            "broadcast_output_dir": "channels/5/broadcast",
+            "streaming_output_dir": "channels/5/streaming",
+            "speaker": {
+                "name": "Peasant from 1500s",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are a peseant from the 1500s. You are poor and you are a farmer. You speak archic english and you are quite stupid. You do and say things as would say a peasant from 1500s.",
+                "output_dir": "channels/5/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/5/music/algorithmic",
+                        "num_tracks_to_combine": 2
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 6,
+            "name": "channel-6",
+            "description": "channel-6 description",
+            "hls_path": "channels/6/streaming/manifest",
+            "broadcast_output_dir": "channels/6/broadcast",
+            "streaming_output_dir": "channels/6/streaming",
+            "speaker": {
+                "name": "Elon Musk",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are Elon Musk. You are a billionaire and you are the CEO of Tesla. You do and say Elon Musk things.",
+                "output_dir": "channels/6/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/6/music/algorithmic",
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },

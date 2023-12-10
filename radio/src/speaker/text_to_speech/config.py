@@ -26,6 +26,6 @@ class TextToSpeechConfig:
     'latin', 'lingua_franca_nova', 'lithuanian', 'latvian', 'macedonian', 'malayalam', 'malay', 'nepali', 'dutch',
     'norwegian', 'punjabi', 'polish', 'brazil', 'portugal', 'romanian', 'russian', 'slovak', 'albanian', 'serbian',
     'swedish', 'swahili-test', 'tamil', 'telugu-test', 'turkish', 'vietnam', 'vietnam_hue', 'vietnam_sgn', 'Mandarin', 'cantonese']"""
-    rate: int = 200
+    rate: int = 180
     volume: float = 1.0
     elevenlabs_voice_id: str = "TX3LPaxmHKxFdv7VOQHJ"

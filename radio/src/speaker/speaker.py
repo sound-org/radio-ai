@@ -60,7 +60,7 @@ class Speaker:
         Returns:
             tuple[str, str]: A tuple containing the generated lines and the path to the generated speech file.
         """
-        logger.info("Generating speaker lines...")
+        logger.info(f"{self._name}: Generating lines...")
         lines: str = self._say_cool_things()
         path: str = self._text_to_speech(text=lines)
         return (lines, path)
@@ -72,7 +72,7 @@ class Speaker:
         Returns:
             tuple[str, str]: A tuple containing the speaker's reaction to the email and the path to the generated speech file.
         """
-        logger.info("Reacting to email message...")
+        logger.info(f"{self._name}: Reacting to email message...")
         email: str = self._get_last_email()
         speaker_reaction: str = self._react_to_email(email)
         path = self._text_to_speech(text=speaker_reaction)
@@ -98,7 +98,6 @@ class Speaker:
         Returns:
             str: The speaker's reaction to the email.
         """
-        logger.info("Reacting to email...")
         return self._llm.react_to_email_message(email)
 
     def _say_cool_things(self) -> str:
