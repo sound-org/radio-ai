@@ -94,13 +94,11 @@ func (channel *Channel) init() error {
 //	// Perform other operations...
 //	// To stop the operations, close the 'quit' channel: close(quit)
 func Run(channel *Channel, quit *chan bool) {
+	for channel.init() != nil {
+		time.Sleep(time.Second * 30)
+	}
 
 	log.Printf("[INIT] Channel(%d) \"%s\"\n", channel.Config.Id, channel.Config.Desc)
-
-	err := channel.init()
-	if err != nil {
-		panic(err)
-	}
 
 	stream := time.NewTicker(10 * time.Second)
 	go startUpdating(channel, stream, quit)
