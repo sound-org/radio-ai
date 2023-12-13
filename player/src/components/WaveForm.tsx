@@ -1,9 +1,16 @@
-// This function takes in the audio data, analyzes it, and generates a waveform
-// that is visualized on a canvas element.
 import React from "react";
 import {useEffect, useRef} from "react";
 
-function animateBars(analyser: { getByteFrequencyData: (arg0: any) => void }, canvas: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, dataArray: number[], bufferLength: number) {
+/**
+ * This function takes in the audio data, analyzes it, and generates a waveform that is visualized on a canvas element
+ *
+ * @param analyser analyser node from WebAudioAPI
+ * @param canvas HTML canvas element
+ * @param canvasCtx rendering context of the canvas
+ * @param dataArray array of data that will be populated
+ * @param bufferLength length of an audio buffer
+ */
+export function animateBars(analyser: { getByteFrequencyData: (arg0: any) => void }, canvas: HTMLCanvasElement, canvasCtx: CanvasRenderingContext2D, dataArray: number[], bufferLength: number) {
     // Analyze the audio data using the Web Audio API's `getByteFrequencyData` method.
     analyser.getByteFrequencyData(dataArray);
 
@@ -20,29 +27,21 @@ function animateBars(analyser: { getByteFrequencyData: (arg0: any) => void }, ca
     let barHeight;
     let x = 0;
 
-    // let r = Math.floor(Math.random() * 255)
-    // let g = Math.floor(Math.random() * 255)
-    // let b = Math.floor(Math.random() * 255)
-
     // Loop through each element in the `dataArray`.
     for (let i = 0; i < bufferLength; i++) {
-        // Calculate the height of the current bar based on the audio data and the canvas height.
         barHeight = (dataArray[i] / 255) * HEIGHT;
-
-        // Set the canvas fill style to the random RGB values.
         canvasCtx.fillStyle = 'rgb(' + 242 + ',' + 104 + ',' + 65 + ')';
-
-        // Draw the bar on the canvas at the current x-position and with the calculated height and width.
         canvasCtx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-
-        // Update the x-position for the next bar.
         x += barWidth + 1;
     }
 }
 
-// Component to render the waveform
-const WaveForm = ({ analyzerData }: any) => {
-    // Ref for the canvas element
+/**
+ * This component renders an audio animation
+ *
+ * @param analyzerData set of objects necessary to animate {analyzer, bufferLength, dataArray}
+ */
+export const WaveForm = ({ analyzerData }: any) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { dataArray, analyzer, bufferLength } = analyzerData;
 
