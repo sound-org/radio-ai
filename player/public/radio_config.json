@@ -16,5 +16,17 @@
         "name": "Bathroom",
         "description": "A perfect choice to enjoy your bathroom break",
         "hls_path": "bathroom/outputlist.m3u8"
+    },
+    {
+        "id": 4,
+        "name": "Channel 4",
+        "description": "---- 4 ----",
+        "hls_path": "bathroom/outputlist.m3u8"
+    },
+    {
+        "id": 5,
+        "name": "Channel 5",
+        "description": "---- 5 ----",
+        "hls_path": "bathroom/outputlist.m3u8"
     }
 ]
