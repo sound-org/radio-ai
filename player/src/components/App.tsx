@@ -39,6 +39,13 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
     const [thumbnailPath, setThumbnailPath] = useState<string>("");
     const [firstPlay, setFirstPlay] = useState(true);
 
+    /**
+     * Function that allows seeding random generator in JS
+     * http://davidbau.com/encode/seedrandom.js
+     * License (MIT) 2014
+     */
+    const seedrandom = require('seedrandom');
+
     const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
         setManifestUrl(newUrl);
         console.log("Switched channel")
@@ -59,7 +66,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         if (manifestUrl !== undefined) {
             console.log("New manifest loaded: " + serverRoot + manifestUrl)
             hlsRef.current?.loadSource(serverRoot + manifestUrl);
-            if(!firstPlay) {
+            if (!firstPlay) {
                 togglePlay();
             }
         }
@@ -86,8 +93,13 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                 for (let i = 0; i < THUMBNAILS_COUNT; i++) {
                     initialThumbnails.push(i+1);
                 }
+
+                // Randomly choose thumbnail -> different set every day
+                const currentDate = new Date();
+                const seed = `${currentDate.getFullYear()}${currentDate.getMonth()}${currentDate.getDate()}`;
+                const rng = seedrandom(seed);
                 for (let i = initialThumbnails.length - 1; i > 0; i--) {
-                    let j = Math.floor(Math.random() * (i + 1));
+                    let j = Math.floor(rng() * (i + 1));
                     let x: number = initialThumbnails[i];
                     initialThumbnails[i] = initialThumbnails[j];
                     initialThumbnails[j] = x;
@@ -141,7 +153,9 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                 setIsPlaying(false);
             }
         } else {
-            audioRef.current!.play();
+            audioRef.current!.play().then(() => {
+                // todo?
+            });
             setIsPlaying(true);
             if (analyzerData === null) {
                 audioAnalyzer();
