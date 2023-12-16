@@ -96,7 +96,7 @@ func (channel *Channel) init() error {
 func Run(channel *Channel, quit *chan bool) {
 	for err := channel.init(); err != nil; {
 		time.Sleep(time.Second * 30)
-		log.Printf("[INFO] Channel(%d) failed to initialize cache due to ` %s`\n", channel.Config.Id, err)
+		log.Printf("[INFO] Channel(%d) failed to initialize cache due to `%s`\n", channel.Config.Id, err)
 	}
 
 	log.Printf("[INIT] Channel(%d) \"%s\"\n", channel.Config.Id, channel.Config.Desc)
