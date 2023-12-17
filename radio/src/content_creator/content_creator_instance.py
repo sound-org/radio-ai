@@ -16,8 +16,3 @@ def create_content_creator(config_path="../radio_config.json") -> ContentCreator
 
 
 content_creator: ContentCreator = create_content_creator()
-
-
-def reload_config():
-    global content_creator
-    content_creator = create_content_creator()

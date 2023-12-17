@@ -4,20 +4,10 @@ from fastapi import APIRouter
 
 from src.content_creator.content_creator_instance import content_creator
 
-from .content_creator_instance import reload_config
-
 logger = logging.getLogger(__name__)
 
 
 router = APIRouter(prefix="/content-creator", tags=["content_creator"])
-
-
-@router.get(path="/reload-config")
-def reload_radio_config():
-    """
-    Reloads the radio configuration.
-    """
-    reload_config()
 
 
 @router.get(path="/create-broadcast")
