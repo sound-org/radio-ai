@@ -21,6 +21,7 @@ import Channel from './Channel';
 export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConfig: false}): ReactElement => {
 
     // Settings
+    const THUMBNAILS_COUNT = 8;
     const useLocalConfig:boolean = props.useLocalConfig;
     const serverRoot:string = "http://localhost:8080/";
 
@@ -32,10 +33,18 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
 
     // Channel handling
     const [channelsInfo, setChannelsInfo] = useState<ChannelInfo[]>([]);
+    const [thumbnails, setThumbnails] = useState<number[]>([]);
     const [activeChannelIdx, setActiveChannelIdx] = useState<number>(1);
     const [manifestUrl, setManifestUrl] = useState<string>();
-    const [thumbnailPath, setThumbnailPath] = useState<string>("/assets/thumb1.jpg");
+    const [thumbnailPath, setThumbnailPath] = useState<string>("");
     const [firstPlay, setFirstPlay] = useState(true);
+
+    /**
+     * Function that allows seeding random generator in JS
+     * http://davidbau.com/encode/seedrandom.js
+     * License (MIT) 2014
+     */
+    const seedrandom = require('seedrandom');
 
     const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
         setManifestUrl(newUrl);
@@ -57,7 +66,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         if (manifestUrl !== undefined) {
             console.log("New manifest loaded: " + serverRoot + manifestUrl)
             hlsRef.current?.loadSource(serverRoot + manifestUrl);
-            if(!firstPlay) {
+            if (!firstPlay) {
                 togglePlay();
             }
         }
@@ -79,9 +88,27 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                 const info: ChannelInfo[] = json as ChannelInfo[];
                 setChannelsInfo(info);
                 setManifestUrl(info[0].hls_path);
+
+                const initialThumbnails = [];
+                for (let i = 0; i < THUMBNAILS_COUNT; i++) {
+                    initialThumbnails.push(i+1);
                 }
-            ).catch(() => {
-              console.error("SERVER ERROR");
+
+                // Randomly choose thumbnail -> different set every day
+                const currentDate = new Date();
+                const seed = `${currentDate.getFullYear()}${currentDate.getMonth()}${currentDate.getDate()}`;
+                const rng = seedrandom(seed);
+                for (let i = initialThumbnails.length - 1; i > 0; i--) {
+                    let j = Math.floor(rng() * (i + 1));
+                    let x: number = initialThumbnails[i];
+                    initialThumbnails[i] = initialThumbnails[j];
+                    initialThumbnails[j] = x;
+                }
+                setThumbnails(initialThumbnails);
+                setThumbnailPath(`/assets/thumb${initialThumbnails[0]}.jpg`);
+                }
+            ).catch((e) => {
+            console.log(e);
         });
 
         // Setup HLS
@@ -96,7 +123,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         if (audioRef.current) {
             hlsRef.current.attachMedia(audioRef.current);
         }
-    }, [useLocalConfig]);
+    }, []);
 
     // Audio analyzer
     const [analyzerData, setAnalyzerData] = useState<any>(null);
@@ -121,13 +148,14 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
 
     function togglePlay(): void {
         if (isPlaying) {
-            // console.log(audioRef.current!.currentTime)
             if (audioRef.current!.currentTime > 0) {
                 audioRef.current!.pause();
                 setIsPlaying(false);
             }
         } else {
-            audioRef.current!.play();
+            audioRef.current!.play().then(() => {
+                // todo?
+            });
             setIsPlaying(true);
             if (analyzerData === null) {
                 audioAnalyzer();
@@ -142,15 +170,12 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         setVolume(volume);
     }
 
-    const musicBgStyle = {
-        backgroundImage: `url('${thumbnailPath}')`,
-    };
-
     return (
         <div className="App">
             <div className="Channels">
                 {channelsInfo.map((info, i) => {
-                    return <Channel key={i} num={info.id} hlsPath={info.hls_path} thumbnailPath={`/assets/thumb${info.id}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
+                    console.log(`Using asset: /assets/thumb${thumbnails[i]}.jpg`);
+                    return <Channel key={i} num={info.id} hlsPath={info.hls_path} thumbnailPath={`/assets/thumb${thumbnails[i]}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
                 })}
             </div>
             <div className="Radio">
@@ -158,7 +183,9 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                     rAIdio
                 </header>
                 <div className="Player">
-                    <div className="Image" style={musicBgStyle} onClick={togglePlay}>
+                    <div className="Image" style={{
+                        backgroundImage: `url('${thumbnailPath}')`,
+                    }} onClick={togglePlay}>
                         <button type="button" className="Player-btn">
                             {!isPlaying ? (
                                 <PlayIcon className="Player-icon" aria-hidden="true"/>
