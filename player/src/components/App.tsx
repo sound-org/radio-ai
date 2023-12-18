@@ -30,6 +30,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
     const [, setVolume] = useState(MAX_VOLUME)
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const audioRef = useRef<HTMLAudioElement>(null);
+    const [manifestOK, setManifestOK] = useState<boolean>(true);
 
     // Channel handling
     const [channelsInfo, setChannelsInfo] = useState<ChannelInfo[]>([]);
@@ -64,10 +65,15 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
     // HLS manifest change
     useEffect(() => {
         if (manifestUrl !== undefined) {
-            console.log("New manifest loaded: " + serverRoot + manifestUrl)
-            hlsRef.current?.loadSource(serverRoot + manifestUrl);
-            if (!firstPlay) {
-                togglePlay();
+            if (manifestOK) {
+                console.log("New manifest loaded: " + serverRoot + manifestUrl)
+                setManifestOK(false);
+                hlsRef.current?.loadSource(serverRoot + manifestUrl);
+                if (!firstPlay) {
+                    togglePlay();
+                }
+            } else {
+                alert("You've found a bugged channel, please refresh app")
             }
         }
     }, [manifestUrl])
@@ -155,6 +161,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         } else {
             audioRef.current!.play().then(() => {
                 // todo?
+                setManifestOK(true);
             });
             setIsPlaying(true);
             if (analyzerData === null) {
