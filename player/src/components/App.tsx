@@ -69,6 +69,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                 console.log("New manifest loaded: " + serverRoot + manifestUrl)
                 setManifestOK(false);
                 hlsRef.current?.loadSource(serverRoot + manifestUrl);
+                hlsRef.current?.attachMedia(audioRef.current!);
                 if (!firstPlay) {
                     togglePlay();
                 }
@@ -80,6 +81,30 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
 
     // Radio config = run once
     useEffect(() => {
+        // Setup HLS
+        hlsRef.current = new Hls({
+            debug: true,
+            enableWorker: true,
+            lowLatencyMode: true,
+            backBufferLength: 90
+        });
+
+        hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, function () {
+            console.log('video and hls.js are now bound together !');
+        });
+        hlsRef.current.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+            console.log(
+                'manifest loaded, found ' + data.levels.length + ' quality level',
+            );
+        });
+        hlsRef.current.on(Hls.Events.ERROR, function (event, data) {
+            console.warn('Hls.Events.ERROR', audioRef.current?.src, data);
+        });
+
+        if (audioRef.current) {
+            hlsRef.current.attachMedia(audioRef.current);
+        }
+
         // Fetch info
         fetch(useLocalConfig ? "../radio_config.json" : serverRoot + "info", {
                 headers : {
@@ -110,6 +135,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                     initialThumbnails[i] = initialThumbnails[j];
                     initialThumbnails[j] = x;
                 }
+                console.log(`Using assets no.: ${initialThumbnails}`);
                 setThumbnails(initialThumbnails);
                 setThumbnailPath(`/assets/thumb${initialThumbnails[0]}.jpg`);
                 }
@@ -117,18 +143,6 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
             console.log(e);
         });
 
-        // Setup HLS
-        hlsRef.current = new Hls({
-            enableWorker: true,
-            maxBufferLength: 1,
-            liveSyncDuration: 0,
-            liveMaxLatencyDuration: 5,
-            liveDurationInfinity: true,
-            highBufferWatchdogPeriod: 1
-        });
-        if (audioRef.current) {
-            hlsRef.current.attachMedia(audioRef.current);
-        }
     }, []);
 
     // Audio analyzer
@@ -181,7 +195,6 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         <div className="App">
             <div className="Channels">
                 {channelsInfo.map((info, i) => {
-                    console.log(`Using asset: /assets/thumb${thumbnails[i]}.jpg`);
                     return <Channel key={i} num={info.id} hlsPath={info.hls_path} thumbnailPath={`/assets/thumb${thumbnails[i]}.jpg`} active={activeChannelIdx === info.id} switchChannel={switchChannel} />;
                 })}
             </div>
