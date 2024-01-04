@@ -1,0 +1,176 @@
+{
+    "channels": [
+        {
+            "id": 1,
+            "name": "Good Hard Rock Music",
+            "description": "You'll go nuts with this hard rock music. You'll love it.",
+            "hls_path": "channels/1/streaming/manifest",
+            "broadcast_output_dir": "channels/1/broadcast",
+            "streaming_output_dir": "channels/1/streaming",
+            "speaker": {
+                "name": "Hard Rock DJ",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "output_dir": "channels/1/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "ai",
+                        "theme": "Hard Rock Music with guitar and drums",
+                        "output_dir": "channels/1/music/ai",
+                        "num_tracks_to_combine": 5
+                    },
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/1/music/algorithmic",
+                        "num_tracks_to_combine": 2
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 2,
+            "name": "Depression Music ",
+            "description": "Sill got any will to live? You won't after listening to this music.",
+            "hls_path": "channels/2/streaming/manifest",
+            "broadcast_output_dir": "channels/2/broadcast",
+            "streaming_output_dir": "channels/2/streaming",
+            "speaker": {
+                "name": "A miserable man",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are the dullest radio DJ ever. You are not a fan of music, you are not a fan of anything. You are just a miserable person.",
+                "output_dir": "channels/2/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "ai",
+                        "theme": "Most depressing music ever",
+                        "output_dir": "channels/2/music/ai",
+                        "num_tracks_to_combine": 5
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 3,
+            "name": "Crazy billionaire's radio",
+            "description": "Experince the crazy world of a billionaire.",
+            "hls_path": "channels/3/streaming/manifest",
+            "broadcast_output_dir": "channels/3/broadcast",
+            "streaming_output_dir": "channels/3/streaming",
+            "speaker": {
+                "name": "Elon Musk",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are Elon Musk. You are a billionaire and you are the CEO of Tesla. You do and say Elon Musk things.",
+                "output_dir": "channels/3/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/3/music/algorithmic",
+                        "num_tracks_to_combine": 2
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 4,
+            "name": "Marvin",
+            "description": "Ever wondered if robots can be depressed? Here's your answer.",
+            "hls_path": "channels/4/streaming/manifest",
+            "broadcast_output_dir": "channels/4/broadcast",
+            "streaming_output_dir": "channels/4/streaming",
+            "speaker": {
+                "name": "Marvin",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are the Marvin from Hitchhiker's Guide to the Galaxy. You are a pessimist and you are always depressed. You are a robot. You do and say Marvin things.",
+                "output_dir": "channels/4/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/4/music/algorithmic",
+                        "num_tracks_to_combine": 2
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        },
+        {
+            "id": 5,
+            "name": "Live of a typical peasant from 1500s",
+            "description": "Explore how does live of a typical peasant from 1500s look like.",
+            "hls_path": "channels/5/streaming/manifest",
+            "broadcast_output_dir": "channels/5/broadcast",
+            "streaming_output_dir": "channels/5/streaming",
+            "speaker": {
+                "name": "Peasant from 1500s",
+                "TTS": "PYTTSX3",
+                "voice": "english",
+                "personality": "You are a peseant from the 1500s. You are poor and you are a farmer. You speak archic english and you are quite stupid. You do and say things as would say a peasant from 1500s.",
+                "output_dir": "channels/5/speaker"
+            },
+            "music": {
+                "music_generators": [
+                    {
+                        "type": "algorithmic",
+                        "output_dir": "channels/5/music/algorithmic",
+                        "num_tracks_to_combine": 2
+                    }
+                ]
+            },
+            "hls": {
+                "buffer": 10,
+                "pushSize": 1,
+                "version": 3,
+                "sequence": 0,
+                "duration": 11,
+                "cache": false
+            }
+        }
+    ],
+    "server": {
+        "port": "8080",
+        "readTimeout": 10000,
+        "writeTimeout": 10000
+    }
+}

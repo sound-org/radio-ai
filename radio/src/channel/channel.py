@@ -66,7 +66,7 @@ class Channel:
             f"ffmpeg -i {broadcast_file} -c:a libmp3lame -b:a 128k "
             f"-map 0:0 -f segment -segment_time 10 "
             f"-segment_list {output_dir}/outputlist.m3u8 "
-            f"-segment_format mpegts {output_dir}/output-{timestamp}%03d.ts"
+            f"-segment_format mp3 {output_dir}/output-{timestamp}%03d.ts"
         )
         try:
             subprocess.run(
