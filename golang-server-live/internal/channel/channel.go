@@ -222,11 +222,12 @@ func mapTs(path string, playlist *hls.Playlist) hls.Playlist {
 		Metadata: playlist.Metadata,
 		ToDelete: playlist.ToDelete,
 		HasEnd:   playlist.HasEnd,
-		Ts: utils.Map[hls.TsFile, hls.TsFile](playlist.Ts, func(ts hls.TsFile) hls.TsFile {
+		Tags: utils.Map[hls.TsFile, hls.TsFile](playlist.Tags, func(ts hls.TsFile) hls.TsFile {
 			return hls.TsFile{
 				Header: ts.Header,
 				Name:   filepath.ToSlash(filepath.Join(path, ts.Name)),
 			}
 		}),
+		ChangeOfIndex: playlist.ChangeOfIndex,
 	}
 }

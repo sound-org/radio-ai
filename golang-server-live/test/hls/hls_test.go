@@ -41,9 +41,9 @@ func assertRecord(rec *hls.Playlist) bool {
 	ok = ok && rec.Metadata.Sequence == 0
 	ok = ok && rec.Metadata.Cache == "YES"
 	ok = ok && rec.Metadata.Duration == 11
-	ok = ok && len(rec.Ts) == 5
-	ok = ok && rec.Ts[3].Header == "#EXTINF:10.004889,"
-	ok = ok && rec.Ts[4].Name == "ts/output024.ts"
+	ok = ok && len(rec.Tags) == 5
+	ok = ok && rec.Tags[3].Header == "#EXTINF:10.004889,"
+	ok = ok && rec.Tags[4].Name == "ts/output024.ts"
 	ok = ok && rec.HasEnd
 	ok = ok && !rec.ToDelete
 

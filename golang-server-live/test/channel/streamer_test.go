@@ -49,7 +49,7 @@ func TestPust(t *testing.T) {
 	}
 
 	// fake initialization of TS in streamer
-	streamer.Stream.Ts = make([]hls.TsFile, 10)
+	streamer.Stream.Tags = make([]hls.TsFile, 10)
 
 	file, err := test_utils.CreateFile(test_utils.GetM3U8(), ".", "test*.m3u8")
 	if err != nil {
@@ -73,11 +73,11 @@ func TestPust(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	if len(streamer.Stream.Ts) != 10 {
+	if len(streamer.Stream.Tags) != 10 {
 		log.Fatal("Streamer should have 10 ts files added")
 	}
 
-	if streamer.Stream.Ts[8] != rec.Ts[0] {
+	if streamer.Stream.Tags[8] != rec.Tags[0] {
 		log.Fatal("Streamer should push fifo to Stream")
 	}
 }

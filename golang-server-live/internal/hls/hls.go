@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/sound-org/radio-ai/server/pkg/utils"
 )
 
 // Playlist represents a metadata of media segment object from HLS protocol.
@@ -27,10 +29,11 @@ type Metadata struct {
 
 // Playlist represents a playlist object from HLS protocol.
 type Playlist struct {
-	Metadata Metadata
-	Ts       []TsFile
-	HasEnd   bool
-	ToDelete bool
+	Metadata      Metadata
+	Tags          []TsFile
+	HasEnd        bool
+	ToDelete      bool
+	ChangeOfIndex int
 }
 
 // Load reads and parses the content of an M3U8 file from the provided file descriptor (os.File).
@@ -64,10 +67,11 @@ func Load(rd *os.File) (*Playlist, error) {
 	}
 
 	return &Playlist{
-		Metadata: *metadata,
-		Ts:       *ts,
-		ToDelete: false,
-		HasEnd:   hasEnd,
+		Metadata:      *metadata,
+		Tags:          *ts,
+		ToDelete:      false,
+		HasEnd:        hasEnd,
+		ChangeOfIndex: -1,
 	}, nil
 }
 
@@ -205,7 +209,7 @@ func (playlist *Playlist) Write(wr http.ResponseWriter) error {
 		"#EXT-X-MEDIA-SEQUENCE:{{ .Metadata.Sequence }}\n" +
 		"#EXT-X-ALLOW-CACHE:{{ .Metadata.Cache }}\n" +
 		"#EXT-X-TARGETDURATION:{{ .Metadata.Duration }}\n" +
-		"{{ range .Ts }}{{ .Header }}\n{{ .Name }}\n{{ end }}" +
+		"{{ range .Tags }}{{ . }}{{ end }}" +
 		"{{ if .HasEnd }}#EXT-X-ENDLIST{{ else }}{{ end }}\n"
 
 	t, err := template.New("manifest").Parse(str)
@@ -213,10 +217,38 @@ func (playlist *Playlist) Write(wr http.ResponseWriter) error {
 		return err
 	}
 
-	err = t.Execute(wr, playlist)
+	ts := utils.Map[TsFile, string](playlist.Tags, func(tf TsFile) string {
+		return fmt.Sprintf("%s\n%s\n", tf.Header, tf.Name)
+	})
+
+	tags := addTag(ts, "#EXT-X-DISCONINUITY\n", playlist.ChangeOfIndex)
+
+	args := struct {
+		Metadata Metadata
+		Tags     []string
+		HasEnd   bool
+	}{
+		Metadata: playlist.Metadata,
+		Tags:     tags,
+		HasEnd:   playlist.HasEnd,
+	}
+
+	err = t.Execute(wr, args)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func addTag(tags []string, tag string, index int) []string {
+	if index <= 0 {
+		return tags
+	}
+	if index == len(tags) {
+		return append(tags, tag)
+	}
+	temp := append(tags[:index+1], tags[index:]...)
+	temp[index] = tag
+	return temp
 }

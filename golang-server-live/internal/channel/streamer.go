@@ -2,6 +2,7 @@ package channel
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/sound-org/radio-ai/server/internal/cnf"
@@ -64,9 +65,10 @@ func getStreamingFile(hc *cnf.HlsConfig) *hls.Playlist {
 			Cache:    cache,
 			Duration: float32(hc.Duration),
 		},
-		Ts:       []hls.TsFile{},
-		HasEnd:   false,
-		ToDelete: false,
+		Tags:          []hls.TsFile{},
+		HasEnd:        false,
+		ToDelete:      false,
+		ChangeOfIndex: -1,
 	}
 }
 
@@ -117,15 +119,22 @@ func (streamer *Streamer) Push(file *hls.Playlist, start int) error {
 //	    // handle the error
 //	}
 func (streamer *Streamer) push(file *hls.Playlist, start int) error {
-	if len(file.Ts) <= start {
+	if len(file.Tags) <= start {
+		// error occured most likely end of file to stream setting #EXT-X-DISCONINUITY tag
+		log.Println("[INFO] Error of file")
+		streamer.Stream.ChangeOfIndex = len(streamer.Stream.Tags)
 		return fmt.Errorf("file out of index")
 	}
 
-	end := min(len(file.Ts), start+int(streamer.config.PushSize))
+	if streamer.Stream.ChangeOfIndex >= 0 {
+		streamer.Stream.ChangeOfIndex = streamer.Stream.ChangeOfIndex - 1
+	}
+
+	end := min(len(file.Tags), start+int(streamer.config.PushSize))
 	size := end - start
 
-	streamer.Stream.Ts = streamer.Stream.Ts[size:]
-	streamer.Stream.Ts = append(streamer.Stream.Ts, file.Ts[start:end]...)
+	streamer.Stream.Tags = streamer.Stream.Tags[size:]
+	streamer.Stream.Tags = append(streamer.Stream.Tags, file.Tags[start:end]...)
 	streamer.Stream.Metadata.Sequence = streamer.Stream.Metadata.Sequence + uint32(size)
 
 	return nil
@@ -149,12 +158,12 @@ func (streamer *Streamer) push(file *hls.Playlist, start int) error {
 //	}
 func (streamer *Streamer) init(file *hls.Playlist) error {
 	// initialize stream with at most maxBuffer of ts files from file
-	if len(streamer.Stream.Ts) != 0 {
+	if len(streamer.Stream.Tags) != 0 {
 		return fmt.Errorf("empty playlist")
 	}
 
-	size := min(len(file.Ts), int(streamer.config.Buffer))
-	streamer.Stream.Ts = append(streamer.Stream.Ts, file.Ts[0:size]...)
+	size := min(len(file.Tags), int(streamer.config.Buffer))
+	streamer.Stream.Tags = append(streamer.Stream.Tags, file.Tags[0:size]...)
 	return nil
 }
 

@@ -132,7 +132,7 @@ func TestGet(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	if len(playlist.Ts) != 5 {
+	if len(playlist.Tags) != 5 {
 		log.Fatal("Playlist should be 5 ts long")
 	}
 }
