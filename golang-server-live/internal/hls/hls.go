@@ -242,11 +242,8 @@ func (playlist *Playlist) Write(wr http.ResponseWriter) error {
 }
 
 func addTag(tags []string, tag string, index int) []string {
-	if index <= 0 {
+	if index <= 0 || index == len(tags) {
 		return tags
-	}
-	if index == len(tags) {
-		return append(tags, tag)
 	}
 	temp := append(tags[:index+1], tags[index:]...)
 	temp[index] = tag
