@@ -74,7 +74,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                     togglePlay();
                 }
             } else {
-                alert("You've found a bugged channel, please refresh app")
+                // alert("You've found a bugged channel, please refresh app")
             }
         }
     }, [manifestUrl])
@@ -99,6 +99,13 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         });
         hlsRef.current.on(Hls.Events.ERROR, function (event, data) {
             console.warn('Hls.Events.ERROR', audioRef.current?.src, data);
+
+            // switch (data.type) {
+            //     case Hls.ErrorTypes.MEDIA_ERROR:
+            //         break;
+            //     default:
+            //         break;
+            // }
         });
 
         if (audioRef.current) {
