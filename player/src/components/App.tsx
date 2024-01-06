@@ -39,7 +39,23 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
     const [manifestUrl, setManifestUrl] = useState<string>();
     const [thumbnailPath, setThumbnailPath] = useState<string>("");
     const [firstPlay, setFirstPlay] = useState(true);
+    // Inside your component
+    const manifestUrlRef = useRef(manifestUrl); // Initialize the ref with manifestUrl
+    const activeChannelIdxRef = useRef(activeChannelIdx); // Initialize the ref with activeChannelIdx
+    const thumbnailPathRef = useRef(thumbnailPath); // Initialize the ref with thumbnailPath
+    useEffect(() => {
+        // Update the ref whenever activeChannelIdx changes
+        activeChannelIdxRef.current = activeChannelIdx;
+    }, [activeChannelIdx]);
+    useEffect(() => {
+        // Update the ref whenever thumbnailPath changes
+        thumbnailPathRef.current = thumbnailPath;
+    }, [thumbnailPath]);
 
+    // Update the ref whenever manifestUrl changes
+    useEffect(() => {
+        manifestUrlRef.current = manifestUrl;
+    }, [manifestUrl]);
     /**
      * Function that allows seeding random generator in JS
      * http://davidbau.com/encode/seedrandom.js
@@ -47,14 +63,14 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
      */
     const seedrandom = require('seedrandom');
 
-    const switchChannel = (newUrl: string, newIdx: number, newImgPath: string) => {
+    const switchChannel = (newUrl: any, newIdx: number, newImgPath: string) => {
         setManifestUrl(newUrl);
         console.log("Switched channel")
         setActiveChannelIdx(newIdx);
         setThumbnailPath(newImgPath);
-        if (analyzerData === null) {
-            audioAnalyzer();
-        }
+        // if (analyzerData === null) {
+        //     audioAnalyzer();
+        // }
         setIsPlaying(false);
         setFirstPlay(false);
     }
@@ -66,7 +82,7 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
     useEffect(() => {
         if (manifestUrl !== undefined) {
             if (manifestOK) {
-                console.log("New manifest loaded: " + serverRoot + manifestUrl)
+                console.warn("New manifest loaded: " + serverRoot + manifestUrl)
                 setManifestOK(false);
                 hlsRef.current?.loadSource(serverRoot + manifestUrl);
                 hlsRef.current?.attachMedia(audioRef.current!);
@@ -74,19 +90,21 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
                     togglePlay();
                 }
             } else {
-                // alert("You've found a bugged channel, please refresh app")
+                alert("You've found a bugged channel, please refresh app")
             }
         }
     }, [manifestUrl])
 
     // Radio config = run once
     useEffect(() => {
+        console.error("manifest url___: " + manifestUrl);
+
         // Setup HLS
         hlsRef.current = new Hls({
             debug: true,
             enableWorker: true,
             lowLatencyMode: true,
-            backBufferLength: 90
+            backBufferLength: 180 // Increase the backBufferLength to 180 seconds
         });
 
         hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, function () {
@@ -99,13 +117,48 @@ export const App: React.FC<{ useLocalConfig: boolean }> = (props = {useLocalConf
         });
         hlsRef.current.on(Hls.Events.ERROR, function (event, data) {
             console.warn('Hls.Events.ERROR', audioRef.current?.src, data);
+            // Use manifestUrlRef.current to access the current manifestUrl
+            if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
 
-            // switch (data.type) {
-            //     case Hls.ErrorTypes.MEDIA_ERROR:
-            //         break;
-            //     default:
-            //         break;
-            // }
+                // extract channel id
+                const currentChannelId = parseInt(manifestUrlRef.current?.match(/channels\/(\d)\//)?.[1] || '0', 10);
+                console.log('Current Channel ID:', currentChannelId);
+                // manifest url:" channels/3/streaming/manifest
+
+                const currentManifestUrl = manifestUrlRef.current;
+                const currentActiveChannelIdx = activeChannelIdxRef.current;
+                const currentThumbnailPath = thumbnailPathRef.current;
+
+                console.log('Current Manifest URL:', currentManifestUrl);
+
+                // switchChannel(currentManifestUrl, currentActiveChannelIdx, currentThumbnailPath);
+                const newChannelId = currentChannelId + 1;
+                const newManifestUrl = currentManifestUrl?.replace(/(channels\/)\d+(\/streaming)/, `$1${newChannelId}$2`);
+                // setManifestUrl(newManifestUrl);
+                // setActiveChannelIdx(newChannelId);
+                // setManifestUrl(undefined)
+                // // setManifestUrl(currentManifestUrl);
+                // setTimeout(() => {
+                //     setManifestUrl(currentManifestUrl);
+                // }, 0);
+                // setActiveChannelIdx(currentActiveChannelIdx);
+                // first unload any source streams
+                hlsRef.current?.destroy();
+                // setManifestOK(false);
+                console.error("New manifest loaded: " + serverRoot + currentManifestUrl)
+                hlsRef.current?.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                    hlsRef.current?.attachMedia(audioRef.current!);
+                });
+                hlsRef.current?.loadSource(serverRoot + currentManifestUrl);
+                // hlsRef.current?.attachMedia(audioRef.current!);
+                // switchChannel(newManifestUrl, newChannelId, currentThumbnailPath);
+
+                // switchChannel(currentManifestUrl, currentActiveChannelIdx, currentThumbnailPath);
+                // setIsPlaying(true);
+                // audioAnalyzer();
+                // setIsPlaying(false);
+                // togglePlay();
+            }
         });
 
         if (audioRef.current) {
