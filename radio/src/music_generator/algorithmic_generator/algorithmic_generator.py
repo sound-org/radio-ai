@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import random
 import time
@@ -42,20 +43,27 @@ class AlgorithmicGenerator(AbstractMusicGenerator):
         primary_key = random.choice(keys)
         secondary_key = random.choice(keys)
         base_len: int = 32
+        max_duration: float = 40.0  # Maximum duration in seconds
+
+        # Calculate the number of chords needed to achieve the desired duration
+        chords_per_second = len(keys) / max_duration
+        no_of_chords = math.ceil(chords_per_second * base_len)
 
         # main line --> quarter notes
-        notes_melody = self._create_random_melody(primary_key, 0, no_of_chords=base_len)
+        notes_melody = self._create_random_melody(
+            primary_key, 0, no_of_chords=no_of_chords
+        )
         # print(notes_melody)
 
         # bass line --> whole notes
         notes_bass = self._create_random_melody(
-            secondary_key, 0, no_of_chords=base_len // 4
+            secondary_key, 0, no_of_chords=no_of_chords // 4
         )
         # print(notes_bass)
 
         # additional line --> eight notes with offset
         additional_notes = self._create_random_melody(
-            "C", 0, no_of_chords=base_len * 2 * 3 // 4
+            "C", 0, no_of_chords=no_of_chords * 2 * 3 // 4
         )
         # print(additional_notes)
 

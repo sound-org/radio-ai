@@ -104,7 +104,7 @@ class Channel:
         paths_to_audio_files.append(speaker_lines_path)
         paths_to_audio_files.append(speaker_reaction_to_email_path)
         paths_to_audio_files.extend(music_paths)
-        paths_to_audio_files.append(outro_path)
+        # paths_to_audio_files.append(outro_path)
 
         output_file = os.path.join(
             self._broadcast_output_dir,
