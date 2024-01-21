@@ -160,3 +160,4 @@ musicgen_out.wav
 channels
 model_cache
 radio/model_cache
+.vscode

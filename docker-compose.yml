@@ -1,26 +1,26 @@
 version: '3.8'
 services:
-  # backend:
-  #   build:
-  #     context: .
-  #     dockerfile: radio/Dockerfile.backend
-  #   volumes:
-  #     - ./channels/:/usr/src/app/radio/channels/
-  #     - ./radio_config.json:/usr/src/app/radio_config.json
-  #     - ./model_cache:/usr/src/app/radio/model_cache
-  #     - ./audio_samples:/usr/src/app/radio/audio_samples
-  #     - ./radio/src:/usr/src/app/radio/src
-  #     - ./radio/token_gmail.json:/usr/src/app/radio/token_gmail.json
-  #   working_dir: /usr/src/app/radio
-  #   # command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000","--reload"]
-  #   command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
-  #   ports:
-  #     - 8000:8000
-  #     - 5678:5678
-  #   env_file:
-  #     - radio/.env
-  #   networks:
-  #     - app-network
+  backend:
+    build:
+      context: .
+      dockerfile: radio/Dockerfile.backend
+    volumes:
+      - ./channels/:/usr/src/app/radio/channels/
+      - ./radio_config.json:/usr/src/app/radio_config.json
+      - ./model_cache:/usr/src/app/radio/model_cache
+      - ./audio_samples:/usr/src/app/radio/audio_samples
+      - ./radio/src:/usr/src/app/radio/src
+      - ./radio/token_gmail.json:/usr/src/app/radio/token_gmail.json
+    working_dir: /usr/src/app/radio
+    # command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000","--reload"]
+    command: ["python", "/usr/local/lib/python3.9/site-packages/debugpy","--listen", "0.0.0.0:5678", "-m", "uvicorn", "src.main:app",  "--host", "0.0.0.0", "--port", "8000","--reload"]
+    ports:
+      - 8000:8000
+      - 5678:5678
+    env_file:
+      - radio/.env
+    networks:
+      - app-network
   frontend:
     build:
       context: .
