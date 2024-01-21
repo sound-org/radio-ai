@@ -25,6 +25,7 @@ export interface ChannelProps {
 export const Channel: React.FC<ChannelProps> = (props: ChannelProps) => {
     const handleClick = () => {
         if (!props.active) {
+            console.error("Switching to channel " + props.num + "with path " + props.hlsPath);
             props.switchChannel(props.hlsPath, props.num, props.thumbnailPath);
         }
     }

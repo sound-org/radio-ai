@@ -44,7 +44,7 @@ body {
 }
 
 .Radio-header {
-  font-size: 46px;
+  font-size: 42px;
   color: white;
   padding: 3vh;
   text-align: center;
@@ -70,8 +70,8 @@ body {
   background-size: cover;
   min-width: 100px;
   min-height: 100px;
-  width: 40vh;
-  height: 40vh;
+  width: 37vh;
+  height: 37vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,13 +79,13 @@ body {
 }
 
 .Title {
-  font-size: calc(16px + 2vmin);
+  font-size: calc(14px + 2vmin);
   font-weight: bold;
-  padding: 20px 0 10px 0;
+  padding: 10px 0 10px 0;
 }
 
 .Description {
-  font-size: calc(8px + 2vmin);
+  font-size: calc(6px + 2vmin);
   padding: 10px 0 10px 0;
   word-wrap: normal;
   height: 10vh;

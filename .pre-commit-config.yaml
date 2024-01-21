@@ -3,8 +3,11 @@ repos:
     rev: v2.3.0
     hooks:
       - id: check-yaml
+        exclude: channels/.*
       - id: end-of-file-fixer
+        exclude: channels/.*
       - id: trailing-whitespace
+        exclude: channels/.*
   - repo: https://github.com/psf/black
     rev: 22.10.0
     hooks:

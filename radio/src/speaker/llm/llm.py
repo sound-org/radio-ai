@@ -38,7 +38,8 @@ class LLM:
             str: The generated speaker lines.
 
         """
-        chat = ChatOpenAI()
+
+        chat = ChatOpenAI(model="gpt-4-1106-preview")
         message = SystemMessage(content=text)
         history_copy = self._history.copy()
         history_copy.append(message)
@@ -56,7 +57,7 @@ class LLM:
             str: The reaction/response to the email message.
 
         """
-        chat = ChatOpenAI()
+        chat = ChatOpenAI(model="gpt-4-1106-preview")
         email_message = SystemMessage(content=email)
         history_copy = self._history.copy()
         history_copy.append(self._steering_message)

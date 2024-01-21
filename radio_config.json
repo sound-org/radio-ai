@@ -9,9 +9,9 @@
             "streaming_output_dir": "channels/1/streaming",
             "speaker": {
                 "name": "Hard Rock DJ",
-                "TTS": "PYTTSX3",
-                "voice": "english",
-                "personality": "You are and radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
+                "TTS": "ELEVENLABS",
+                "voice": "rz9kGsHtm82s5eC7KCEY",
+                "personality": "You are a radio DJ, you love good hard rock music, the harder the better music, you are definitely crazy",
                 "output_dir": "channels/1/speaker"
             },
             "music": {
@@ -20,12 +20,7 @@
                         "type": "ai",
                         "theme": "Hard Rock Music with guitar and drums",
                         "output_dir": "channels/1/music/ai",
-                        "num_tracks_to_combine": 5
-                    },
-                    {
-                        "type": "algorithmic",
-                        "output_dir": "channels/1/music/algorithmic",
-                        "num_tracks_to_combine": 2
+                        "num_tracks_to_combine": 1
                     }
                 ]
             },
@@ -47,8 +42,8 @@
             "streaming_output_dir": "channels/2/streaming",
             "speaker": {
                 "name": "A miserable man",
-                "TTS": "PYTTSX3",
-                "voice": "english",
+                "TTS": "ELEVENLABS",
+                "voice": "laEX2CkBUNs7n0KwAVHt",
                 "personality": "You are the dullest radio DJ ever. You are not a fan of music, you are not a fan of anything. You are just a miserable person.",
                 "output_dir": "channels/2/speaker"
             },
@@ -58,7 +53,7 @@
                         "type": "ai",
                         "theme": "Most depressing music ever",
                         "output_dir": "channels/2/music/ai",
-                        "num_tracks_to_combine": 5
+                        "num_tracks_to_combine": 1
                     }
                 ]
             },
@@ -74,14 +69,14 @@
         {
             "id": 3,
             "name": "Crazy billionaire's radio",
-            "description": "Experince the crazy world of a billionaire.",
+            "description": "Experience the crazy world of a billionaire.",
             "hls_path": "channels/3/streaming/manifest",
             "broadcast_output_dir": "channels/3/broadcast",
             "streaming_output_dir": "channels/3/streaming",
             "speaker": {
                 "name": "Elon Musk",
-                "TTS": "PYTTSX3",
-                "voice": "english",
+                "TTS": "ELEVENLABS",
+                "voice": "mjE2aHHb4DNTk6kHFWWC",
                 "personality": "You are Elon Musk. You are a billionaire and you are the CEO of Tesla. You do and say Elon Musk things.",
                 "output_dir": "channels/3/speaker"
             },
@@ -90,7 +85,7 @@
                     {
                         "type": "algorithmic",
                         "output_dir": "channels/3/music/algorithmic",
-                        "num_tracks_to_combine": 2
+                        "num_tracks_to_combine": 1
                     }
                 ]
             },
@@ -122,7 +117,7 @@
                     {
                         "type": "algorithmic",
                         "output_dir": "channels/4/music/algorithmic",
-                        "num_tracks_to_combine": 2
+                        "num_tracks_to_combine": 1
                     }
                 ]
             },
@@ -137,16 +132,16 @@
         },
         {
             "id": 5,
-            "name": "Live of a typical peasant from 1500s",
-            "description": "Explore how does live of a typical peasant from 1500s look like.",
+            "name": "Life of a typical peasant from 1500s",
+            "description": "Explore how does life of a typical peasant from 1500s look like.",
             "hls_path": "channels/5/streaming/manifest",
             "broadcast_output_dir": "channels/5/broadcast",
             "streaming_output_dir": "channels/5/streaming",
             "speaker": {
                 "name": "Peasant from 1500s",
-                "TTS": "PYTTSX3",
-                "voice": "english",
-                "personality": "You are a peseant from the 1500s. You are poor and you are a farmer. You speak archic english and you are quite stupid. You do and say things as would say a peasant from 1500s.",
+                "TTS": "ELEVENLABS",
+                "voice": "BVYEUhS4co5fcj8TBJDw",
+                "personality": "You are a peasant from the 1500s. You are poor and you are a farmer. You speak archaic english and you are quite stupid. You do and say things as would say a peasant from 1500s.",
                 "output_dir": "channels/5/speaker"
             },
             "music": {
@@ -154,7 +149,7 @@
                     {
                         "type": "algorithmic",
                         "output_dir": "channels/5/music/algorithmic",
-                        "num_tracks_to_combine": 2
+                        "num_tracks_to_combine": 1
                     }
                 ]
             },

@@ -16,7 +16,7 @@ GO:
 HLS:
 
  Tworzenie plików .ts oraz playlisty .m3u8 przez ffmpeg :
-  `ffmpeg -i x.mp3 -c:a libmp3lame -b:a 128k -map 0:0 -f segment -segment_time 10 -segment_list outputlist.m3u8 -segment_format mpegts output%03d.ts`
+  `ffmpeg -i x.mp3 -c:a libmp3lame -b:a 128k -map 0:0 -f segment -segment_time 10 -segment_list outputlist.m3u8 -segment_format mp3 output%03d.ts`
 
 MIDI to MP3:
 Ja korzystam z fluidsynth

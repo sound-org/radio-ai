@@ -4,6 +4,7 @@ from typing import Tuple
 from fastapi import APIRouter, Request, Response, status
 
 from .authenticaion_service import AuthenticationService
+from .gmail import Gmail
 from .gmail_config import GmailConfig
 
 router = APIRouter(prefix="/gmail", tags=["gmail"])
@@ -76,3 +77,11 @@ def callback(request: Request, response: Response):
     authentication_service.callback_handler(request=request)
     logger.info("Callback route finished for google drive integration")
     return "Successfully saved credentials"
+
+
+@router.get(path="/get-last-email", status_code=status.HTTP_200_OK)
+def get_last_email(response: Response) -> str:
+    gmail_service = Gmail()
+    last_email = gmail_service.get_latest_message()
+
+    return last_email
