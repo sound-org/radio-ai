@@ -20,7 +20,7 @@
                         "type": "ai",
                         "theme": "Hard Rock Music with guitar and drums",
                         "output_dir": "channels/1/music/ai",
-                        "num_tracks_to_combine": 1
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },
@@ -53,7 +53,7 @@
                         "type": "ai",
                         "theme": "Most depressing music ever",
                         "output_dir": "channels/2/music/ai",
-                        "num_tracks_to_combine": 1
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },
@@ -83,9 +83,10 @@
             "music": {
                 "music_generators": [
                     {
-                        "type": "algorithmic",
-                        "output_dir": "channels/3/music/algorithmic",
-                        "num_tracks_to_combine": 1
+                        "type": "ai",
+                        "theme": "Posh music listen by billionaires. It is a mix of classical music and jazz.",
+                        "output_dir": "channels/3/music/ai",
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },
@@ -115,9 +116,10 @@
             "music": {
                 "music_generators": [
                     {
-                        "type": "algorithmic",
-                        "output_dir": "channels/4/music/algorithmic",
-                        "num_tracks_to_combine": 1
+                        "type": "ai",
+                        "theme": "Sounds of the future cyberpunk world",
+                        "output_dir": "channels/4/music/ai",
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },
@@ -147,9 +149,10 @@
             "music": {
                 "music_generators": [
                     {
-                        "type": "algorithmic",
-                        "output_dir": "channels/5/music/algorithmic",
-                        "num_tracks_to_combine": 1
+                        "type": "ai",
+                        "theme": "Folk music with a lot of flutes and violins and other traditional instruments",
+                        "output_dir": "channels/5/music/ai",
+                        "num_tracks_to_combine": 2
                     }
                 ]
             },
