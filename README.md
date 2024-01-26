@@ -8,7 +8,7 @@ This project aims to use the latest developments in generative artificial intell
 
 To run project you need to install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
-Then you need to run following command:
+Then you need to run the following command:
 ```docker compose up --build```
 
 ## How to use
@@ -24,10 +24,14 @@ Project is divided into 4 main parts:
 - [golang-server-live](./golang-server-live) - Golang server that streams generated content
 - [scheduler](./scheduler) - Simple container with cron job that triggers content generation
 
+In the [channels](./channels) folder you can find all the generated content for each channel.
+
+[radio_config.json](./radio_config.json) file contains configuration for the radio.
+
 ## Demo
 
 You can see demo files for this project in [demo_files](./demo_files) folder.
 It contains:
 
-- video materials showcasing the project
-- sample radio content for each radio channel: broadcast, generated music, generated speaker voice
+- Video materials showcasing the project
+- Sample radio content for each channel: broadcast, generated music, generated speaker voice
