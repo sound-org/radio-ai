@@ -44,15 +44,15 @@ services:
       networks:
         - app-network
       command: /usr/src/app/golang-server-live/main radio_config.json
-  # scheduler:
-  #     build:
-  #       context: scheduler
-  #       dockerfile: Dockerfile.scheduler
-  #     volumes:
-  #       - ./scheduler/generate_music.sh:/usr/src/app/generate_music.sh
-  #       - ./scheduler/generate_new_broadcast.sh:/usr/src/app/generate_new_broadcast.sh
-  #     networks:
-  #       - app-network
+  scheduler:
+      build:
+        context: scheduler
+        dockerfile: Dockerfile.scheduler
+      volumes:
+        - ./scheduler/generate_music.sh:/usr/src/app/generate_music.sh
+        - ./scheduler/generate_new_broadcast.sh:/usr/src/app/generate_new_broadcast.sh
+      networks:
+        - app-network
 
 networks:
   app-network:
