@@ -1,24 +1,33 @@
-# radio-ai
+# rAIdio
 
-How To:
+## Abstract
 
-- to create a new radio broadcast, create a POST request at <http://localhost:8000/channels/prepare-broadcast>
+This project aims to use the latest developments in generative artificial intelligence to create an advanced system that mimics internet radio. The project integrates state-of-the-art technologies in text generation, music generation, and human voice synthesis to create a cohesive system. The solution not only enables playback of artificially generated broadcasts but also opens up a whole new dimension of exploring musical genres and styles.
 
-GO:
+## How to run
 
- W `/go` znajduje się server obsługujący HLS. Aby go odpalić potrzeba go <=1.21.3
- Klienta możnma odpalić tu : <https://hlsjs-dev.video-dev.org/demo/>  w linku do src wpicas <http://localhost:8080/outputlist.m3u8>
- Server odpalać z pliku /cmd/app/main.go komendą go run .
+To run project you need to install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
- Odpalanie:
- w `/golang-server-live` zrób go build **./cmd/app/.** następnie wykonaj **./golang-server-live/app.exe ./radio_config.json** z poziomu folderu `radio-ai`
+Then you need to run following command:
+```docker compose up --build```
 
-HLS:
+## How to use
 
- Tworzenie plików .ts oraz playlisty .m3u8 przez ffmpeg :
-  `ffmpeg -i x.mp3 -c:a libmp3lame -b:a 128k -map 0:0 -f segment -segment_time 10 -segment_list outputlist.m3u8 -segment_format mp3 output%03d.ts`
+After running project you can access client app on [localhost:3000](http://localhost:5000/).
 
-MIDI to MP3:
-Ja korzystam z fluidsynth
-`fluidsynth -a alsa -T raw -F - soundfont.sf2 MIDI_sample.mid |
-  ffmpeg -f s32le -i - MIDI_sample.mp3`
+## Project structure
+
+Project is divided into 4 main parts:
+
+- [player](./player) - React app that is the frontend client of the project
+- [radio](./radio) - Python projet that generates radio content
+- [golang-server-live](./golang-server-live) - Golang server that streams generated content
+- [scheduler](./scheduler) - Simple container with cron job that triggers content generation
+
+## Demo
+
+You can see demo files for this project in [demo_files](./demo_files) folder.
+It contains:
+
+- video materials showcasing the project
+- sample radio content for each radio channel: broadcast, generated music, generated speaker voice
